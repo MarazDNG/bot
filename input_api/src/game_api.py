@@ -59,11 +59,14 @@ cache_time = None
 def check_cache(coords: tuple) -> None:
     """ Detect stucked character."""
     global cached_pos
+    cached_pos = coords if not cached_pos else cached_pos
     global cache_time
+    cache_time = coords if not cache_time else datetime.now()
+
     check_time = datetime.now()
     diff = check_time - cache_time
     if diff > timedelta(seconds=1):
-        raise StuckedException()
+        attack()
     cached_pos = coords
     cache_time = check_time
 
@@ -93,7 +96,7 @@ def get_to(pos, area):
     ct = 0
     while True:
         my_coords = read_coords()
-
+        check_cache(my_coords)
 
         try:
             n_pos = path[ct]
