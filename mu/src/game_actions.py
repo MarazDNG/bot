@@ -1,17 +1,24 @@
 
-from i_game import get_to, read_lvl, read_coords
-from i_arduino import hold_left, release_buttons, send_ascii, send_string
+from mu_input.game_api import get_to
+from mu_input.game_api import read_coords
+from mu_input.game_api import read_lvl
+from mu_input.arduino_api import send_ascii
+from mu_input.arduino_api import release_buttons
+from mu_input.arduino_api import hold_left
+from mu_input.arduino_api import send_string
+
 import time
 from keys import KEY_RETURN, KEY_HOME
 
 
-def go_to(*args):
+def move_to_coords(*args):
+    # TODO
     print('go_to start')
     get_to(*args)
     print('go_to end')
 
 
-def get_lvl():
+def get_my_lvl() -> int:
     send_string('c')
     time.sleep(1)
     lvl = read_lvl()
@@ -26,7 +33,7 @@ def get_lvl():
     return lvl
 
 
-def get_coords():
+def get_my_coords() -> tuple:
     return read_coords()
 
 

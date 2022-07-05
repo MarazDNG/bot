@@ -69,8 +69,14 @@ def fill_map(area):
     return a_map
 
 
-def djikstra(start, goal, area):
+def djikstra(start: tuple, goal: tuple, area: str) -> list:
+    """
+        start - (x, y)
+        goal - (x, y)
+        area - "lorencia"
 
+        return - list of coordinates
+    """
     mapa = fill_map(area)
 
     mapa.spot(start).value = 's'

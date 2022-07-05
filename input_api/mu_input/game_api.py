@@ -7,16 +7,21 @@ from datetime import datetime
 from datetime import timedelta
 from arduino_api import hold_left
 from arduino_api import release_buttons
-from image_extract import get_image_of
-from info_extract import extract_coords, extract_lvl
-from source.arduino_api import click
-from i_mouse import game_mouse_to_pixel
+from mu_image.src.info_extract import extract_coords
+from mu_image.src.info_extract import extract_lvl
+from mu_image.src.image_extract import get_image_of
+from mu_image.src.image_extract import grab_coords
+from arduino_api import click
+# from i_mouse import game_mouse_to_pixel
 from djikstra import djikstra4, djikstra
 from exceptions import StuckedException
 import time
 from numpy import cos, sin, pi
 import numpy
 from math import sqrt
+
+def game_mouse_to_pixel(*args):
+    pass
 
 SURR = {
     (0, 0): (645, 323),
@@ -72,12 +77,12 @@ def check_cache(coords: tuple) -> None:
 
 
 def read_lvl():
-    img = get_image_of("lvl")
+    img = get_image_of()
     return extract_lvl(img)
 
 
 def read_coords() -> tuple:
-    img = get_image_of("coords")
+    img = grab_coords()
     return extract_coords(img)
 
 

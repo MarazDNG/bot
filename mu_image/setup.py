@@ -6,7 +6,7 @@ def read(fname: str) -> str:
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "libmu",
+    name = "mu_image",
     version = read("VERSION"),
     packages = find_packages(),
     install_requires = read("requirements.txt").splitlines()
