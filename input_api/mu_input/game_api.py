@@ -5,12 +5,12 @@
 
 from datetime import datetime
 from datetime import timedelta
+from mu_image.info_extract import extract_coords
+from mu_image.info_extract import extract_lvl
+from mu_image.image_extract import get_image_of
+from mu_image.image_extract import grab_coords
 from arduino_api import hold_left
 from arduino_api import release_buttons
-from mu_image.src.info_extract import extract_coords
-from mu_image.src.info_extract import extract_lvl
-from mu_image.src.image_extract import get_image_of
-from mu_image.src.image_extract import grab_coords
 from arduino_api import click
 # from i_mouse import game_mouse_to_pixel
 from djikstra import djikstra4, djikstra

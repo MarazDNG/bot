@@ -1,7 +1,7 @@
 from unittest import TestCase
 import mock
 
-from src.game_actions import get_my_lvl
+from mu_bot.game_actions import get_my_lvl
 
 
 class TestGameActions(TestCase):
