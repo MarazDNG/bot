@@ -59,9 +59,9 @@ cache_time = None
 def check_cache(coords: tuple) -> None:
     """ Detect stucked character."""
     global cached_pos
-    cached_pos = coords if not cached_pos else cached_pos
+    cached_pos = cached_pos or coords
     global cache_time
-    cache_time = coords if not cache_time else datetime.now()
+    cache_time = cache_time or datetime.now()
 
     check_time = datetime.now()
     diff = check_time - cache_time
@@ -73,15 +73,13 @@ def check_cache(coords: tuple) -> None:
 
 def read_lvl():
     img = get_image_of("lvl")
-    lvl = extract_lvl(img)
-    return lvl
+    return extract_lvl(img)
 
 
 def read_coords() -> tuple:
     img = get_image_of("coords")
-    coords = extract_coords(img)
-    return coords
- 
+    return extract_coords(img)
+
 
 def get_to(pos, area):
     global cache_time
@@ -109,7 +107,7 @@ def get_to(pos, area):
                     )
             px_pos = SURR[diff]
 
-        except:
+        except Exception:
             print("SADGE!")
             continue
         if (ct + 1) >= len(path):
@@ -136,7 +134,7 @@ def walk_to(pos, area):
             ct += 1
         try:
             vector = get_vector(path[ct+2], my_coords)
-        except:
+        except Exception:
             print("SADGE!")
             continue
         if (ct + 2) >= len(path):
