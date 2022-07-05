@@ -5,6 +5,7 @@
 
 import cv2
 import numpy
+import pkg_resources
 
 
 def extract_coords(img):
@@ -13,7 +14,8 @@ def extract_coords(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     matches = []
     for i in range(10):
-        pattern = cv2.imread(f'patterns/{i}.png', cv2.IMREAD_UNCHANGED)
+        path = pkg_resources.resource_filename("mu_image", f"patterns/{i}.png")
+        pattern = cv2.imread(path, cv2.IMREAD_UNCHANGED)
         pattern = cv2.cvtColor(pattern, cv2.COLOR_BGRA2GRAY)
         result = cv2.matchTemplate(img, pattern, cv2.TM_CCOEFF_NORMED)
         _, xloc = numpy.where(result > 0.99)
@@ -42,11 +44,13 @@ def extract_lvl(img):
     """ Return lvl in given image.
         Return 0 if lvl couldnt be found.
     """
+    img.show()
     img = numpy.array(img)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     matches = []
     for i in range(10):
-        pattern = cv2.imread(f'y_img/y{i}.png', cv2.IMREAD_UNCHANGED)
+        path = pkg_resources.resource_filename("mu_image", f"y_img/y{i}.png")
+        pattern = cv2.imread(path, cv2.IMREAD_UNCHANGED)
         pattern = cv2.cvtColor(pattern, cv2.COLOR_BGRA2GRAY)
         result = cv2.matchTemplate(img, pattern, cv2.TM_CCOEFF_NORMED)
         _, xloc = numpy.where(result > 0.99)

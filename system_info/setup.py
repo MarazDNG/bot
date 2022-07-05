@@ -6,12 +6,8 @@ def read(fname: str) -> str:
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "mu_image",
+    name = "mu_window",
     version = read("VERSION"),
     packages = find_packages(),
-    install_requires = read("requirements.txt").splitlines(),
-    package_data={
-        "": ["*"],
-    },
-    include_package_data=True,
+    install_requires = read("requirements.txt").splitlines()
 )

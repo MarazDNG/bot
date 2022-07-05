@@ -7,7 +7,6 @@ from curses import KEY_SELECT
 from time import time
 from i_arduino import click, send_ascii
 from i_mouse import game_mouse_to_pixel
-from system_info import game_start_pixel
 from keys import KEY_ESC, KEY_RETURN
 
 
@@ -35,7 +34,7 @@ def game_login():
     click()
 
     # click auto-login
-    game_start_pixel((1, 2))
+    # game_start_pixel((1, 2))
     click()
 
     # click on character

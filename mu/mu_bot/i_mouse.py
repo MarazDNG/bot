@@ -1,4 +1,4 @@
-from system_info import game_start_pixel
+from mu_window.system_info import game_start_pixel
 from i_arduino import mouse_to_pos
 
 

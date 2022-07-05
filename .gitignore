@@ -1,1 +1,3 @@
 libmu/
+*dist/
+*.egg*

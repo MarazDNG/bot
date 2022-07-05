@@ -8,7 +8,7 @@ from mu_input.arduino_api import hold_left
 from mu_input.arduino_api import send_string
 
 import time
-from keys import KEY_RETURN, KEY_HOME
+from .keys import KEY_RETURN, KEY_HOME
 
 
 def move_to_coords(*args):

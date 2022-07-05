@@ -6,7 +6,7 @@
 import win32gui
 
 
-WINDOW_PARTIAL_TEXT = "Player: LIDL"
+WINDOW_PARTIAL_TEXT = "Player:"
 
 
 def game_start_pixel():
