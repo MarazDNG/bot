@@ -42,8 +42,10 @@ def grab_lvl() -> Image:
     bbox = (x, y, x+25, y+10)
     return ImageGrab.grab(bbox=bbox)
 
+
+
 def grab_coords():
-    """Return image with coordinates."""
+    """Return image with coordinates."""    
     
     left, top = game_start_pixel()
     w = 80

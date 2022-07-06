@@ -3,6 +3,7 @@
 #
 
 
+from typing import List
 from PIL import Image
 
 
@@ -18,14 +19,6 @@ DIFF = [
 ]
 
 
-class Map:
-
-    def __init__(self, mapa):
-        self.mapa = mapa
-
-    def spot(self, pos):
-        x, y = pos
-        return self.mapa[x][y]
 
 
 class Spot:
@@ -39,28 +32,38 @@ class Spot:
         return (self.x, self.y)
 
 
+class Map:
+    PATH = 0
+    WALL = 1
+    def __init__(self, mapa: List[List] = None):
+        if mapa is None:
+            mapa = []
+        self.mapa = mapa
+
+    def spot(self, pos: tuple) -> Spot:
+        x, y = pos
+        return self.mapa[x][y]
+
+    def load_img(self, img: Image):
+        pass
+
+    def __getitem__(self, item: tuple):
+        return self.mapa[item[0]][item[1]]
+
 def get_surrounding(x, y):
-
-    l = []
-    for dx, dy in DIFF:
-        l.append((x+dx, y+dy))
-    return l
+    return [(x+dx, y+dy) for dx, dy in DIFF]
 
 
-def fill_map(area):
+def fill_map2(area) -> Map:
+    """Convert img to map."""
+    WHITE_COLOR = (255, 255, 255)
     img = Image.open(f'img/img_{area}.png')
-    filling = img.load()
-    a_map = []
+    # filling = img.load()
     width, height = img.size()
+    a_map = []
     for i in range(width):
-        row = []
-        for j in range(height):
-            if filling[i, j] == (255, 255, 255):
-                row.append('Y')
-            else:
-                row.append('N')
+        row = [filling[i, j] == WHITE_COLOR for j in range(height)]
         a_map.append(row)
-    # print(counter)
     # Convert list or true/false into list of objects
     for i, row in enumerate(a_map):
         for j, col in enumerate(row):
@@ -69,16 +72,24 @@ def fill_map(area):
     return a_map
 
 
+def fill_map(path) -> Map:
+    WHITE_COLOR = (255, 255, 255)
+    path: str
+    img = Image.open(path)
+    a_map = [[(tuple(x) == WHITE_COLOR) for x in i] for i in img]
+    return Map(a_map)
+
+
 def djikstra(start: tuple, goal: tuple, area: str) -> list:
     """
+        Djikstra algorithm.
         start - (x, y)
         goal - (x, y)
-        area - "lorencia"
 
         return - list of coordinates
     """
     mapa = fill_map(area)
-
+    
     mapa.spot(start).value = 's'
     mapa.spot(goal).value = 'g'
 
