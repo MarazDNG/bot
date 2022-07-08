@@ -3,6 +3,7 @@
 #
 
 
+from re import A
 from typing import List
 from PIL import Image
 
@@ -45,7 +46,8 @@ class Map:
         return self.mapa[x][y]
 
     def load_img(self, img: Image):
-        pass
+        WHITE_COLOR = (255, 255, 255)
+        self.mapa = [[(tuple(x) == WHITE_COLOR) for x in i] for i in img]
 
     def __getitem__(self, item: tuple):
         return self.mapa[item[0]][item[1]]
@@ -54,33 +56,7 @@ def get_surrounding(x, y):
     return [(x+dx, y+dy) for dx, dy in DIFF]
 
 
-def fill_map2(area) -> Map:
-    """Convert img to map."""
-    WHITE_COLOR = (255, 255, 255)
-    img = Image.open(f'img/img_{area}.png')
-    # filling = img.load()
-    width, height = img.size()
-    a_map = []
-    for i in range(width):
-        row = [filling[i, j] == WHITE_COLOR for j in range(height)]
-        a_map.append(row)
-    # Convert list or true/false into list of objects
-    for i, row in enumerate(a_map):
-        for j, col in enumerate(row):
-            a_map[i][j] = Spot(i, j, a_map[i][j])
-    a_map = Map(a_map)
-    return a_map
-
-
-def fill_map(path) -> Map:
-    WHITE_COLOR = (255, 255, 255)
-    path: str
-    img = Image.open(path)
-    a_map = [[(tuple(x) == WHITE_COLOR) for x in i] for i in img]
-    return Map(a_map)
-
-
-def djikstra(start: tuple, goal: tuple, area: str) -> list:
+def djikstra(start: tuple, goal: tuple, array_map: list) -> list:
     """
         Djikstra algorithm.
         start - (x, y)
@@ -88,33 +64,26 @@ def djikstra(start: tuple, goal: tuple, area: str) -> list:
 
         return - list of coordinates
     """
-    mapa = fill_map(area)
-    
+    mapa = array_map
     mapa.spot(start).value = 's'
     mapa.spot(goal).value = 'g'
 
     # List of indices of spots - current layer X
-    current = [mapa.spot(start)]
+    current = [start]
 
     # List of indices of spots that should be assigned a numebr. X
     distance = 1
 
-    def filter_used(haystack, bucket):
-        for index in haystack:
-            if mapa.spot(index).value in ['Y', 'g'] and mapa.spot(index) not in bucket:
-                bucket.append(mapa.spot(index))
     while True:
-        new_layer = []
+        old_set = set()
+        new_set = set()
         for item in current:
-            indices = get_surrounding(*item.pos())  # [(x, y),]
-            filter_used(indices, new_layer)
+            new_set = get_surrounding(*item)  # [(x, y),]
 
-        def find_g(haystack):
-            for item in haystack:
-                if item.value == 'g':
-                    return item.pos()
-            return 0
-        if find_g(new_layer):
+        new_set.difference_update(old_set)
+        new_set.difference_update(current)
+
+        if goal in new_layer:
             #print("OMG MOREEE!")
             break
         for item in new_layer:
