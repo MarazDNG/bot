@@ -13,7 +13,7 @@ from .arduino_api import hold_left
 from .arduino_api import release_buttons
 from .arduino_api import click
 # from i_mouse import game_mouse_to_pixel
-from .djikstra import djikstra4, djikstra
+from .djikstra import djikstra4, djikstra8
 # from exceptions import StuckedException
 import time
 from numpy import cos, sin, pi
@@ -94,7 +94,7 @@ def get_to(pos, area):
     my_coords = read_coords()
     check_cache(my_coords)
     print('coords:', my_coords)
-    path = djikstra(my_coords, pos, area)
+    path = djikstra8(my_coords, pos, area)
     print("Path acquired..")
     ct = 0
     while True:

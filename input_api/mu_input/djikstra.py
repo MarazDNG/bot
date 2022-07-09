@@ -1,162 +1,56 @@
-#
-# Djikstra algorithm
-#
+from itertools import product
 
 
-from re import A
-from typing import List
-from PIL import Image
+def _get_surrounding8(x: int, y: int) -> set:
+    p = {i for i in product((0, 1, -1), repeat=2) if i != (0, 0)}
+    return {(x+dx, y+dy) for dx, dy in p}
 
 
-DIFF = [
-    (-1, -1),
-    (-1, 0),
-    (-1, 1),
-    (0, -1),
-    (0, 1),
-    (1, -1),
-    (1, 0),
-    (1, 1),
-]
+def _get_surrounding4(x: int, y: int) -> set:
+    return {(x+1, y), (x, y+1), (x-1, y), (x, y-1)}
 
 
+def djikstra8(start: tuple, goal: tuple, array_map: list) -> list:
+    return _djikstra_body(start, goal, array_map, _get_surrounding8)
 
 
-class Spot:
-
-    def __init__(self, x, y, value):
-        self.x = x
-        self.y = y
-        self.value = value
-
-    def pos(self):
-        return (self.x, self.y)
+def djikstra4(start: tuple, goal: tuple, array_map: list) -> list:
+    return _djikstra_body(start, goal, array_map, _get_surrounding4)
 
 
-class Map:
-    PATH = 0
-    WALL = 1
-    def __init__(self, mapa: List[List] = None):
-        if mapa is None:
-            mapa = []
-        self.mapa = mapa
-
-    def spot(self, pos: tuple) -> Spot:
-        x, y = pos
-        return self.mapa[x][y]
-
-    def load_img(self, img: Image):
-        WHITE_COLOR = (255, 255, 255)
-        self.mapa = [[(tuple(x) == WHITE_COLOR) for x in i] for i in img]
-
-    def __getitem__(self, item: tuple):
-        return self.mapa[item[0]][item[1]]
-
-def get_surrounding(x, y):
-    return [(x+dx, y+dy) for dx, dy in DIFF]
-
-
-def djikstra(start: tuple, goal: tuple, array_map: list) -> list:
-    """
-        Djikstra algorithm.
-        start - (x, y)
-        goal - (x, y)
-
-        return - list of coordinates
-    """
-    mapa = array_map
-    mapa.spot(start).value = 's'
-    mapa.spot(goal).value = 'g'
-
-    # List of indices of spots - current layer X
-    current = [start]
-
-    # List of indices of spots that should be assigned a numebr. X
-    distance = 1
-
-    while True:
-        old_set = set()
-        new_set = set()
-        for item in current:
-            new_set = get_surrounding(*item)  # [(x, y),]
-
-        new_set.difference_update(old_set)
-        new_set.difference_update(current)
-
-        if goal in new_layer:
-            #print("OMG MOREEE!")
-            break
-        for item in new_layer:
-            item.value = distance
-        distance += 1
-        current = new_layer.copy()
-        new_layer = []
-    distance -= 1
-
-    place = mapa.spot(goal)
-    path = []
-
-    while True:
-        neighbors = get_surrounding(*place.pos())
-        neighbors = [mapa.spot(i) for i in neighbors if mapa.spot(
-            i).value in [distance, 's']]
-        if len(neighbors) == 0:
-            print("FCK!")
-            break
-        next_point = neighbors[0]
-        path.append(next_point.pos())
-        if next_point.value == 's':
-            #print("FOUND IT!")
-            break
-        place = next_point
-        distance -= 1
-    path.reverse()
-    return path
-
-
-def djikstra4(start, goal, area):
-
-    mapa = fill_map(area)
-    mapa.spot(start).value = 's'
-    mapa.spot(goal).value = 'g'
-
-    current = [start]
+def _djikstra_body(start: tuple, goal: tuple, array_map: list, neighbor_fnc: callable) -> list:
+    sets = [
+        {start, }
+    ]
     distance = 0
 
-    while len(current):
-        next_layer = set()
-        for item in current:
-            x, y = item
-            next_layer.add((x+1, y))
-            next_layer.add((x, y+1))
-            next_layer.add((x-1, y))
-            next_layer.add((x, y-1))
+    while True:
+        new_set = set()
+        for item in sets[distance]:
+            neighbors = neighbor_fnc(*item)
+            new_set.join({(x, y) for x, y in neighbors if array_map[x][y]})
 
-        distance += 1
-        if goal in next_layer:
+        if distance > 0:
+            new_set.difference_update(sets[distance - 1])
+        new_set.difference_update(sets[distance])
+
+        if goal in new_set:
             break
 
-        next_layer = [i for i in next_layer if mapa.spot(i).value == 'Y']
-        for i in next_layer:
-            mapa.spot(i).value = distance
-        current = next_layer.copy()
+        sets.append(new_set)
+        distance += 1
 
-    distance -= 1
-
-    path = [goal]
-    x, y = goal
+    path = [goal, ]
     while distance:
-        neighbors = set()
-        neighbors.add((x+1, y))
-        neighbors.add((x, y+1))
-        neighbors.add((x-1, y))
-        neighbors.add((x, y-1))
-        for i in neighbors:
-            if mapa.spot(i).value == distance:
-                path.append(i)
-                x, y = i
-                break
+        neighbors = neighbor_fnc(*path[-1])
+        neighbors = neighbors.intersection(sets[distance])
+        if not neighbors:
+            print("FCK!")
+            break
+        path.append(tuple(neighbors)[0])
+        if path[-1] == start:
+            break
         distance -= 1
-    path.reverse()
 
+    path.reverse()
     return path
