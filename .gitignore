@@ -1,3 +1,5 @@
 libmu/
 *dist/
 *.egg*
+*__pycache__*
+.vscode/
