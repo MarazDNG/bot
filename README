@@ -1,0 +1,7 @@
+```mermaid
+flowchart TD;
+    A("game api 'mu_bot'")-->B("game methods");
+    B -- input ----> MUW
+    MUW-->AR("arduino api 'mu_input'")
+    MUW-- IMP --> B
+```

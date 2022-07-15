@@ -37,18 +37,18 @@ def get_my_coords() -> tuple:
     return read_coords()
 
 
-def custom_attack():
+def custom_attack() -> None:
     send_string('5')
     hold_left()
     time.sleep(10)
     release_buttons()
 
 
-def warp_to(area):
+def warp_to(area) -> None:
     send_ascii(KEY_RETURN)
     send_string(f'/warp {area}')
     send_ascii(KEY_RETURN)
 
 
-def start_helper():
+def start_helper() -> None:
     send_ascii(KEY_HOME)

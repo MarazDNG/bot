@@ -1,0 +1,4 @@
+
+Create method "grab_rectangle_imgae" in mu_window.py file.
+
+Return Image object, take x, y, w, h as parameters (start_in_window_x, start_in_window_y, width, height).

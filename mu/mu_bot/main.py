@@ -7,7 +7,7 @@ import time
 from game_account_actions import game_login, server_selection
 from i_arduino import *
 from i_game import get_lvl
-from game_actions import custom_attack, go_to, start_helper, warp_to
+from mu.mu_bot.game_api import custom_attack, go_to, start_helper, warp_to
 from reset import reset
 
 

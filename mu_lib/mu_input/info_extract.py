@@ -8,7 +8,7 @@ import numpy
 import pkg_resources
 
 
-def extract_coords(img):
+def extract_coords(img) -> tuple:
     """ Return coordinates in given image."""
     img = numpy.array(img)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -40,7 +40,7 @@ def extract_coords(img):
     return (x, y)
 
 
-def extract_lvl(img):
+def extract_lvl(img) -> int:
     """ Return lvl in given image.
         Return 0 if lvl couldnt be found.
     """

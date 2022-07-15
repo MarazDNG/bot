@@ -15,17 +15,19 @@ INT_STARTING_SIGN = '|'
 STRING_STARTING_SIGN = '%'
 
 
-def send_string(data):
+def send_string(data: str):
+    """ Send string to Arduino. """
     arduino = Serial(PORT)
     arduino.write(f'{STRING_STARTING_SIGN}{data}{ENDING_SIGN}'.encode('utf-8'))
 
 
-def send_ascii(data):
+def send_ascii(data: int):
+    """ Send char in ascii code. """
     arduino = Serial(PORT)
     arduino.write(f'{INT_STARTING_SIGN}{data}{ENDING_SIGN}'.encode('utf-8'))
 
 
-def send(data):
+def _send(data):
     """ Send encoded data to Arduino port."""
     arduino = Serial(PORT)
     arduino.write(f'{data}{ENDING_SIGN}'.encode('utf-8'))
@@ -33,30 +35,30 @@ def send(data):
 
 def hold_right():
     release_buttons()
-    send('r')
+    _send('r')
 
 
 def hold_left() -> None:
     release_buttons()
-    send('l')
+    _send('l')
 
 
 def release_buttons():
-    send('x')
+    _send('x')
 
 
 def click():
-    send('k')
+    _send('k')
 
 
-def mouse_to_pos(target_pos):
-    """ Move to the given pixel. """
+def ard_mouse_to_pos(target_pos):
+    """ Move to the given pixel the screen. """
     pos = pyautogui.position()
     pos = numpy.array([pos.x, pos.y])
     vector = target_pos - pos
-    send(f'{vector[0]}:{vector[1]}')
+    _send(f'{vector[0]}:{vector[1]}')
 
 
 def mouse_move(pos):
     """ Move by delta. """
-    send(f'{pos[0]}:{pos[1]}')
+    _send(f'{pos[0]}:{pos[1]}')

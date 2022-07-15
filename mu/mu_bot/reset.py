@@ -7,6 +7,8 @@ from webdriver_manager.firefox import GeckoDriverManager
 ID = 'Maraz'
 PW = '***REMOVED***'
 
+# Done
+
 
 def reset():
     driver = webdriver.Firefox()

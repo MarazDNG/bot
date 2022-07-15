@@ -9,9 +9,6 @@ from mu_image.info_extract import extract_coords
 from mu_image.info_extract import extract_lvl
 from mu_image.image_extract import grab_coords
 from mu_image.image_extract import grab_lvl
-from .arduino_api import hold_left
-from .arduino_api import release_buttons
-from .arduino_api import click
 # from i_mouse import game_mouse_to_pixel
 from .djikstra import djikstra4, djikstra8
 # from exceptions import StuckedException
@@ -20,8 +17,6 @@ from numpy import cos, sin, pi
 import numpy
 from math import sqrt
 
-def game_mouse_to_pixel(*args):
-    pass
 
 SURR = {
     (0, 0): (645, 323),
@@ -61,7 +56,7 @@ cached_pos = None
 cache_time = None
 
 
-def check_cache(coords: tuple) -> None:
+def check_if_stucked(coords: tuple) -> None:
     """ Detect stucked character."""
     global cached_pos
     cached_pos = cached_pos or coords
@@ -76,12 +71,12 @@ def check_cache(coords: tuple) -> None:
     cache_time = check_time
 
 
-def read_lvl():
+def read_lvl_from_frame():
     img = grab_lvl()
     return extract_lvl(img)
 
 
-def read_coords() -> tuple:
+def read_coords_from_frame() -> tuple:
     img = grab_coords()
     return extract_coords(img)
 
@@ -92,14 +87,14 @@ def get_to(pos, area):
     """ Sometimes fcks up."""
     """ djiksta() works well with threshold 1.5 - 2.0"""
     my_coords = read_coords()
-    check_cache(my_coords)
+    check_if_stucked(my_coords)
     print('coords:', my_coords)
     path = djikstra8(my_coords, pos, area)
     print("Path acquired..")
     ct = 0
     while True:
         my_coords = read_coords()
-        check_cache(my_coords)
+        check_if_stucked(my_coords)
 
         try:
             n_pos = path[ct]
@@ -183,7 +178,7 @@ def transform_vector(vector):
 def distance(a, b):
     return sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
-
+    
 def attack() -> None:
     hold_left()
     time.sleep(2)
