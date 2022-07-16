@@ -5,10 +5,13 @@
 
 import cv2
 import numpy
-import pkg_resources
+import os
 
-COORDS_SET = "patterns"
-LVL_SET = "y_img"
+# DONE
+
+
+COORDS_SET = "patterns/"
+LVL_SET = "y_img/y"
 
 
 def _match_numbers(pattern_set: str, img: numpy.array) -> list:
@@ -17,9 +20,7 @@ def _match_numbers(pattern_set: str, img: numpy.array) -> list:
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     matches = []
     for i in range(10):
-        # path = pkg_resources.resource_filename(
-        #     "mu_image_processing", f"{pattern_set}/{i}.png")
-        path = f"{pattern_set}/{i}.png"
+        path = f"{os.path.dirname(os.path.abspath(__file__))}/{pattern_set}{i}.png"
         pattern = cv2.imread(path, cv2.IMREAD_UNCHANGED)
         pattern = cv2.cvtColor(pattern, cv2.COLOR_BGRA2GRAY)
         result = cv2.matchTemplate(img, pattern, cv2.TM_CCOEFF_NORMED)
