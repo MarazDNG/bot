@@ -1,0 +1,3 @@
+include mu_image/lvl.png
+include mu_image/patterns/*
+include mu_image/y_img/*
