@@ -4,6 +4,13 @@ import win32con
 from PIL import Image
 
 
+from arduino_api.arduino_api import ard_mouse_to_pos
+from arduino_api.arduino_api import click
+from arduino_api.arduino_api import hold_left
+from arduino_api.arduino_api import hold_right
+from arduino_api.arduino_api import release_buttons
+
+
 def _game_start_pixel() -> tuple:
     """ Return starting pixel of the game."""
     if hasattr(_game_start_pixel, "window"):
@@ -61,3 +68,21 @@ def press():
 
 def wait():
     pass
+
+
+def mouse_event(event):
+    if event == "click":
+        click()
+    if event == "hold_left":
+        hold_left()
+    if event == "hold_right":
+        hold_right()
+    if event == "release_buttons":
+        release_buttons()
+
+
+def mouse_to_pos(game_pos):
+    """Move mouse to given position in the window."""
+    ard_mouse_to_pos(
+        _game_start_pixel() + game_pos
+    )

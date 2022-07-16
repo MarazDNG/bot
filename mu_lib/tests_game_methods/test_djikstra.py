@@ -1,5 +1,5 @@
 from unittest import TestCase
-from mu_input.djikstra import djikstra8, djikstra4
+from game_methods.djikstra import djikstra8, djikstra4
 
 # DONE
 

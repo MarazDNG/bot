@@ -52,23 +52,23 @@ SURR = {
     (-2, -1): (489, 300),
 }
 
-cached_pos = None
-cache_time = None
+_cached_pos = None
+_cache_time = None
 
 
 def check_if_stucked(coords: tuple) -> None:
     """ Detect stucked character."""
-    global cached_pos
-    cached_pos = cached_pos or coords
-    global cache_time
-    cache_time = cache_time or datetime.now()
+    global _cached_pos
+    _cached_pos = _cached_pos or coords
+    global _cache_time
+    _cache_time = _cache_time or datetime.now()
 
     check_time = datetime.now()
-    diff = check_time - cache_time
+    diff = check_time - _cache_time
     if diff > timedelta(seconds=1):
         attack()
-    cached_pos = coords
-    cache_time = check_time
+    _cached_pos = coords
+    _cache_time = check_time
 
 
 def read_lvl_from_frame():
@@ -82,8 +82,8 @@ def read_coords_from_frame() -> tuple:
 
 
 def get_to(pos, area):
-    global cache_time
-    global cached_pos
+    global _cache_time
+    global _cached_pos
     """ Sometimes fcks up."""
     """ djiksta() works well with threshold 1.5 - 2.0"""
     my_coords = read_coords()
@@ -99,7 +99,7 @@ def get_to(pos, area):
         try:
             n_pos = path[ct]
 
-            if distance(n_pos, my_coords) < 2:
+            if _distance(n_pos, my_coords) < 2:
                 ct += 1
                 n_pos = path[ct]
             diff = (n_pos[0] - my_coords[0],
@@ -130,7 +130,7 @@ def walk_to(pos, area):
     while True:
         my_coords = read_coords()
         # passed.add(my_coords)
-        if distance(path[ct], my_coords) < 2:
+        if _distance(path[ct], my_coords) < 2:
             ct += 1
         try:
             vector = get_vector(path[ct+2], my_coords)
@@ -175,7 +175,7 @@ def transform_vector(vector):
     return (nx, ny)
 
 
-def distance(a, b):
+def _distance(a, b):
     return sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
     
