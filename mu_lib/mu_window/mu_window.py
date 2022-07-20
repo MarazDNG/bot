@@ -10,6 +10,8 @@ from arduino_api.arduino_api import hold_left
 from arduino_api.arduino_api import hold_right
 from arduino_api.arduino_api import release_buttons
 
+WINDOW_PARTIAL_TEXT = "Player:"
+
 
 def _game_start_pixel() -> tuple:
     """ Return starting pixel of the game."""
@@ -34,6 +36,7 @@ def _game_start_pixel() -> tuple:
 
 def grab_image_from_window(x: int, y: int, w: int, h: int) -> Image:
     """Return image with coordinates."""
+    win_start_pixel = _game_start_pixel()
     hdesktop = win32gui.GetDesktopWindow()
     hwndDC = win32gui.GetWindowDC(hdesktop)
     mfcDC = win32ui.CreateDCFromHandle(hwndDC)
@@ -45,7 +48,7 @@ def grab_image_from_window(x: int, y: int, w: int, h: int) -> Image:
     saveDC.SelectObject(saveBitMap)
 
     result = saveDC.BitBlt((0, 0), (w, h), mfcDC,
-                           (x, y), win32con.SRCCOPY)
+                           (win_start_pixel[0] + x, win_start_pixel[1] + y), win32con.SRCCOPY)
 
     bmpinfo = saveBitMap.GetInfo()
     bmpstr = saveBitMap.GetBitmapBits(True)
