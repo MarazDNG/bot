@@ -3,18 +3,20 @@
 #
 
 
-from datetime import datetime
-from datetime import timedelta
-from mu_image.info_extract import extract_coords
-from mu_image.info_extract import extract_lvl
-from mu_image.image_extract import grab_coords
-from mu_image.image_extract import grab_lvl
+from mu_lib.mu_window.mu_window import grab_image_from_window, mouse_event, mouse_to_pos
+from mu_image_processing.info_extract import extract_lvl, extract_coords
 # from i_mouse import game_mouse_to_pixel
 from .djikstra import djikstra4, djikstra8
 # from exceptions import StuckedException
+from mu_window import mu_window
+from arduino_api import arduino_api
+
+
+from datetime import datetime
+from datetime import timedelta
 import time
-from numpy import cos, sin, pi
 import numpy
+from numpy import cos, sin, pi
 from math import sqrt
 
 
@@ -56,29 +58,39 @@ _cached_pos = None
 _cache_time = None
 
 
-def check_if_stucked(coords: tuple) -> None:
+def _check_if_stucked(coords: tuple) -> None:
     """ Detect stucked character."""
     global _cached_pos
     _cached_pos = _cached_pos or coords
     global _cache_time
     _cache_time = _cache_time or datetime.now()
 
-    check_time = datetime.now()
-    diff = check_time - _cache_time
+    time_now = datetime.now()
+    diff = time_now - _cache_time
     if diff > timedelta(seconds=1):
         attack()
     _cached_pos = coords
-    _cache_time = check_time
+    _cache_time = time_now
 
 
-def read_lvl_from_frame():
-    img = grab_lvl()
+def read_lvl_from_frame() -> int:
+    # TO CALIBRATE
+    img = grab_image_from_window(1000, 100, 20, 10)
     return extract_lvl(img)
 
 
 def read_coords_from_frame() -> tuple:
-    img = grab_coords()
+    # TO CALIBRATE
+    img = grab_image_from_window(20, 50, 40, 10)
     return extract_coords(img)
+
+
+def read_lvl() -> tuple:
+    mu_window.press("c")
+    time.sleep(0.1)
+    coords = read_lvl_from_frame()
+    mu_window.press("c")
+    return coords
 
 
 def get_to(pos, area):
@@ -86,15 +98,15 @@ def get_to(pos, area):
     global _cached_pos
     """ Sometimes fcks up."""
     """ djiksta() works well with threshold 1.5 - 2.0"""
-    my_coords = read_coords()
-    check_if_stucked(my_coords)
+    my_coords = read_coords_from_frame()
+    _check_if_stucked(my_coords)
     print('coords:', my_coords)
     path = djikstra8(my_coords, pos, area)
     print("Path acquired..")
     ct = 0
     while True:
-        my_coords = read_coords()
-        check_if_stucked(my_coords)
+        my_coords = read_coords_from_frame()
+        _check_if_stucked(my_coords)
 
         try:
             n_pos = path[ct]
@@ -119,6 +131,35 @@ def get_to(pos, area):
         click()
 
 
+def get_to2(path: list) -> None:
+    """ Sometimes fcks up."""
+    """ djiksta() works well with threshold 1.5 - 2.0"""
+    global _cache_time
+    global _cached_pos
+    steps_made = 0
+
+    while steps_made < len(path):
+        current_coords = read_coords_from_frame()
+        _check_if_stucked(current_coords)
+
+        try:
+            following_coords = path[steps_made]
+
+            if _distance(following_coords, current_coords) < 2:
+                following_coords = path[steps_made + 1]
+                steps_made += 1
+            diff = tuple(numpy.subtract(following_coords, current_coords))
+            window_pixel_position = SURR[diff]
+
+        except Exception:
+            print("Error in pathing!")
+            continue
+
+        mouse_to_pos(window_pixel_position)
+        time.sleep(0.05)
+        mouse_event("click")
+
+
 def walk_to(pos, area):
     """ Works nicely."""
     my_coords = read_coords()
@@ -133,13 +174,13 @@ def walk_to(pos, area):
         if _distance(path[ct], my_coords) < 2:
             ct += 1
         try:
-            vector = get_vector(path[ct+2], my_coords)
+            vector = _get_vector(path[ct+2], my_coords)
         except Exception:
             print("SADGE!")
             continue
         if (ct + 2) >= len(path):
             break
-        vector = transform_vector(vector)
+        vector = _transform_vector(vector)
         mouse_pos = (origin[0] + vector[0],
                      origin[1] + vector[1],
                      )
@@ -148,7 +189,7 @@ def walk_to(pos, area):
         click()
 
 
-def get_vector(target_pos, current_pos):
+def _get_vector(target_pos, current_pos):
     """Get normalized vector by ingame coordinates.
     """
     if current_pos == target_pos:
@@ -161,7 +202,7 @@ def get_vector(target_pos, current_pos):
     return vector
 
 
-def transform_vector(vector):
+def _transform_vector(vector):
     """Transform and scale vector by screen coordinates.
     """
     start = time.time()
@@ -178,8 +219,24 @@ def transform_vector(vector):
 def _distance(a, b):
     return sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
-    
+
 def attack() -> None:
     hold_left()
     time.sleep(2)
     release_buttons()
+
+
+def prebihani(path: list) -> None:
+    """ Run to the end of path and back."""
+    arduino_api.send_ascii(177)
+    time.sleep(4)
+    arduino_api.send_ascii(177)
+
+    get_to2(path)
+
+    arduino_api.send_ascii(177)
+    time.sleep(4)
+    arduino_api.send_ascii(177)
+
+    path.reverse()
+    get_to2(path)

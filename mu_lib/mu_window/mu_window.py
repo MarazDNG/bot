@@ -1,10 +1,10 @@
 import win32gui
 import win32ui
 import win32con
+import time
 from PIL import Image
 
-
-from arduino_api.arduino_api import ard_mouse_to_pos
+from arduino_api.arduino_api import ard_mouse_to_pos, send_string
 from arduino_api.arduino_api import click
 from arduino_api.arduino_api import hold_left
 from arduino_api.arduino_api import hold_right
@@ -32,7 +32,7 @@ def _game_start_pixel() -> tuple:
     return (x, y)
 
 
-def grab_imgage_from_window(x: int, y: int, w: int, h: int) -> Image:
+def grab_image_from_window(x: int, y: int, w: int, h: int) -> Image:
     """Return image with coordinates."""
     hdesktop = win32gui.GetDesktopWindow()
     hwndDC = win32gui.GetWindowDC(hdesktop)
@@ -62,12 +62,12 @@ def grab_imgage_from_window(x: int, y: int, w: int, h: int) -> Image:
     return im
 
 
-def press():
-    pass
+def press(keys: str):
+    send_string(keys)
 
 
-def wait():
-    pass
+def wait(time_sec: int):
+    time.sleep(time_sec)
 
 
 def mouse_event(event):
