@@ -8,8 +8,10 @@ from game_account_actions import game_login, server_selection
 from i_arduino import *
 from i_game import get_lvl
 from mu.mu_bot.game_api import custom_attack, go_to, start_helper, warp_to
+from mu_lib.game_methods.djikstra import djikstra8
 from reset import reset
-
+from mu_lib.game_methods import game_methods
+from mu_lib.game_methods.Map import get_mu_map_list
 
 SURR = {
     (0, 0): (645, 323),
@@ -55,6 +57,11 @@ Lorencia = {'goal': LORA_GOAL,
             }
 
 
+def go_to(target_coords: tuple, map_name: str):
+    current_coords = game_methods.read_coords()
+    path = djikstra8(current_coords, target_coords, get_mu_map_list(map_name))
+    game_methods.get_to2(path)
+
 
 if __name__ == '__main__':
 
@@ -70,6 +77,7 @@ if __name__ == '__main__':
             area = 'lorencia'
             warp_to(area)
             time.sleep(5)
+
             go_to(LORA_GOAL, 'lorencia')
 
             if lvl < 10:

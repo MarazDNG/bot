@@ -1,13 +1,11 @@
 from PIL import Image
 from typing import List
 
-class Map:
-    def __init__(self, mapa: List[List[bool]] = None):
-        if mapa is None:
-            mapa = []
-        self.mapa = mapa
 
-    def load_img(self, img: Image) -> None:
-        WHITE_COLOR = (255, 255, 255)
-        self.mapa = [[(tuple(x) == WHITE_COLOR) for x in i] for i in img]
-
+def get_mu_map_list(map_name: str) -> Image:
+    """
+    Get map image from mu_lib/maps/
+    """
+    img = Image.open(f'maps/img_{map_name}.png')
+    WHITE_COLOR = (255, 255, 255)
+    return [[(tuple(x) == WHITE_COLOR) for x in i] for i in img]

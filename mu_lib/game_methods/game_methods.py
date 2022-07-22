@@ -84,12 +84,16 @@ def read_coords_from_frame() -> tuple:
     return extract_coords(img)
 
 
-def read_lvl() -> tuple:
+def read_lvl() -> int:
     mu_window.press("c")
     time.sleep(0.1)
     coords = read_lvl_from_frame()
     mu_window.press("c")
     return coords
+
+
+def read_coords() -> tuple:
+    return read_coords_from_frame()
 
 
 def _walk_on_shortest_straight(goal: tuple) -> None:
