@@ -86,6 +86,7 @@ def mouse_event(event):
 
 def mouse_to_pos(game_pos):
     """Move mouse to given position in the window."""
-    ard_mouse_to_pos(
-        _game_start_pixel() + game_pos
-    )
+    gsp = _game_start_pixel()
+    screen_position = (gsp[0] + game_pos[0],
+                       gsp[1] + game_pos[1])
+    ard_mouse_to_pos(screen_position)

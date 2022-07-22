@@ -3,7 +3,7 @@
 #
 
 
-from mu_lib.mu_window.mu_window import grab_image_from_window, mouse_event, mouse_to_pos
+from mu_window import mu_window
 from mu_image_processing.info_extract import extract_lvl, extract_coords
 # from i_mouse import game_mouse_to_pixel
 from .djikstra import djikstra4, djikstra8
@@ -11,7 +11,7 @@ from .djikstra import djikstra4, djikstra8
 from mu_window import mu_window
 from arduino_api import arduino_api
 
-
+import math
 from datetime import datetime
 from datetime import timedelta
 import time
@@ -75,13 +75,12 @@ def _check_if_stucked(coords: tuple) -> None:
 
 def read_lvl_from_frame() -> int:
     # TO CALIBRATE
-    img = grab_image_from_window(1000, 100, 20, 10)
+    img = mu_window.grab_image_from_window(1000, 100, 20, 10)
     return extract_lvl(img)
 
 
 def read_coords_from_frame() -> tuple:
-    # TO CALIBRATE
-    img = grab_image_from_window(20, 50, 40, 10)
+    img = mu_window.grab_image_from_window(50, 35, 150, 13)
     return extract_coords(img)
 
 
@@ -140,24 +139,31 @@ def get_to2(path: list) -> None:
 
     while steps_made < len(path):
         current_coords = read_coords_from_frame()
-        _check_if_stucked(current_coords)
+        # _check_if_stucked(current_coords)
 
+        following_coords = path[steps_made]
         try:
-            following_coords = path[steps_made]
 
             if _distance(following_coords, current_coords) < 2:
-                following_coords = path[steps_made + 1]
                 steps_made += 1
-            diff = tuple(numpy.subtract(following_coords, current_coords))
+                continue
+
+            diff = tuple(numpy.subtract(
+                following_coords, current_coords))
+            # print(f"{diff}:{SURR[diff]}")
             window_pixel_position = SURR[diff]
 
-        except Exception:
-            print("Error in pathing!")
-            continue
-
-        mouse_to_pos(window_pixel_position)
-        time.sleep(0.05)
-        mouse_event("click")
+            mu_window.mouse_to_pos(window_pixel_position)
+            time.sleep(0.05)
+            mu_window.mouse_event("click")
+            time.sleep(0.05)
+        except IndexError:
+            print("Final destination!")
+            break
+        except KeyError:
+            print("You got lost!")
+            _walk_on_shortest_straight(path[steps_made])
+            print("Back on path!")
 
 
 def walk_to(pos, area):
@@ -228,15 +234,37 @@ def attack() -> None:
 
 def prebihani(path: list) -> None:
     """ Run to the end of path and back."""
-    arduino_api.send_ascii(177)
-    time.sleep(4)
-    arduino_api.send_ascii(177)
+    # arduino_api.send_ascii(177)
+    time.sleep(3)
+    # arduino_api.send_ascii(177)
 
     get_to2(path)
 
-    arduino_api.send_ascii(177)
-    time.sleep(4)
-    arduino_api.send_ascii(177)
+    # arduino_api.send_ascii(177)
+    time.sleep(3.5)
+    # arduino_api.send_ascii(177)
 
     path.reverse()
     get_to2(path)
+    path.reverse()
+
+
+def _walk_on_shortest_straight(goal: tuple) -> None:
+    while True:
+        current_coords = read_coords_from_frame()
+        diff = (goal[0] - current_coords[0],
+                goal[1] - current_coords[1],)
+        if diff == (0, 0):
+            break
+        dx = 0
+        dy = 0
+        if diff[0]:
+            dx = math.copysign(1, diff[0])
+        if diff[1]:
+            dy = math.copysign(1, diff[1])
+
+        ddiff = (dx, dy)
+        mu_window.mouse_to_pos(SURR[ddiff])
+        time.sleep(0.05)
+        mu_window.mouse_event("click")
+        time.sleep(0.05)

@@ -9,8 +9,8 @@ from serial.serialwin32 import Serial
 
 UPPER_LIMIT = 120
 LOWER_LIMIT = -120
-PORT = 'COM6'
-ENDING_SIGN = '`'
+PORT = 'COM12'
+ENDING_SIGN = 'r'
 INT_STARTING_SIGN = '|'
 STRING_STARTING_SIGN = '%'
 
@@ -55,7 +55,10 @@ def ard_mouse_to_pos(target_pos):
     """ Move to the given pixel the screen. """
     pos = pyautogui.position()
     pos = numpy.array([pos.x, pos.y])
-    vector = target_pos - pos
+    vector = (
+        target_pos[0] - pos[0],
+        target_pos[1] - pos[1],
+    )
     _send(f'{vector[0]}:{vector[1]}')
 
 
