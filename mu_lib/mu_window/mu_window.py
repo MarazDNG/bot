@@ -9,6 +9,7 @@ from arduino_api.arduino_api import click
 from arduino_api.arduino_api import hold_left
 from arduino_api.arduino_api import hold_right
 from arduino_api.arduino_api import release_buttons
+from arduino_api.arduino_api import send_ascii
 
 WINDOW_PARTIAL_TEXT = "Player:"
 
@@ -65,8 +66,12 @@ def grab_image_from_window(x: int, y: int, w: int, h: int) -> Image:
     return im
 
 
-def press(keys: str):
-    send_string(keys)
+def press(char: int):
+    send_ascii(char)
+
+
+def write_text(text: str):
+    send_string(text)
 
 
 def wait(time_sec: int):

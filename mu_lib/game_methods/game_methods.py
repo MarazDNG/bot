@@ -75,7 +75,7 @@ def _check_if_stucked(coords: tuple) -> None:
 
 def read_lvl_from_frame() -> int:
     # TO CALIBRATE
-    img = mu_window.grab_image_from_window(1000, 100, 20, 10)
+    img = mu_window.grab_image_from_window(960, 110, 30, 15)
     return extract_lvl(img)
 
 
@@ -85,10 +85,10 @@ def read_coords_from_frame() -> tuple:
 
 
 def read_lvl() -> tuple:
-    mu_window.press("c")
+    arduino_api.send_ascii(ord("c"))
     time.sleep(0.1)
     coords = read_lvl_from_frame()
-    mu_window.press("c")
+    arduino_api.send_ascii(ord("c"))
     return coords
 
 
