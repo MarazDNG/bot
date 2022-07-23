@@ -27,12 +27,6 @@ def send_ascii(data: int):
     arduino.write(f'{INT_STARTING_SIGN}{data}{ENDING_SIGN}'.encode('utf-8'))
 
 
-def _send(data):
-    """ Send encoded data to Arduino port."""
-    arduino = Serial(PORT)
-    arduino.write(f'{data}{ENDING_SIGN}'.encode('utf-8'))
-
-
 def hold_right():
     release_buttons()
     _send('r')
@@ -49,6 +43,12 @@ def release_buttons():
 
 def click():
     _send('k')
+
+
+def _send(data):
+    """ Send encoded data to Arduino port."""
+    arduino = Serial(PORT)
+    arduino.write(f'{data}{ENDING_SIGN}'.encode('utf-8'))
 
 
 def ard_mouse_to_pos(target_pos):
