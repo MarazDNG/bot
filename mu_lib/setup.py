@@ -8,7 +8,7 @@ def read(fname: str) -> str:
 
 
 setup(
-    name="mu_input",
+    name="mu_lib",
     version=read("VERSION"),
     packages=find_packages(),
     install_requires=read("requirements.txt").splitlines(),

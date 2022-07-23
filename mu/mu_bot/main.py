@@ -3,50 +3,18 @@
 #
 
 import time
+import pygetwindow as gw
 
-from game_account_actions import game_login, server_selection
-from i_game import get_lvl
-from mu.mu_bot.game_api import custom_attack, go_to, start_helper, warp_to
-from reset import reset
+# from game_account_actions import game_login, server_selection
+# from game_api import custom_attack, go_to, start_helper, warp_to
+# from reset import reset
 
-from mu_lib.game_methods import djikstra
-from mu_lib.game_methods import game_methods
-from mu_lib.game_methods import map
+from game_methods import djikstra
+from game_methods import game_methods
+from game_methods import map
+from arduino_api import arduino_api
+from keys import *
 
-
-SURR = {
-    (0, 0): (645, 323),
-
-    (-1, 1): (640, 278),
-    (0, 1): (677, 300),
-    (1, 1): (715, 333),
-    (1, 0): (700, 366),
-    (1, -1): (635, 373),
-    (0, -1): (597, 366),
-    (-1, -1): (535, 330),
-    (-1, 0): (600, 300),
-
-    (-2, 0): (541, 253),
-    (0, 2): (743, 263),
-    (2, 0): (762, 405),
-    (0, -2): (527, 409),
-    (-2, -2): (424, 333),
-    (-2, 2): (645, 209),
-    (2, 2): (863, 333),
-    (2, -2): (646, 500),
-
-    (-2, 1): (593, 237),
-    (-1, 2): (696, 237),
-
-    (1, 2): (804, 300),
-    (2, 1): (816, 366),
-
-    (2, -1): (582, 449),
-    (1, -2): (709, 449),
-
-    (-1, -2): (476, 366),
-    (-2, -1): (489, 300),
-}
 LORA_GOAL = (151, 73)
 ELB_GOAL = (69, 59)
 ATL_GOAL = (236, 50)
@@ -65,9 +33,23 @@ def go_to(target_coords: tuple, map_name: str):
     game_methods.get_to2(path)
 
 
-if __name__ == '__main__':
+def warp_to(area: str):
+    arduino_api.send_ascii(KEY_RETURN)
+    time.sleep(2)
+    arduino_api.send_string(f'/warp {area}')
+    time.sleep(2)
+    arduino_api.send_ascii(KEY_RETURN)
+    time.sleep(3)
 
-    time.sleep(1)
+
+def start_helper() -> None:
+    arduino_api.send_ascii(KEY_HOME)
+
+
+if __name__ == '__main__':
+    win = gw.getWindowsWithTitle("Player")[0]
+    win.activate()
+    time.sleep(1.5)
 
     area = "lorencia"
     warp_to(area)
@@ -84,7 +66,7 @@ if __name__ == '__main__':
             go_to(LORA_GOAL, 'lorencia')
 
             if lvl < 10:
-                custom_attack()
+                time.sleep(10)
             else:
                 start_helper()
 

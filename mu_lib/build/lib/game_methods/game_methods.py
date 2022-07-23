@@ -128,12 +128,12 @@ def get_to2(path: list) -> None:
 
     while steps_made < len(path):
         current_coords = read_coords_from_frame()
-        # _check_if_stucked(current_coords)
+        _check_if_stucked(current_coords)
         following_coords = path[steps_made]
 
         try:
             tuple_zip = tuple(zip(current_coords, following_coords))
-            if numpy.linalg.norm(tuple(v1 - v2 for v1, v2 in tuple_zip)) < 2:
+            if numpy.linalg.norm((v1 - v2 for v1, v2 in tuple_zip)) < 2:
                 steps_made += 1
                 continue
 

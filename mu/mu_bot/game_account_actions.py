@@ -3,7 +3,6 @@
 #
 
 
-from curses import KEY_SELECT
 from time import time
 from i_arduino import click, send_ascii
 from i_mouse import game_mouse_to_pixel
