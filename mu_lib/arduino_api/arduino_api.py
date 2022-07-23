@@ -10,7 +10,7 @@ from serial.serialwin32 import Serial
 UPPER_LIMIT = 120
 LOWER_LIMIT = -120
 PORT = 'COM12'
-ENDING_SIGN = 'r'
+ENDING_SIGN = '`'
 INT_STARTING_SIGN = '|'
 STRING_STARTING_SIGN = '%'
 
@@ -25,12 +25,6 @@ def send_ascii(data: int):
     """ Send char in ascii code. """
     arduino = Serial(PORT)
     arduino.write(f'{INT_STARTING_SIGN}{data}{ENDING_SIGN}'.encode('utf-8'))
-
-
-def _send(data):
-    """ Send encoded data to Arduino port."""
-    arduino = Serial(PORT)
-    arduino.write(f'{data}{ENDING_SIGN}'.encode('utf-8'))
 
 
 def hold_right():
@@ -49,6 +43,12 @@ def release_buttons():
 
 def click():
     _send('k')
+
+
+def _send(data):
+    """ Send encoded data to Arduino port."""
+    arduino = Serial(PORT)
+    arduino.write(f'{data}{ENDING_SIGN}'.encode('utf-8'))
 
 
 def ard_mouse_to_pos(target_pos):
