@@ -9,7 +9,7 @@ from serial.serialwin32 import Serial
 
 UPPER_LIMIT = 120
 LOWER_LIMIT = -120
-PORT = 'COM12'
+PORT = 'COM6'
 ENDING_SIGN = '`'
 INT_STARTING_SIGN = '|'
 STRING_STARTING_SIGN = '%'

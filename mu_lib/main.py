@@ -58,10 +58,10 @@ path3 = [
     (53, 25),
 ]
 
-# send_ascii(ord("c"))  
+# send_ascii(ord("c"))
 
-# lvl = read_lvl()
-# print("LVL:", lvl)
-while True:
-    prebihani(path3)
+lvl = read_lvl()
+print("LVL:", lvl)
+# while True:
+#     prebihani(path3)
 # send
