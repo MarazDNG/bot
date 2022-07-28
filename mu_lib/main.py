@@ -11,54 +11,69 @@ from scripts import activate_window
 
 
 activate_window()
+# 295, 30, 10, 10 - whole helper sign
+# 299, 35, 1, 1 - helper pixel
+# helper pixel - (74, 53, 5) - ON
+# helper pixel - (239, 174, 36) - OFF
+
+
+area = "lorencia"
+warp_to(area)
+
+counter = 0
 
 while True:
+    lvl = game_methods.read_lvl()
+    if counter > 5:
+        raise Exception("Lvl could not be retrieved!")
 
-    area = "lorencia"
-    warp_to(area)
+    if not lvl:
+        counter += 1
+        continue
 
-    while True:
-        lvl = game_methods.read_lvl()
-        time.sleep(5)
-        print(lvl)
+    time.sleep(5)
+    print(lvl)
 
-        if lvl < 20:
-            if area != 'lorencia':
-                area = 'lorencia'
-                warp_to(area)
+    if lvl < 20:
+        if area != 'lorencia':
+            area = 'lorencia'
+            warp_to(area)
 
-            go_to(LORA_GOAL, 'lorencia')
-
-            if lvl < 10:
-                time.sleep(10)
-            else:
+        if lvl < 10:
+            if not game_methods.is_helper_on():
+                go_to(LORA_GOAL, 'lorencia')
                 start_helper()
+            time.sleep(10)
 
-        elif lvl in range(20, 80):
-            if area != 'elbeland':
-                area = 'elbeland'
-                warp_to("elbeland2")
+    elif lvl in range(20, 80):
+        if area != 'elbeland':
+            area = 'elbeland'
+            warp_to("elbeland2")
+
+        if not game_methods.is_helper_on():
             go_to(ELB_GOAL, 'elbeland')
             start_helper()
 
-        elif lvl in range(80, 140):
-            if area != 'atlans':
-                area = 'atlans'
-                warp_to("atlans2")
+    elif lvl in range(80, 140):
+        if area != 'atlans':
+            area = 'atlans'
+            warp_to("atlans2")
+
+        if not game_methods.is_helper_on():
             go_to(ATL_GOAL, 'atlans')
             start_helper()
 
-        elif lvl in range(140, 280):
-            pass
+    elif lvl in range(140, 280):
+        pass
 
-        elif lvl in range(280, 400):
-            area = 'swampofpeace'
-            warp_to(area)
-            print("WELL DONE!!!")
-            print('\a')
-            break
+    elif lvl in range(280, 400):
+        area = 'peaceswamp'
+        warp_to(area)
+        print("WELL DONE!!!")
+        print('\a')
+        break
 
-        # elif lvl == 400:
-        #     server_selection()
-        #     reset()
-        #     game_login()
+    # elif lvl == 400:
+    #     server_selection()
+    #     reset()
+    #     game_login()

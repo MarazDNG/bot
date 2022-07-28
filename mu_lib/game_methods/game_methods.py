@@ -13,7 +13,7 @@ from datetime import datetime
 from datetime import timedelta
 import time
 import numpy
-
+import re
 
 SURR = {
     (0, 0): (645, 323),
@@ -53,6 +53,19 @@ _cached_pos = None
 _cache_time = None
 
 
+def is_helper_on() -> bool:
+    on = (74, 53, 5)
+    img = mu_window.grab_image_from_window(299, 35, 1, 1)
+    img = numpy.asarray(img)
+    color = tuple(img[0][0])
+    res = color[0] == on[0] and color[1] == on[1] and color[2] == on[2]
+    if res:
+        print("Helper is on!")
+    else:
+        print("Helper is off!")
+    return res
+
+
 def attack() -> None:
     hold_left()
     time.sleep(2)
@@ -84,12 +97,18 @@ def read_coords_from_frame() -> tuple:
     return extract_coords(img)
 
 
-def read_lvl() -> int:
+def read_lvl2() -> int:
     mu_window.press(ord("c"))
     time.sleep(1)
     lvl = read_lvl_from_frame()
     mu_window.press(ord("c"))
     return lvl
+
+
+def read_lvl() -> int:
+    win_title = mu_window.get_window_title()
+    lvl_str = re.search("Level: \d+", win_title)[0]
+    return int(lvl_str.split()[1])
 
 
 def read_coords() -> tuple:

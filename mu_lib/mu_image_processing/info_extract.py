@@ -59,4 +59,8 @@ def extract_lvl(img: numpy.ndarray) -> int:
     matches = _match_numbers(LVL_SET, img)
     matches = [i[1] for i in matches]
     lvl = "".join(map(str, matches))
-    return int(lvl)
+    try:
+        lvl = int(lvl)
+        return lvl
+    except ValueError:
+        return 0

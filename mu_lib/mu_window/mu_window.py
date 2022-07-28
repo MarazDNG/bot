@@ -35,6 +35,22 @@ def _game_start_pixel() -> tuple:
     return (x, y)
 
 
+def get_window_title() -> str:
+    """Return window title."""
+    if hasattr(get_window_title, "window"):
+        return get_window_title.window
+
+    h = []
+
+    def winEnumHandler(hwnd, ctx):
+        if win32gui.IsWindowVisible(hwnd) and WINDOW_PARTIAL_TEXT in win32gui.GetWindowText(hwnd):
+            #print(hex(hwnd), win32gui.GetWindowText(hwnd))
+            h.append(hwnd)
+    win32gui.EnumWindows(winEnumHandler, None)
+
+    return win32gui.GetWindowText(h[0])
+
+
 def grab_image_from_window(x: int, y: int, w: int, h: int) -> Image:
     """Return image with coordinates."""
     win_start_pixel = _game_start_pixel()
