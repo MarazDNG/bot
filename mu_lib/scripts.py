@@ -31,21 +31,7 @@ def test_walking_porting():
     go_to((134, 103), 'lorencia')
 
 
-def test_get_map(map):
-    from game_methods.map import get_mu_map_list
-    return get_mu_map_list(map)
-
-
 if __name__ == "__main__":
     activate_window()
-    go_to((134, 103), 'lorencia')
-    # array_map = (
-    #     (True, True, True, False, False),
-    #     (True, False, True, False, True),
-    #     (True, False, True, False, True),
-    #     (True, False, False, False, True),
-    #     (True, True, True, True, True)
-    # )
-    # p = djikstra8((0, 0), (4, 4), array_map)
-    # print(p)
-    # m = get_mu_map_list("lorencia")
+    # test_walking_porting()
+    go_to((69, 59), 'elbeland')

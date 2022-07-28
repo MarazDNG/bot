@@ -3,65 +3,62 @@ from mu_window import mu_window
 import pygetwindow as gw
 import time
 
-from game_methods.game_methods import read_lvl_from_frame, read_lvl
-from game_methods.game_methods import get_to2
-from game_methods.game_methods import prebihani
-from game_methods.game_methods import _walk_on_shortest_straight
+from game_methods import game_methods
 from arduino_api import arduino_api
+from mu_bot.main import go_to, warp_to, start_helper
+from mu_bot.main import LORA_GOAL, ELB_GOAL, ATL_GOAL
+from scripts import activate_window
 
-win = gw.getWindowsWithTitle("Player")[0]
-win.activate()
-time.sleep(1.5)
 
-# print(read_coords_from_frame())
+activate_window()
 
-path1 = [
-    (77, 172),
-    (78, 172),
-    (79, 172),
-    (80, 172),
-    (81, 172),
-    (82, 172),
-    (83, 173),
-    (84, 174),
-    (83, 174),
-    (83, 175),
-    (82, 176),
-]
+while True:
 
-# 189, 153
-# 194, 146
+    area = "lorencia"
+    warp_to(area)
 
-path2 = [
-    (189, 153),
-    (190, 152),
-    (191, 151),
-    (192, 150),
-    (193, 149),
-    (194, 148),
-    (194, 147),
-    (194, 146),
-]
+    while True:
+        lvl = game_methods.read_lvl()
+        time.sleep(5)
+        print(lvl)
 
-path3 = [
-    (53, 14),
-    (53, 15),
-    (53, 16),
-    (53, 17),
-    (53, 18),
-    (53, 19),
-    (53, 20),
-    (53, 21),
-    (53, 22),
-    (53, 23),
-    (53, 24),
-    (53, 25),
-]
+        if lvl < 20:
+            if area != 'lorencia':
+                area = 'lorencia'
+                warp_to(area)
 
-# send_ascii(ord("c"))
+            go_to(LORA_GOAL, 'lorencia')
 
-lvl = read_lvl()
-print("LVL:", lvl)
-# while True:
-#     prebihani(path3)
-# send
+            if lvl < 10:
+                time.sleep(10)
+            else:
+                start_helper()
+
+        elif lvl in range(20, 80):
+            if area != 'elbeland':
+                area = 'elbeland'
+                warp_to("elbeland2")
+            go_to(ELB_GOAL, 'elbeland')
+            start_helper()
+
+        elif lvl in range(80, 140):
+            if area != 'atlans':
+                area = 'atlans'
+                warp_to("atlans2")
+            go_to(ATL_GOAL, 'atlans')
+            start_helper()
+
+        elif lvl in range(140, 280):
+            pass
+
+        elif lvl in range(280, 400):
+            area = 'swampofpeace'
+            warp_to(area)
+            print("WELL DONE!!!")
+            print('\a')
+            break
+
+        # elif lvl == 400:
+        #     server_selection()
+        #     reset()
+        #     game_login()

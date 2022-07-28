@@ -4,7 +4,6 @@
 
 import time
 import pygetwindow as gw
-
 # from game_account_actions import game_login, server_selection
 # from game_api import custom_attack, go_to, start_helper, warp_to
 # from reset import reset
@@ -12,11 +11,12 @@ import pygetwindow as gw
 from game_methods import djikstra
 from game_methods import game_methods
 from game_methods import map
+
 from arduino_api import arduino_api
 from .keys import *
 
 LORA_GOAL = (151, 73)
-ELB_GOAL = (69, 59)
+ELB_GOAL = (72, 60)
 ATL_GOAL = (236, 50)
 
 
@@ -28,6 +28,12 @@ Lorencia = {'goal': LORA_GOAL,
 
 def go_to(target_coords: tuple, map_name: str):
     current_coords = game_methods.read_coords()
+    vector = (
+        target_coords[0] - current_coords[0],
+        target_coords[1] - current_coords[1],
+    )
+    if abs(vector[0]) <= 2 and abs(vector[1]) <= 2:
+        return
     path = djikstra.djikstra8(
         current_coords, target_coords, map.get_mu_map_list(map_name))
     game_methods.get_to2(path)

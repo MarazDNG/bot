@@ -1,4 +1,5 @@
 from itertools import product
+import logging
 
 # DONE
 
@@ -22,6 +23,8 @@ def djikstra4(start: tuple, goal: tuple, array_map: list) -> list:
 
 
 def _djikstra_body(start: tuple, goal: tuple, array_map: list, neighbor_fnc: callable) -> list:
+    logging.basicConfig(level=logging.DEBUG, filename="djikstra.log")
+    logging.debug(f"Start: {start}, Goal: {goal}")
     sets = [
         {start, }
     ]
