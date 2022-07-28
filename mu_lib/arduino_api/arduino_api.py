@@ -42,7 +42,7 @@ def release_buttons():
 
 
 def click():
-    _send('k')
+    _send('c')
 
 
 def _send(data):

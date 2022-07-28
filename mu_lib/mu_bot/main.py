@@ -13,7 +13,7 @@ from game_methods import djikstra
 from game_methods import game_methods
 from game_methods import map
 from arduino_api import arduino_api
-from keys import *
+from .keys import *
 
 LORA_GOAL = (151, 73)
 ELB_GOAL = (69, 59)

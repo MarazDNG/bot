@@ -17,19 +17,17 @@ void loop()
   // Serial.println("kokot");
   if (Serial.available() > 0)
   {
-    // delay(1000);
     String input = Serial.readStringUntil('`');
     if (input[0] == '|')
     {
       input.remove(0, 1);
-      // Keyboard.print("This is int: ");
-      // Keyboard.println(input.toInt());
+      // if int
       click_key(input.toInt());
     }
     else if (input[0] == '%')
     {
+      // if string
       input.remove(0, 1);
-      // Keyboard.print("This is string: ");
       Keyboard.println(input);
     }
     else if (input[0] == 'c')

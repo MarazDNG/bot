@@ -3,3 +3,5 @@ libmu/
 *.egg*
 *__pycache__*
 .vscode/
+*.pyc
+*.log

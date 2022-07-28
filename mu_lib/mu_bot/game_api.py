@@ -50,6 +50,7 @@ def warp_to(area) -> None:
     send_string(f'/warp {area}')
     time.sleep(1)
     send_ascii(KEY_RETURN)
+    time.sleep(2)
 
 
 def start_helper() -> None:
