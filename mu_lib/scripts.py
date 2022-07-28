@@ -1,4 +1,6 @@
 from cgi import test
+
+from yaml import SequenceStartEvent
 from game_methods.game_methods import read_lvl
 from mu_bot.main import go_to
 from mu_bot.game_api import warp_to
@@ -32,9 +34,9 @@ def test_walking_porting():
 
 
 if __name__ == "__main__":
-    # activate_window()
-    # test_walking_porting()
-    # go_to((69, 59), 'elbeland')
-    m = get_mu_map_list("elbeland")
-    p = djikstra8((99, 53), (72, 50), m)
-    print(p)
+    activate_window()
+    from mu_bot.game_account_actions import server_selection, game_login
+    from mu_bot.reset import reset
+    # server_selection()
+    # reset()
+    game_login()

@@ -1,13 +1,11 @@
-from arduino_api.arduino_api import send_string, send_ascii
-from mu_window import mu_window
-import pygetwindow as gw
 import time
 
 from game_methods import game_methods
-from arduino_api import arduino_api
 from mu_bot.main import go_to, warp_to, start_helper
 from mu_bot.main import LORA_GOAL, ELB_GOAL, ATL_GOAL
-from scripts import activate_window
+from .scripts import activate_window
+from mu_bot.game_account_actions import server_selection, game_login
+from mu_bot.reset import reset
 
 
 activate_window()
@@ -73,7 +71,8 @@ while True:
         print('\a')
         break
 
-    # elif lvl == 400:
-    #     server_selection()
-    #     reset()
-    #     game_login()
+    elif lvl == 400:
+        server_selection()
+        reset()
+        activate_window()
+        game_login()

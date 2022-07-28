@@ -2,21 +2,20 @@
 # Game login and game logout
 #
 
+from mu_window import mu_window
+from arduino_api import arduino_api
+from .keys import KEY_ESC, KEY_RETURN
 
-from time import time
-from i_arduino import click, send_ascii
-from i_mouse import game_mouse_to_pixel
-from keys import KEY_ESC, KEY_RETURN
+import time
 
 
 def server_selection():
     """ Logout into server selection.
     """
 
-    send_ascii(KEY_ESC)
+    arduino_api.send_ascii(KEY_ESC)
     # click select
-    game_mouse_to_pixel((400, 100))
-    click()
+    mu_window.click_on_pixel((600, 280))
     time.sleep(6)
 
 
@@ -25,23 +24,19 @@ def game_login():
     choose character.
     """
     # pop up server selection
-    game_mouse_to_pixel((1, 2))
-    click()
+    mu_window.click_on_pixel((450, 305))
 
     # select server
-    game_mouse_to_pixel((1, 2))
-    click()
+    mu_window.click_on_pixel((600, 305))
 
     # click auto-login
-    # game_start_pixel((1, 2))
-    click()
+    mu_window.click_on_pixel((520, 590))
 
     # click on character
-    game_mouse_to_pixel((1, 2))
-    click()
+    mu_window.click_on_pixel((360, 530))
 
     # load character
-    send_ascii(KEY_RETURN)
+    arduino_api.send_ascii(KEY_RETURN)
 
     # wait for character loading
     time.sleep(5)
