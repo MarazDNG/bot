@@ -32,6 +32,9 @@ def test_walking_porting():
 
 
 if __name__ == "__main__":
-    activate_window()
+    # activate_window()
     # test_walking_porting()
-    go_to((69, 59), 'elbeland')
+    # go_to((69, 59), 'elbeland')
+    m = get_mu_map_list("elbeland")
+    p = djikstra8((99, 53), (72, 50), m)
+    print(p)
