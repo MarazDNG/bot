@@ -46,7 +46,9 @@ def custom_attack() -> None:
 
 def warp_to(area) -> None:
     send_ascii(KEY_RETURN)
+    time.sleep(1)
     send_string(f'/warp {area}')
+    time.sleep(1)
     send_ascii(KEY_RETURN)
 
 
