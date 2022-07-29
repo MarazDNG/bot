@@ -4,7 +4,7 @@
 
 from mu_window import mu_window
 from arduino_api import arduino_api
-from .keys import KEY_ESC, KEY_RETURN
+from ..game_methods.keys import KEY_ESC, KEY_RETURN
 
 import time
 

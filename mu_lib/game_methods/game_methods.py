@@ -3,10 +3,12 @@
 #
 
 
-from mu_window import mu_window
 from mu_image_processing.info_extract import extract_lvl, extract_coords
-from .djikstra import djikstra4, djikstra8
 from mu_window import mu_window
+from mu_window import mu_window
+from arduino_api import arduino_api
+from keys import *
+import djikstra
 
 import math
 from datetime import datetime
@@ -66,10 +68,10 @@ def is_helper_on() -> bool:
     return res
 
 
-def attack() -> None:
-    hold_left()
+def _attack() -> None:
+    mu_window.mouse_event("hold_left")
     time.sleep(2)
-    release_buttons()
+    mu_window.mouse_event("release_buttons")
 
 
 def _check_if_stucked(coords: tuple) -> None:
@@ -81,8 +83,8 @@ def _check_if_stucked(coords: tuple) -> None:
 
     time_now = datetime.now()
     diff = time_now - _cache_time
-    if diff > timedelta(seconds=1):
-        attack()
+    if diff > timedelta(seconds=2):
+        _attack()
     _cached_pos = coords
     _cache_time = time_now
 
@@ -147,7 +149,7 @@ def get_to2(path: list) -> None:
 
     while steps_made < len(path):
         current_coords = read_coords_from_frame()
-        # _check_if_stucked(current_coords)
+        _check_if_stucked(current_coords)
         following_coords = path[steps_made]
 
         try:
@@ -181,3 +183,35 @@ def prebihani(path: list) -> None:
     path.reverse()
     get_to2(path)
     path.reverse()
+
+
+def warp_to(area: str) -> None:
+    arduino_api.send_ascii(KEY_RETURN)
+    time.sleep(2)
+    arduino_api.send_string(f'/warp {area}')
+    time.sleep(2)
+    arduino_api.send_ascii(KEY_RETURN)
+    time.sleep(3)
+
+
+def go_to(target_coords: tuple, map_name: str):
+    current_coords = read_coords()
+    vector = (
+        target_coords[0] - current_coords[0],
+        target_coords[1] - current_coords[1],
+    )
+    if abs(vector[0]) <= 2 and abs(vector[1]) <= 2:
+        return
+    path = djikstra.djikstra8(
+        current_coords, target_coords, map.get_mu_map_list(map_name))
+    get_to2(path)
+
+
+def start_helper() -> None:
+    arduino_api.send_ascii(KEY_HOME)
+    time.sleep(0.5)
+    if not is_helper_on():
+        mu_window.press(ord("1"))
+        mu_window.mouse_to_pos(SURR[(0, 0)])
+        mu_window.mouse_event("hold_left")
+        time.sleep(30)

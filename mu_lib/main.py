@@ -1,12 +1,9 @@
-import time
 
 from game_methods import game_methods
-from mu_bot.main import go_to, warp_to, start_helper
-from mu_bot.main import LORA_GOAL, ELB_GOAL, ATL_GOAL
 from .scripts import activate_window
-from mu_bot.game_account_actions import server_selection, game_login
-from mu_bot.reset import reset
-
+from mu_bot import game_menu
+from game_methods.reset import reset
+from game_methods.spots import *
 
 activate_window()
 # 295, 30, 10, 10 - whole helper sign
@@ -14,65 +11,39 @@ activate_window()
 # helper pixel - (74, 53, 5) - ON
 # helper pixel - (239, 174, 36) - OFF
 
+spot_sequence = [
+    BUDGE_DRAGONS,
+    WEREWOLVES,
+    # GREAT_BAHAMUTS,
+    BLUE_GOLEMS,
+    SAPI_DUOS,
+]
 
-area = "lorencia"
-warp_to(area)
+warp_name = "lorencia"
+game_methods.warp_to(warp_name)
 
-counter = 0
+spot_sequence_counter = 0
+
+
+def kill(spot: Spot, warp_name: str) -> str:
+    if warp_name != spot.warp:
+        game_methods.warp_to(spot.warp)
+    if not game_methods.is_helper_on():
+        game_methods.go_to(spot.coords, spot.map)
+        game_methods.start_helper()
+    return spot.warp
+
 
 while True:
     lvl = game_methods.read_lvl()
-    if counter > 5:
-        raise Exception("Lvl could not be retrieved!")
 
-    if not lvl:
-        counter += 1
-        continue
+    if warp_name != spot_sequence[-1].warp and \
+            lvl > spot_sequence[spot_sequence_counter].level_limit:
+        spot_sequence_counter += 1
+        warp_name = kill(spot_sequence[spot_sequence_counter], warp_name)
 
-    time.sleep(5)
-    print(lvl)
-
-    if lvl < 20:
-        if area != 'lorencia':
-            area = 'lorencia'
-            warp_to(area)
-
-        if lvl < 10:
-            if not game_methods.is_helper_on():
-                go_to(LORA_GOAL, 'lorencia')
-                start_helper()
-            time.sleep(10)
-
-    elif lvl in range(20, 80):
-        if area != 'elbeland':
-            area = 'elbeland'
-            warp_to("elbeland2")
-
-        if not game_methods.is_helper_on():
-            go_to(ELB_GOAL, 'elbeland')
-            start_helper()
-
-    elif lvl in range(80, 140):
-        if area != 'atlans':
-            area = 'atlans'
-            warp_to("atlans2")
-
-        if not game_methods.is_helper_on():
-            go_to(ATL_GOAL, 'atlans')
-            start_helper()
-
-    elif lvl in range(140, 280):
-        pass
-
-    elif lvl in range(280, 400):
-        area = 'peaceswamp'
-        warp_to(area)
-        print("WELL DONE!!!")
-        print('\a')
-        break
-
-    elif lvl == 400:
-        server_selection()
+    if lvl == 400:
+        game_menu.server_selection()
         reset()
         activate_window()
-        game_login()
+        game_menu.game_login()
