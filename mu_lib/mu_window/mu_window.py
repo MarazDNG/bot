@@ -116,6 +116,6 @@ def mouse_to_pos(game_pos):
 def click_on_pixel(window_pixel: tuple):
     """Click on given pixel."""
     mouse_to_pos(window_pixel)
-    time.sleep(0.2)
+    time.sleep(0.4)
     click()
     time.sleep(0.5)

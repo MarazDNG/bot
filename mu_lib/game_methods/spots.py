@@ -1,5 +1,6 @@
 from collections import namedtuple
-from warps_mapping import *
+
+from .warps_mapping import *
 
 Spot = namedtuple('Spot', ['coords', 'map', 'warp', 'level_limit'])
 

@@ -7,8 +7,9 @@ from mu_image_processing.info_extract import extract_lvl, extract_coords
 from mu_window import mu_window
 from mu_window import mu_window
 from arduino_api import arduino_api
-from keys import *
-import djikstra
+from .keys import *
+from .djikstra import djikstra8
+from .map import get_mu_map_list
 
 import math
 from datetime import datetime
@@ -53,19 +54,6 @@ SURR = {
 
 _cached_pos = None
 _cache_time = None
-
-
-def is_helper_on() -> bool:
-    on = (74, 53, 5)
-    img = mu_window.grab_image_from_window(299, 35, 1, 1)
-    img = numpy.asarray(img)
-    color = tuple(img[0][0])
-    res = color[0] == on[0] and color[1] == on[1] and color[2] == on[2]
-    if res:
-        print("Helper is on!")
-    else:
-        print("Helper is off!")
-    return res
 
 
 def _attack() -> None:
@@ -202,16 +190,33 @@ def go_to(target_coords: tuple, map_name: str):
     )
     if abs(vector[0]) <= 2 and abs(vector[1]) <= 2:
         return
-    path = djikstra.djikstra8(
-        current_coords, target_coords, map.get_mu_map_list(map_name))
+    path = djikstra8(
+        current_coords, target_coords, get_mu_map_list(map_name))
     get_to2(path)
 
 
+def is_helper_on() -> bool:
+    on = (74, 53, 5)
+    img = mu_window.grab_image_from_window(299, 35, 1, 1)
+    img = numpy.asarray(img)
+    color = tuple(img[0][0])
+    res = color[0] == on[0] and color[1] == on[1] and color[2] == on[2]
+    if res:
+        print("Helper is on!")
+    else:
+        print("Helper is off!")
+    return res
+
+
 def start_helper() -> None:
-    arduino_api.send_ascii(KEY_HOME)
+    if not is_helper_on():
+        arduino_api.send_ascii(KEY_HOME)
     time.sleep(0.5)
     if not is_helper_on():
+        mu_window.press(KEY_RETURN)
+        time.sleep(0.5)
         mu_window.press(ord("1"))
         mu_window.mouse_to_pos(SURR[(0, 0)])
         mu_window.mouse_event("hold_left")
         time.sleep(30)
+        mu_window.mouse_event("release_buttons")
