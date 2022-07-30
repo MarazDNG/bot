@@ -21,10 +21,9 @@ def warp_stadium_city():
     time.sleep(3)
 
 
-def warp_peace_swamp1():
-    game_methods.warp_to(PEACE_SWAMP[1])
-    game_methods.go_to((139, 124), PEACE_SWAMP[0])
-    portal_coords = (139, 125)
+def warp_peace_swamp(portal_close_coords: tuple, portal_coords: tuple):
+    game_methods.warp_to(PEACE_SWAMP[0])
+    game_methods.go_to(portal_close_coords, PEACE_SWAMP[0])
     time.sleep(1)
     if game_methods.distance(game_methods.read_coords(), portal_coords) <= 2:
         game_methods.go_through_portal(portal_coords)
@@ -35,5 +34,8 @@ STADIUM_CITY = ("stadium", warp_stadium_city, 100)
 LORENCIA = ("lorencia", "lorencia", None)
 ELBELAND2 = ("elbeland", "elbeland2", 20)
 PEACE_SWAMP = ("peaceswamp", "peaceswamp", 300)
-PEACE_SWAMP1 = ("peaceswamp", warp_peace_swamp1, 300)
+PEACE_SWAMP1 = ("peaceswamp", lambda: warp_peace_swamp(
+    (139, 124), (139, 125)), 300)
+PEACE_SWAMP3 = ("peaceswamp", lambda: warp_peace_swamp(
+    (53, 24), (53, 14)), 300)
 ATLANS2 = ("atlans", "atlans2", 80)

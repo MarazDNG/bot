@@ -167,24 +167,21 @@ def get_to2(path: list) -> None:
             print("Back on path!")
 
 
-def prebihani(path: list) -> None:
+def prebihani(path: list, time_length: int = None) -> None:
     """ Run to the end of path and back."""
+    start = datetime.now()
     time.sleep(3)
     get_to2(path)
 
-    time.sleep(3.5)
+    time.sleep(3)
     path.reverse()
     get_to2(path)
     path.reverse()
 
-
-def warp_to(area: str) -> None:
-    arduino_api.send_ascii(KEY_RETURN)
-    time.sleep(2)
-    arduino_api.send_string(f'/warp {area}')
-    time.sleep(2)
-    arduino_api.send_ascii(KEY_RETURN)
-    time.sleep(3)
+    if time_length:
+        end = datetime.now()
+        rem = end - start
+        time.sleep(time_length - rem.total_seconds() + 2)
 
 
 def go_to(target_coords: tuple, map_name: str):
@@ -200,7 +197,7 @@ def go_to(target_coords: tuple, map_name: str):
     get_to2(path)
 
 
-def is_helper_on() -> bool:
+def _is_helper_on() -> bool:
     on = (74, 53, 5)
     img = mu_window.grab_image_from_window(299, 35, 1, 1)
     img = numpy.asarray(img)
@@ -223,11 +220,12 @@ def _detect_ok() -> bool:
 
 
 def start_helper() -> bool:
-    if not is_helper_on():
+    if not _is_helper_on():
         arduino_api.send_ascii(KEY_HOME)
     time.sleep(0.5)
-    if not is_helper_on():
-        mu_window.press(KEY_RETURN)
+    if not _is_helper_on():
+        if _detect_ok():
+            mu_window.press(KEY_RETURN)
         time.sleep(0.5)
         mu_window.press(ord("1"))
         mu_window.mouse_to_pos(SURR[(0, 0)])
@@ -245,6 +243,10 @@ def _to_chat(msg: str) -> None:
     time.sleep(0.5)
     arduino_api.send_ascii(KEY_RETURN)
     time.sleep(0.5)
+
+
+def warp_to(area: str) -> None:
+    _to_chat(f'/warp {area}')
 
 
 def distribute_stats() -> None:
