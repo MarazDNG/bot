@@ -113,7 +113,7 @@ def _check_if_stucked(coords: tuple) -> None:
 
 def _walk_on_shortest_straight(goal: tuple) -> None:
     while True:
-        current_coords = read_coords_from_frame()
+        current_coords = read_coords()
         diff = (goal[0] - current_coords[0],
                 goal[1] - current_coords[1],)
         if diff == (0, 0):
@@ -133,16 +133,14 @@ def _walk_on_shortest_straight(goal: tuple) -> None:
 
 
 def get_to2(path: list) -> None:
-    """ Sometimes fcks up."""
-    """ djiksta() works well with threshold 1.5 - 2.0"""
     global _cache_time
     _cache_time = datetime.now()
     global _cached_pos
-    _cached_pos = read_coords_from_frame()
+    _cached_pos = read_coords()
     steps_made = 0
 
     while steps_made < len(path):
-        current_coords = read_coords_from_frame()
+        current_coords = read_coords()
         _check_if_stucked(current_coords)
         following_coords = path[steps_made]
 

@@ -5,3 +5,7 @@ libmu/
 .vscode/
 *.pyc
 *.log
+*/build/*
+*/dist/*
+*/venv/*
+*_cache/
