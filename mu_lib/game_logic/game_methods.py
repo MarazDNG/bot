@@ -223,7 +223,7 @@ def start_helper() -> bool:
         time.sleep(0.5)
         mu_window.press(ord("1"))
         mu_window.mouse_to_pos(SURR[(0, 0)])
-        mu_window.mouse_event("hold_left")
+        mu_window.mouse_event("hold_right")
         time.sleep(5)
         mu_window.mouse_event("release_buttons")
         return False
