@@ -11,9 +11,10 @@ from .keys import *
 from .djikstra import djikstra8
 from .map import get_mu_map_list
 
-import math
 from datetime import datetime
 from datetime import timedelta
+import math
+import itertools
 import time
 import numpy
 import re
@@ -210,6 +211,15 @@ def is_helper_on() -> bool:
     else:
         print("Helper is off!")
     return res
+
+
+def _detect_ok() -> bool:
+    # 600 235 30 1
+    bbox = (600, 235, 30, 1)
+    test_indices = (6, 8, 20, 27)
+    img = mu_window.grab_image_from_window(*bbox)
+    img_1d = [tuple(x) for x in numpy.asarray(img)[0]]
+    return all(img_1d[i][c] == 255 for i, c in itertools.product(test_indices, range(3)))
 
 
 def start_helper() -> bool:
