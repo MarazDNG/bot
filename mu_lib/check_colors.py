@@ -2,7 +2,7 @@ from PIL import Image
 import numpy as np
 
 m = "elbeland"
-path = f"game_methods/maps/img_{m}.png"
+path = f"game_logic/maps/new_elb.png"
 
 img = Image.open(path)
 img = np.asarray(img)
