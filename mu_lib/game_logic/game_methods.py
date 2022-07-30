@@ -56,27 +56,6 @@ _cached_pos = None
 _cache_time = None
 
 
-def _attack() -> None:
-    mu_window.mouse_event("hold_left")
-    time.sleep(2)
-    mu_window.mouse_event("release_buttons")
-
-
-def _check_if_stucked(coords: tuple) -> None:
-    """ Detect stucked character."""
-    global _cached_pos
-    _cached_pos = _cached_pos or coords
-    global _cache_time
-    _cache_time = _cache_time or datetime.now()
-
-    time_now = datetime.now()
-    diff = time_now - _cache_time
-    if diff > timedelta(seconds=2):
-        _attack()
-    _cached_pos = coords
-    _cache_time = time_now
-
-
 def read_lvl_from_frame() -> int:
     img = mu_window.grab_image_from_window(960, 110, 30, 15)
     return extract_lvl(img)
@@ -103,6 +82,33 @@ def read_lvl() -> int:
 
 def read_coords() -> tuple:
     return read_coords_from_frame()
+
+
+def _attack() -> None:
+    mu_window.mouse_event("hold_right")
+    time.sleep(3)
+    mu_window.mouse_event("release_buttons")
+
+
+def _check_if_stucked(coords: tuple) -> None:
+    """ Detect stucked character."""
+    global _cached_pos
+    _cached_pos = _cached_pos or coords
+    global _cache_time
+    _cache_time = _cache_time or datetime.now()
+    time_now = datetime.now()
+    # print(
+    #     f"cached: {_cached_pos}, coords_now: {coords}, cache_time: {_cache_time}, time_now: {time_now}")
+    if _cached_pos != coords:
+        _cached_pos = coords
+        _cache_time = time_now
+        return
+
+    diff = time_now - _cache_time
+    if diff > timedelta(seconds=2):
+        _attack()
+        _cached_pos = coords
+        _cache_time = time_now
 
 
 def _walk_on_shortest_straight(goal: tuple) -> None:
@@ -132,7 +138,7 @@ def get_to2(path: list) -> None:
     global _cache_time
     _cache_time = datetime.now()
     global _cached_pos
-    _cached_pos = None
+    _cached_pos = read_coords_from_frame()
     steps_made = 0
 
     while steps_made < len(path):
@@ -150,7 +156,7 @@ def get_to2(path: list) -> None:
                 following_coords, current_coords))
 
             window_pixel_position = SURR[diff]
-            mu_window.click_on_pixel(window_pixel_position)
+            mu_window.click_on_pixel(window_pixel_position, delay=False)
 
         except IndexError:
             print("Final destination!")
@@ -208,7 +214,7 @@ def is_helper_on() -> bool:
     return res
 
 
-def start_helper() -> None:
+def start_helper() -> bool:
     if not is_helper_on():
         arduino_api.send_ascii(KEY_HOME)
     time.sleep(0.5)
@@ -218,5 +224,35 @@ def start_helper() -> None:
         mu_window.press(ord("1"))
         mu_window.mouse_to_pos(SURR[(0, 0)])
         mu_window.mouse_event("hold_left")
-        time.sleep(30)
+        time.sleep(5)
         mu_window.mouse_event("release_buttons")
+        return False
+    return True
+
+
+def _to_chat(msg: str) -> None:
+    arduino_api.send_ascii(KEY_RETURN)
+    time.sleep(0.5)
+    arduino_api.send_string(msg)
+    time.sleep(0.5)
+    arduino_api.send_ascii(KEY_RETURN)
+    time.sleep(0.5)
+
+
+def distribute_stats() -> None:
+    _to_chat("/addstr 2000")
+    _to_chat("/addagi 40000")
+    _to_chat("/addvit 1000")
+    _to_chat("/addene 40000")
+
+
+def distance(a: tuple, b: tuple) -> float:
+    return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
+
+
+def go_through_portal(portal_coords: tuple) -> None:
+    current_coords = read_coords()
+    diff = (portal_coords[0] - current_coords[0],
+            portal_coords[1] - current_coords[1],)
+    mu_window.click_on_pixel(SURR[diff])
+    time.sleep(3)

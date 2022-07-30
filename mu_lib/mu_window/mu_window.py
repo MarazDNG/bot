@@ -113,9 +113,15 @@ def mouse_to_pos(game_pos):
     ard_mouse_to_pos(screen_position)
 
 
-def click_on_pixel(window_pixel: tuple):
+def click_on_pixel(window_pixel: tuple, delay: bool = True):
     """Click on given pixel."""
     mouse_to_pos(window_pixel)
-    time.sleep(0.4)
+    if delay:
+        time.sleep(0.8)
+    else:
+        time.sleep(0.1)
     click()
-    time.sleep(0.5)
+    if delay:
+        time.sleep(0.5)
+    else:
+        time.sleep(0.1)

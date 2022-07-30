@@ -1,7 +1,7 @@
 
 from scripts import activate_window
 from PIL import Image
-from game_methods.game_methods import read_coords
+from game_logic.game_methods import read_coords
 import sys
 
 
@@ -9,7 +9,10 @@ if len(sys.argv) != 2:
     raise Exception("Please provide a map name as an argument!")
 
 try:
-    img = Image.open(sys.argv[1])
+    if sys.argv[1] == "--new":
+        img = Image.open("input.png")
+    else:
+        img = Image.open(sys.argv[1])
 except:
     raise Exception("Could not open image!")
 idk = img.load()
@@ -28,4 +31,4 @@ for i in coords_set:
         i[0], i[1]
     ] = (255, 255, 255)
 
-img.save(f'mapper.png')
+img.save('mapper.png')
