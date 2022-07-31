@@ -1,15 +1,13 @@
-from re import A
 from PIL import Image
-from typing import List
 import os
 import numpy
+from conf.conf import WHITE_COLOR
 
 
 def _is_white(color: numpy.iterable) -> bool:
     """
     Check if color is white
     """
-    WHITE_COLOR = (255, 255, 255)
     return color[0] == WHITE_COLOR[0] and color[1] == WHITE_COLOR[1] and color[2] == WHITE_COLOR[2]
 
 

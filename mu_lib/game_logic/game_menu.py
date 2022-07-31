@@ -4,7 +4,7 @@
 
 from mu_window import mu_window
 from arduino_api import arduino_api
-from .keys import KEY_ESC, KEY_RETURN
+from conf.conf import KEY_ESC, KEY_RETURN
 
 import time
 
@@ -39,4 +39,4 @@ def game_login():
     arduino_api.send_ascii(KEY_RETURN)
 
     # wait for character loading
-    time.sleep(5)
+    time.sleep(7)

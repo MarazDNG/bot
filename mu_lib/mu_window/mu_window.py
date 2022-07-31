@@ -3,6 +3,7 @@ import win32ui
 import win32con
 import time
 from PIL import Image
+import pygetwindow as gw
 
 from arduino_api.arduino_api import ard_mouse_to_pos, send_string
 from arduino_api.arduino_api import click
@@ -12,6 +13,12 @@ from arduino_api.arduino_api import release_buttons
 from arduino_api.arduino_api import send_ascii
 
 WINDOW_PARTIAL_TEXT = "Player:"
+
+
+def activate_window():
+    win = gw.getWindowsWithTitle("Player")[0]
+    win.activate()
+    time.sleep(2)
 
 
 def _game_start_pixel() -> tuple:

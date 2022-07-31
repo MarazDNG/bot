@@ -5,11 +5,10 @@
 
 from mu_image_processing.info_extract import extract_lvl, extract_coords
 from mu_window import mu_window
-from mu_window import mu_window
 from arduino_api import arduino_api
-from .keys import *
 from .djikstra import djikstra8
 from .map import get_mu_map_list
+from conf.conf import SURR, KEY_HOME, KEY_RETURN, STR, AGI, VIT, ENE
 
 from datetime import datetime
 from datetime import timedelta
@@ -19,39 +18,6 @@ import time
 import numpy
 import re
 
-SURR = {
-    (0, 0): (645, 323),
-
-    (-1, 1): (640, 278),
-    (0, 1): (677, 300),
-    (1, 1): (715, 333),
-    (1, 0): (700, 366),
-    (1, -1): (635, 373),
-    (0, -1): (597, 366),
-    (-1, -1): (535, 330),
-    (-1, 0): (600, 300),
-
-    (-2, 0): (541, 253),
-    (0, 2): (743, 263),
-    (2, 0): (762, 405),
-    (0, -2): (527, 409),
-    (-2, -2): (424, 333),
-    (-2, 2): (645, 209),
-    (2, 2): (863, 333),
-    (2, -2): (646, 500),
-
-    (-2, 1): (593, 237),
-    (-1, 2): (696, 237),
-
-    (1, 2): (804, 300),
-    (2, 1): (816, 366),
-
-    (2, -1): (582, 449),
-    (1, -2): (709, 449),
-
-    (-1, -2): (476, 366),
-    (-2, -1): (489, 300),
-}
 
 _cached_pos = None
 _cache_time = None
@@ -197,6 +163,14 @@ def go_to(target_coords: tuple, map_name: str):
     get_to2(path)
 
 
+def go_to_spot(spot) -> None:
+    if callable(spot.warp):
+        spot.warp()
+    else:
+        warp_to(spot.warp)
+    go_to(spot.coords, spot.map)
+
+
 def _is_helper_on() -> bool:
     on = (74, 53, 5)
     img = mu_window.grab_image_from_window(299, 35, 1, 1)
@@ -250,10 +224,10 @@ def warp_to(area: str) -> None:
 
 
 def distribute_stats() -> None:
-    _to_chat("/addstr 2000")
-    _to_chat("/addagi 40000")
-    _to_chat("/addvit 1000")
-    _to_chat("/addene 40000")
+    _to_chat(f"/addstr {STR}")
+    _to_chat(f"/addagi {AGI}")
+    _to_chat(f"/addvit {VIT}")
+    _to_chat(f"/addene {ENE}")
 
 
 def distance(a: tuple, b: tuple) -> float:
