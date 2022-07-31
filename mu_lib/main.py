@@ -7,6 +7,7 @@ from conf.conf import SPOT_SEQUENCE
 from mu_window.mu_window import activate_window
 
 import time
+from game_logic import map
 # 295, 30, 10, 10 - whole helper sign
 # 299, 35, 1, 1 - helper pixel
 # helper pixel - (74, 53, 5) - ON
@@ -37,6 +38,8 @@ if __name__ == "__main__":
             continue
 
         with contextlib.suppress(IndexError):
+
+            # [print(i) for i in SPOT_SEQUENCE[spot_sequence_counter + 1]]
             if lvl >= SPOT_SEQUENCE[spot_sequence_counter + 1].level_limit:
                 spot_sequence_counter += 1
                 f_go_to_spot = True
@@ -48,10 +51,11 @@ if __name__ == "__main__":
 
         game_methods.start_helper()
 
-        if SPOT_SEQUENCE[spot_sequence_counter].path is not None:
+        if SPOT_SEQUENCE[spot_sequence_counter].coords_for_overrunning is not None:
             path = game_methods.djikstra8(
                 SPOT_SEQUENCE[spot_sequence_counter].coords,
-                SPOT_SEQUENCE[spot_sequence_counter].spot_for_overrunning)
+                SPOT_SEQUENCE[spot_sequence_counter].coords_for_overrunning,
+                map.get_mu_map_list(SPOT_SEQUENCE[spot_sequence_counter].map))
             game_methods.prebihani(
                 path, SPOT_SEQUENCE[spot_sequence_counter].overrunning_route_time)
         else:

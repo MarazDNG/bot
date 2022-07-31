@@ -147,7 +147,8 @@ def prebihani(path: list, time_length: int = None) -> None:
     if time_length:
         end = datetime.now()
         rem = end - start
-        time.sleep(time_length - rem.total_seconds() + 2)
+        if rem > 0:
+            time.sleep(time_length - rem.total_seconds() + 2)
 
 
 def go_to(target_coords: tuple, map_name: str):
