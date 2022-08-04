@@ -35,7 +35,7 @@ LORENCIA = ("lorencia", "lorencia", None)
 ELBELAND2 = ("elbeland", "elbeland2", 20)
 PEACE_SWAMP = ("peaceswamp", "peaceswamp", 300)
 PEACE_SWAMP1 = ("peaceswamp", lambda: warp_peace_swamp(
-    (139, 124), (139, 125)), 300)
+    (139, 125), (139, 125)), 300)
 PEACE_SWAMP3 = ("peaceswamp", lambda: warp_peace_swamp(
-    (140, 96), (140, 95)), 300)
+    (140, 95), (140, 95)), 300)
 ATLANS2 = ("atlans", "atlans2", 80)

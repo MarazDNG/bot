@@ -39,27 +39,6 @@ def _check_if_stucked(coords: tuple) -> None:
         _cache_time = time_now
 
 
-def _walk_on_shortest_straight(goal: tuple) -> None:
-    while True:
-        current_coords = read_coords()
-        diff = (goal[0] - current_coords[0],
-                goal[1] - current_coords[1],)
-        if diff == (0, 0):
-            break
-        dx = 0
-        dy = 0
-        if diff[0]:
-            dx = math.copysign(1, diff[0])
-        if diff[1]:
-            dy = math.copysign(1, diff[1])
-
-        ddiff = (dx, dy)
-        mu_window.mouse_to_pos(SURR[ddiff])
-        time.sleep(0.05)
-        mu_window.mouse_event("click")
-        time.sleep(0.05)
-
-
 def clicker(q: list) -> None:
     while pos := q.get(timeout=10):
         mu_window.click_on_pixel(pos, delay=False)

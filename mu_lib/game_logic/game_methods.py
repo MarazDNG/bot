@@ -12,6 +12,7 @@ from .map import get_mu_map_list
 from .reading import read_coords
 from .walking_vector import go_through_path
 from .walking_clicking import get_to2
+from .walking_straight import _walk_on_shortest_straight
 
 from datetime import datetime
 import math
@@ -127,5 +128,6 @@ def go_through_portal(portal_coords: tuple) -> None:
     current_coords = read_coords()
     diff = (portal_coords[0] - current_coords[0],
             portal_coords[1] - current_coords[1],)
-    mu_window.click_on_pixel(SURR[diff])
+    _walk_on_shortest_straight(portal_coords)
+    # mu_window.click_on_pixel(SURR[diff])
     time.sleep(3)
