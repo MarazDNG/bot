@@ -34,7 +34,7 @@ def prebihani(path: list, time_length: int = None) -> None:
     if time_length:
         end = datetime.now()
         rem = end - start
-        if rem > 0:
+        if rem > timedelta(seconds=0):
             time.sleep(time_length - rem.total_seconds() + 2)
 
 
@@ -109,6 +109,7 @@ def _to_chat(msg: str) -> None:
 
 def warp_to(area: str) -> None:
     _to_chat(f'/warp {area}')
+    time.sleep(3)
 
 
 def distribute_stats() -> None:

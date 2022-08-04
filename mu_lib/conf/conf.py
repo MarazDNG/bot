@@ -1,20 +1,21 @@
 from game_logic import spots
 
 # stats
-STR = 2000
-AGI = 40000
+STR = 500
+AGI = 23000
 VIT = 3000
-ENE = 60000
+ENE = 24000
 
 # port
-PORT = "COM6"
+PORT = "COM12"
 
 # spot sequence
 SPOT_SEQUENCE = [
     spots.BUDGE_DRAGONS,
     spots.WEREWOLVES,
     spots.BLUE_GOLEMS,
-    spots.SAPI_TRES_SHADOW
+    spots.SAPI_DUOS,
+    # spots.SAPI_TRES_SHADOW
 ]
 
 # keys
