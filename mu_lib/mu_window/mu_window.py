@@ -126,9 +126,9 @@ def click_on_pixel(window_pixel: tuple, delay: bool = True):
     if delay:
         time.sleep(0.8)
     else:
-        time.sleep(0.1)
+        time.sleep(0.05)
     click()
     if delay:
         time.sleep(0.5)
     else:
-        time.sleep(0.1)
+        time.sleep(0.05)

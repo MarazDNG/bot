@@ -3,134 +3,21 @@
 #
 
 
-from mu_image_processing.info_extract import extract_lvl, extract_coords
 from mu_window import mu_window
 from arduino_api import arduino_api
-from .djikstra import djikstra8
-from .map import get_mu_map_list
 from conf.conf import SURR, KEY_HOME, KEY_RETURN, STR, AGI, VIT, ENE
 
+from .djikstra import djikstra8
+from .map import get_mu_map_list
+from .reading import read_coords
+from .walking_vector import go_through_path
+from .walking_clicking import get_to2
+
 from datetime import datetime
-from datetime import timedelta
 import math
 import itertools
 import time
 import numpy
-import re
-
-
-_cached_pos = None
-_cache_time = None
-
-
-def read_lvl_from_frame() -> int:
-    img = mu_window.grab_image_from_window(960, 110, 30, 15)
-    return extract_lvl(img)
-
-
-def read_coords_from_frame() -> tuple:
-    img = mu_window.grab_image_from_window(50, 35, 150, 13)
-    return extract_coords(img)
-
-
-def read_lvl2() -> int:
-    mu_window.press(ord("c"))
-    time.sleep(1)
-    lvl = read_lvl_from_frame()
-    mu_window.press(ord("c"))
-    return lvl
-
-
-def read_lvl() -> int:
-    win_title = mu_window.get_window_title()
-    lvl_str = re.search("Level: \d+", win_title)[0]
-    return int(lvl_str.split()[1])
-
-
-def read_coords() -> tuple:
-    return read_coords_from_frame()
-
-
-def _attack() -> None:
-    mu_window.mouse_event("hold_right")
-    time.sleep(3)
-    mu_window.mouse_event("release_buttons")
-
-
-def _check_if_stucked(coords: tuple) -> None:
-    """ Detect stucked character."""
-    global _cached_pos
-    _cached_pos = _cached_pos or coords
-    global _cache_time
-    _cache_time = _cache_time or datetime.now()
-    time_now = datetime.now()
-    # print(
-    #     f"cached: {_cached_pos}, coords_now: {coords}, cache_time: {_cache_time}, time_now: {time_now}")
-    if _cached_pos != coords:
-        _cached_pos = coords
-        _cache_time = time_now
-        return
-
-    diff = time_now - _cache_time
-    if diff > timedelta(seconds=2):
-        _attack()
-        _cached_pos = coords
-        _cache_time = time_now
-
-
-def _walk_on_shortest_straight(goal: tuple) -> None:
-    while True:
-        current_coords = read_coords()
-        diff = (goal[0] - current_coords[0],
-                goal[1] - current_coords[1],)
-        if diff == (0, 0):
-            break
-        dx = 0
-        dy = 0
-        if diff[0]:
-            dx = math.copysign(1, diff[0])
-        if diff[1]:
-            dy = math.copysign(1, diff[1])
-
-        ddiff = (dx, dy)
-        mu_window.mouse_to_pos(SURR[ddiff])
-        time.sleep(0.05)
-        mu_window.mouse_event("click")
-        time.sleep(0.05)
-
-
-def get_to2(path: list) -> None:
-    global _cache_time
-    _cache_time = datetime.now()
-    global _cached_pos
-    _cached_pos = read_coords()
-    steps_made = 0
-
-    while steps_made < len(path):
-        current_coords = read_coords()
-        _check_if_stucked(current_coords)
-        following_coords = path[steps_made]
-
-        try:
-            tuple_zip = tuple(zip(current_coords, following_coords))
-            if numpy.linalg.norm(tuple(v1 - v2 for v1, v2 in tuple_zip)) < 2:
-                steps_made += 1
-                continue
-
-            diff = tuple(numpy.subtract(
-                following_coords, current_coords))
-
-            window_pixel_position = SURR[diff]
-            mu_window.click_on_pixel(window_pixel_position, delay=False)
-
-        except IndexError:
-            print("Final destination!")
-            break
-
-        except KeyError:
-            print("You got lost!")
-            _walk_on_shortest_straight(path[steps_made])
-            print("Back on path!")
 
 
 def prebihani(path: list, time_length: int = None) -> None:
@@ -161,7 +48,7 @@ def go_to(target_coords: tuple, map_name: str):
         return
     path = djikstra8(
         current_coords, target_coords, get_mu_map_list(map_name))
-    get_to2(path)
+    go_through_path(path)
 
 
 def go_to_spot(spot) -> None:
