@@ -1,42 +1,10 @@
-from .reading import read_coords
-from mu_window import mu_window
 from conf.conf import SURR
+from mu_window import mu_window
 
-from datetime import datetime, timedelta
-import time
-import math
+from .reading import read_coords
+from .walking_straight import _walk_on_shortest_straight, _check_if_stucked
+
 import numpy
-
-
-_cached_pos = None
-_cache_time = None
-
-
-def _attack() -> None:
-    mu_window.mouse_event("hold_right")
-    time.sleep(3)
-    mu_window.mouse_event("release_buttons")
-
-
-def _check_if_stucked(coords: tuple) -> None:
-    """ Detect stucked character."""
-    global _cached_pos
-    _cached_pos = _cached_pos or coords
-    global _cache_time
-    _cache_time = _cache_time or datetime.now()
-    time_now = datetime.now()
-    # print(
-    #     f"cached: {_cached_pos}, coords_now: {coords}, cache_time: {_cache_time}, time_now: {time_now}")
-    if _cached_pos != coords:
-        _cached_pos = coords
-        _cache_time = time_now
-        return
-
-    diff = time_now - _cache_time
-    if diff > timedelta(seconds=2):
-        _attack()
-        _cached_pos = coords
-        _cache_time = time_now
 
 
 def clicker(q: list) -> None:
@@ -46,10 +14,6 @@ def clicker(q: list) -> None:
 
 
 def get_to2(path: list) -> None:
-    global _cache_time
-    _cache_time = datetime.now()
-    global _cached_pos
-    _cached_pos = read_coords()
     steps_made = 0
 
     while steps_made < len(path):

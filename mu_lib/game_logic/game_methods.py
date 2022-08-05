@@ -41,15 +41,10 @@ def prebihani(path: list, time_length: int = None) -> None:
 
 def go_to(target_coords: tuple, map_name: str):
     current_coords = read_coords()
-    vector = (
-        target_coords[0] - current_coords[0],
-        target_coords[1] - current_coords[1],
-    )
-    if abs(vector[0]) <= 2 and abs(vector[1]) <= 2:
-        return
     path = djikstra8(
         current_coords, target_coords, get_mu_map_list(map_name))
     go_through_path(path)
+    _walk_on_shortest_straight(target_coords)
 
 
 def go_to_spot(spot) -> None:

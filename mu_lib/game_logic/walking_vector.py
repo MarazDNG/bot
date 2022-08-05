@@ -15,8 +15,9 @@ def go_through_path(path: list) -> None:
     ahead = 5
     mouse_to_pos(origin)
     mouse_event("hold_left")
-    while ct < path_len + 2:
+    while ct < path_len - 1:
         my_coords = read_coords()
+
         try:
             ahead_coords = path[ct + ahead]
         except IndexError:
@@ -49,7 +50,7 @@ def transform_vector(vector):
     """Transform and scale vector by screen coordinates.
     """
     start = time.time()
-    k = 250
+    k = 120
     ox = vector[0] * k
     oy = vector[1] * k
     nx = ox * cos(1/4 * pi) + oy * sin(1/4 * pi)

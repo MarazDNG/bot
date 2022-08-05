@@ -23,10 +23,8 @@ def warp_stadium_city():
 
 def warp_peace_swamp(portal_close_coords: tuple, portal_coords: tuple):
     game_methods.warp_to(PEACE_SWAMP[0])
-    game_methods.go_to(portal_close_coords, PEACE_SWAMP[0])
+    game_methods.go_to(portal_coords, PEACE_SWAMP[0])
     time.sleep(2)
-    if game_methods.distance(game_methods.read_coords(), portal_coords) <= 2:
-        game_methods.go_through_portal(portal_coords)
 
 
 STADIUM = ("stadium", "stadium", 50)
