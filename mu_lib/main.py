@@ -2,6 +2,7 @@
 import contextlib
 from game_logic import game_methods
 from game_logic import game_menu
+from game_logic import reading
 from game_logic.reset import reset
 from conf.conf import SPOT_SEQUENCE
 from mu_window.mu_window import activate_window
@@ -22,7 +23,7 @@ if __name__ == "__main__":
     f_go_to_spot = True
 
     while True:
-        lvl = game_methods.read_lvl()
+        lvl = reading.read_lvl()
 
         if lvl == 1:
             game_methods.distribute_stats()
