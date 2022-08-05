@@ -36,6 +36,7 @@ if __name__ == "__main__":
             reset()
             activate_window()
             game_menu.game_login()
+            time.sleep(2)
             continue
 
         with contextlib.suppress(IndexError):
