@@ -2,7 +2,8 @@ from conf.conf import SURR
 from mu_window import mu_window
 
 from .reading import read_coords
-from .walking_straight import _walk_on_shortest_straight, _check_if_stucked
+from .walking_straight import _walk_on_shortest_straight
+from .meth import _if_stucked
 
 import numpy
 
@@ -18,7 +19,7 @@ def get_to2(path: list) -> None:
 
     while steps_made < len(path):
         current_coords = read_coords()
-        _check_if_stucked(current_coords)
+        _if_stucked(current_coords)
         following_coords = path[steps_made]
 
         try:
