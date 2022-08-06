@@ -3,6 +3,7 @@
 #
 
 
+import contextlib
 from mu_window import mu_window
 from arduino_api import arduino_api
 from conf.conf import SURR, KEY_HOME, KEY_RETURN, STR, AGI, VIT, ENE
@@ -14,7 +15,7 @@ from .walking_vector import go_through_path
 from .walking_clicking import get_to2
 from .walking_straight import _walk_on_shortest_straight
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import math
 import itertools
 import time
@@ -26,16 +27,14 @@ def prebihani(path: list, time_length: int = None) -> None:
     start = datetime.now()
     time.sleep(3)
     get_to2(path)
-
     time.sleep(3)
     path.reverse()
     get_to2(path)
     path.reverse()
-
     if time_length:
         end = datetime.now()
         rem = end - start
-        if rem > timedelta(seconds=0):
+        with contextlib.suppress(ValueError):
             time.sleep(time_length - rem.total_seconds() + 2)
 
 
@@ -69,6 +68,9 @@ def _is_helper_on() -> bool:
 
 
 def _detect_ok() -> bool:
+    """
+        Detects if OK button is on the screen.
+    """
     # 600 235 30 1
     bbox = (600, 235, 30, 1)
     test_indices = (6, 8, 20, 27)

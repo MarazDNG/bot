@@ -9,11 +9,11 @@ def _read_coords_from_frame() -> tuple:
     return extract_coords(img)
 
 
+def read_coords() -> tuple:
+    return _read_coords_from_frame()
+
+
 def read_lvl() -> int:
     win_title = mu_window.get_window_title()
     lvl_str = re.search("Level: \d+", win_title)[0]
     return int(lvl_str.split()[1])
-
-
-def read_coords() -> tuple:
-    return _read_coords_from_frame()
