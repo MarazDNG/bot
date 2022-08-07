@@ -6,6 +6,7 @@ from game_logic.map import get_mu_map_list
 from game_logic import game_menu
 from game_logic import warps_mapping
 from game_logic import spots
+from game_logic import reading
 
 from main import activate_window
 import time
@@ -44,7 +45,7 @@ path_dev4 = [
 ]
 
 if __name__ == "__main__":
-    activate_window()
+    # activate_window()
     # game_methods.distribute_stats()
     # game_menu.server_selection()
     # game_methods.go_to((173, 217), "peaceswamp")
@@ -53,5 +54,5 @@ if __name__ == "__main__":
     # game_methods.get_to2(path_dev4)
     # test_walking_porting()
     # while True:
-    #     game_methods.read_coords()
-    test_go_to_sapi_duo()
+    print(reading.read_coords())
+    # test_go_to_sapi_duo()
