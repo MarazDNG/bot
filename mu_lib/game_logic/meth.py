@@ -12,8 +12,6 @@ def _if_stucked(coords: tuple, recovery: callable = None, wait_time: int = 2) ->
     global _cache_time
     _cache_time = _cache_time or datetime.now()
     time_now = datetime.now()
-    # print(
-    #     f"cached: {_cached_pos}, coords_now: {coords}, cache_time: {_cache_time}, time_now: {time_now}")
     if _cached_pos != coords:
         _cached_pos = coords
         _cache_time = time_now

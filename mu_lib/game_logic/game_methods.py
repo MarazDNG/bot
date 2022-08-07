@@ -5,7 +5,6 @@
 
 import contextlib
 from mu_window import mu_window
-from arduino_api import arduino_api
 from conf.conf import SURR, KEY_HOME, KEY_RETURN, STR, AGI, VIT, ENE
 
 from .djikstra import djikstra8
@@ -81,7 +80,7 @@ def _detect_ok() -> bool:
 
 def start_helper() -> bool:
     if not _is_helper_on():
-        arduino_api.send_ascii(KEY_HOME)
+        mu_window.press(KEY_HOME)
     time.sleep(0.5)
     if not _is_helper_on():
         if _detect_ok():
@@ -97,11 +96,11 @@ def start_helper() -> bool:
 
 
 def _to_chat(msg: str) -> None:
-    arduino_api.send_ascii(KEY_RETURN)
+    mu_window.press(KEY_RETURN)
     time.sleep(0.5)
-    arduino_api.send_string(msg)
+    mu_window.write_text(msg)
     time.sleep(0.5)
-    arduino_api.send_ascii(KEY_RETURN)
+    mu_window.press(KEY_RETURN)
     time.sleep(0.5)
 
 
