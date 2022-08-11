@@ -8,6 +8,33 @@ import time
 import numpy
 
 
+def go_direction(target_coords: tuple) -> None:
+    origin = SURR[0, 0]
+
+    mouse_to_pos(origin)
+    time.sleep(0.1)
+    mouse_event("hold_left")
+
+    while distance(target_coords, my_coords := read_coords()) > 2:
+        print("coords:", my_coords, "target:", target_coords)
+        if _if_stucked(my_coords):
+            vector = get_vector(target_coords, my_coords)
+            vector = transform_vector(vector, k=250)
+            mouse_pos = origin[0] + vector[0], origin[1] + vector[1]
+            mouse_to_pos(mouse_pos)
+            time.sleep(0.5)
+            continue
+
+        vector = get_vector(target_coords, my_coords)
+        vector = transform_vector(vector)
+        mouse_pos = origin[0] + vector[0], origin[1] + vector[1]
+        mouse_to_pos(mouse_pos)
+        time.sleep(0.02)
+
+    mouse_event("release_buttons")
+    print("Finish!")
+
+
 def go_through_path(path: list) -> None:
     """ Works nicely."""
     ct = 0

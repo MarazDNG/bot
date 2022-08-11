@@ -10,9 +10,10 @@ from conf.conf import SURR, KEY_HOME, KEY_RETURN, STR, AGI, VIT, ENE
 from .djikstra import djikstra8
 from .map import get_mu_map_list
 from .reading import read_coords
-from .walking_vector import go_through_path
+from .walking_vector import go_through_path, go_direction
 from .walking_clicking import get_to2
 from .walking_straight import _walk_on_shortest_straight
+from .memory import surrounding_units
 
 from datetime import datetime, timedelta
 import math
@@ -51,19 +52,16 @@ def go_to_spot(spot) -> None:
     else:
         warp_to(spot.warp)
     go_to(spot.coords, spot.map)
+    kill_runaway_units()
+    _walk_on_shortest_straight(spot.coords)
 
 
 def _is_helper_on() -> bool:
-    on = (74, 53, 5)
+    on = 74, 53, 5
     img = mu_window.grab_image_from_window(299, 35, 1, 1)
     img = numpy.asarray(img)
     color = tuple(img[0][0])
-    res = color[0] == on[0] and color[1] == on[1] and color[2] == on[2]
-    if res:
-        print("Helper is on!")
-    else:
-        print("Helper is off!")
-    return res
+    return color[0] == on[0] and color[1] == on[1] and color[2] == on[2]
 
 
 def _detect_ok() -> bool:
@@ -127,3 +125,13 @@ def go_through_portal(portal_coords: tuple) -> None:
     _walk_on_shortest_straight(portal_coords)
     # mu_window.click_on_pixel(SURR[diff])
     time.sleep(3)
+
+
+def kill_runaway_units() -> None:
+    units = surrounding_units()
+    my_coords = read_coords()
+    start_helper()
+    for u in units:
+        if distance(my_coords, u.coords) > 5:
+            go_direction(u.coords)
+            time.sleep(2)

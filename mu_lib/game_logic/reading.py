@@ -12,3 +12,7 @@ def read_lvl() -> int:
     win_title = mu_window.get_window_title()
     lvl_str = re.search("Level: \d+", win_title)[0]
     return int(lvl_str.split()[1])
+
+
+def surrounding_units() -> list:
+    return memory.surrounding_units()
