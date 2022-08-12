@@ -1,4 +1,9 @@
 from datetime import datetime, timedelta
+import math
+
+
+def distance(a: tuple, b: tuple) -> float:
+    return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
 
 _cached_pos = None

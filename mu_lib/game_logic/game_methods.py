@@ -14,9 +14,9 @@ from .walking_vector import go_through_path, go_direction
 from .walking_clicking import get_to2
 from .walking_straight import _walk_on_shortest_straight
 from .memory import surrounding_units
+from .meth import distance
 
 from datetime import datetime, timedelta
-import math
 import itertools
 import time
 import numpy
@@ -112,10 +112,6 @@ def distribute_stats() -> None:
     _to_chat(f"/addagi {AGI}")
     _to_chat(f"/addvit {VIT}")
     _to_chat(f"/addene {ENE}")
-
-
-def distance(a: tuple, b: tuple) -> float:
-    return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
 
 def go_through_portal(portal_coords: tuple) -> None:
