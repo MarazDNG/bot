@@ -26,10 +26,10 @@ def prebihani(path: list, time_length: int = None) -> None:
     """ Run to the end of path and back."""
     start = datetime.now()
     time.sleep(3)
-    get_to2(path)
+    go_through_path(path)
     time.sleep(3)
     path.reverse()
-    get_to2(path)
+    go_through_path(path)
     path.reverse()
     if time_length:
         end = datetime.now()
