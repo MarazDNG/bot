@@ -2,9 +2,11 @@ from .reading import read_coords
 from .meth import _if_stucked
 from conf.conf import SURR
 from mu_window import mu_window
+from .decorators import d_logger
 
 import time
 import math
+import logging
 
 
 def _attack() -> None:
@@ -13,9 +15,11 @@ def _attack() -> None:
     mu_window.mouse_event("release_buttons")
 
 
+@d_logger
 def _walk_on_shortest_straight(goal: tuple) -> None:
     while True:
         current_coords = read_coords()
+        logging.debug(f"current_coords: {current_coords}")
         _if_stucked(current_coords, recovery=_attack)
         diff = (goal[0] - current_coords[0],
                 goal[1] - current_coords[1],)

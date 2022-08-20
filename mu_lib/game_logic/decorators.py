@@ -1,3 +1,6 @@
+import logging
+
+
 def repeated_value_counter(foo: callable):
     """
     Return how many times a function returned same value.
@@ -16,5 +19,18 @@ def repeated_value_counter(foo: callable):
             wrapper.counter = 0
             wrapper.value = value
         return value
+
+    return wrapper
+
+
+def d_logger(foo: callable):
+    """
+    Decorator for logging.
+    """
+    def wrapper(*args, **kwargs):
+        logging.debug(f"{foo.__name__}({args}, {kwargs})")
+        ret = foo(*args, **kwargs)
+        logging.debug(f"{foo.__name__} returned {ret}")
+        return ret
 
     return wrapper

@@ -1,3 +1,4 @@
+from datetime import date
 from itertools import product
 import logging
 
@@ -24,8 +25,10 @@ def djikstra4(start: tuple, goal: tuple, array_map: list) -> list:
 
 def _djikstra_body(start: tuple, goal: tuple, array_map: list, neighbor_fnc: callable) -> list:
     logging.basicConfig(level=logging.DEBUG,
-                        filename="djikstra.log", filemode="w")
-    logging.debug(f"Start: {start}, Goal: {goal}")
+                        filename="djikstra.log",
+                        filemode="w",
+                        datefmt="%Y/%m/%d %H:%M:%S",)
+    logging.info(f"Start: { start}, Goal: {goal}")
     sets = [
         {start, }
     ]
