@@ -2,6 +2,7 @@ from .reading import read_coords
 from .meth import _if_stucked
 from mu_window.mu_window import mouse_to_pos, mouse_event
 from conf.conf import SURR
+from .decorators import d_logger
 
 from math import sqrt, cos, sin, pi
 import time
@@ -41,7 +42,6 @@ def go_through_path(path: list) -> None:
     origin = SURR[0, 0]
     path_len = len(path)
     ahead = 5
-    mouse_to_pos(origin)
     mouse_event("hold_left")
     while ct < path_len - 1:
         my_coords = read_coords()
@@ -66,11 +66,13 @@ def go_through_path(path: list) -> None:
         # standard movement
         vector = get_vector(ahead_coords, my_coords)
         vector = transform_vector(vector)
+        vector = perspective_transform(vector)
         mouse_pos = origin[0] + vector[0], origin[1] + vector[1]
         mouse_to_pos(mouse_pos)
         time.sleep(0.02)
 
     mouse_event("release_buttons")
+    mouse_to_pos(origin)
     print("Finish!")
 
 
@@ -87,7 +89,7 @@ def get_vector(target_pos, current_pos):
     return vector
 
 
-def transform_vector(vector, k: int = 120):
+def transform_vector(vector, k: int = 200):
     """Transform and scale vector by screen coordinates.
     """
     start = time.time()
@@ -98,6 +100,25 @@ def transform_vector(vector, k: int = 120):
     end = time.time()
     # print('transform vector took:', end-start)
     return (nx, ny)
+
+
+@d_logger
+def perspective_transform(vector: tuple):
+    # perspective formula
+    # ys/n = y/z
+    n = 0.5
+    alpha = pi / 4
+    v = 3
+
+    r = vector[1] / numpy.linalg.norm(vector)
+
+    z = v - r * cos(alpha)
+    y = r * sin(alpha)
+
+    ys = n * y / z
+
+    coeff = ys / (n * r / v)
+    return (vector[0], coeff * vector[1])
 
 
 def distance(a, b):
