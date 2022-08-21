@@ -30,9 +30,9 @@ def _walk_on_shortest_straight(goal: tuple) -> None:
         dx = 0
         dy = 0
         if diff[0]:
-            dx = math.copysign(1, diff[0])
+            dx = math.copysign(diff[0] == 1 or 2, diff[0])
         if diff[1]:
-            dy = math.copysign(1, diff[1])
+            dy = math.copysign(diff[0] == 1 or 2, diff[1])
 
         ddiff = (dx, dy)
         mu_window.mouse_to_pos(SURR[ddiff])

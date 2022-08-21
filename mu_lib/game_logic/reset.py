@@ -2,12 +2,17 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
-from conf.conf import ID, PW
+from datetime import datetime, timedelta
 
+from conf.conf import ID, PW
 # Done
 
 
 def reset():
+    reset.last_time = getattr(reset, "last_time", datetime.now())
+    if datetime.now() - reset.last_time < timedelta(seconds=1200):
+        return
+
     driver = webdriver.Firefox()
     driver.maximize_window()
     driver.get("https://eternmu.cz/")
