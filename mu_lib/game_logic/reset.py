@@ -1,3 +1,5 @@
+from multiprocessing import Process
+import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -8,11 +10,11 @@ from conf.conf import ID, PW
 # Done
 
 
-def reset():
-    reset.last_time = getattr(reset, "last_time", datetime.now())
-    if datetime.now() - reset.last_time < timedelta(seconds=1200):
-        return
+class ResetError(Exception):
+    pass
 
+
+def do_reset():
     driver = webdriver.Firefox()
     driver.maximize_window()
     driver.get("https://eternmu.cz/")
@@ -42,3 +44,19 @@ def reset():
     logout_btn.click()
 
     driver.close()
+
+
+def reset():
+    reset.last_time = getattr(reset, "last_time", datetime.now())
+    if datetime.now() - reset.last_time < timedelta(seconds=1200):
+        return
+
+    for _ in range(3):
+        p = Process(target=do_reset)
+        p.start()
+        p.join(30)
+        if p.exitcode == 0:
+            reset.last_time = datetime.now()
+            return
+
+    raise ResetError("Reset failed!")
