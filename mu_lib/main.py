@@ -9,9 +9,13 @@ from mu_window.mu_window import activate_window
 
 import time
 import contextlib
-
+import logging
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG,
+                        filename="mu.log",
+                        filemode="w",
+                        datefmt="%Y/%m/%d %H:%M:%S",)
     activate_window()
     spot_sequence_counter = 0
     f_go_to_spot = True

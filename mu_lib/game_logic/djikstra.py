@@ -1,3 +1,5 @@
+from .exceptions import TooManyIterationsException
+
 from datetime import date
 from itertools import product
 import logging
@@ -24,10 +26,6 @@ def djikstra4(start: tuple, goal: tuple, array_map: list) -> list:
 
 
 def _djikstra_body(start: tuple, goal: tuple, array_map: list, neighbor_fnc: callable) -> list:
-    logging.basicConfig(level=logging.DEBUG,
-                        filename="djikstra.log",
-                        filemode="w",
-                        datefmt="%Y/%m/%d %H:%M:%S",)
     logging.info(f"Start: { start}, Goal: {goal}")
     sets = [
         {start, }
@@ -35,7 +33,7 @@ def _djikstra_body(start: tuple, goal: tuple, array_map: list, neighbor_fnc: cal
     distance = 0
     while True:
         if distance > 1000:
-            raise Exception("Too many iterations")
+            raise TooManyIterationsException("Too many iterations")
         new_set = set()
         for item in sets[distance]:
             neighbors = neighbor_fnc(*item)
