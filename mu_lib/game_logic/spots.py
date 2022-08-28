@@ -22,3 +22,33 @@ GREAT_BAHAMUTS = Spot((239, 50), *ATLANS2)
 BLUE_GOLEMS = Spot((221, 166), *STADIUM_CITY)
 SAPI_DUOS = Spot((173, 217), *PEACE_SWAMP1)
 SAPI_TRES_SHADOW = Spot((53, 28), *PEACE_SWAMP3, (53, 10), 12)
+
+n_BUDGE_DRAGONS = {
+    "warp": "lorencia",
+    "min_lvl": 10,
+    "coords": (151, 60),
+}
+
+n_WEREWOLVES = {
+    "warp": "elbeland2",
+    "min_lvl": 20,
+    "coords": (57, 69),
+}
+
+n_GREAT_BAHAMUTS = {
+    "warp": "atlans2",
+    "min_lvl": 80,
+    "coords": (239, 50),
+}
+
+n_BLUE_GOLEMS = {
+    "warp": "stadium_city",
+    "min_lvl": 100,
+    "coords": (221, 166),
+}
+
+n_SAPI_DUOS = {
+    "warp": "peaceswamp1",
+    "min_lvl": 300,
+    "coords": (173, 217),
+}

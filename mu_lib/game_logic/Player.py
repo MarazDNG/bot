@@ -1,37 +1,88 @@
-from .reading import read_lvl, read_reset
+from threading import local
 import requests
 import re
+import time
 from cached_property import cached_property_with_ttl
 
-
 from .reset import reset
-from .reading import read_coords
+from .reading import read_lvl, read_reset, read_coords
 from .game_methods import _to_chat
+from .exceptions import WarpException
 from conf.stats import stats
+from .spots import *
+from mu_window import mu_window
+from . import game_menu
+from .game_methods import go_to
+from mu_lib.game_logic import game_methods
 
 
 class Player:
 
     def __init__(self):
         self.reset = read_reset()
-        self.map = None
+        self._warp = "lorencia"
         self.stats = stats
+        self.leveling_plan = {
+            n_BUDGE_DRAGONS,
+            n_WEREWOLVES,
+            n_BLUE_GOLEMS,
+        }
+        self.current_spot_index = 1
 
     @property
     def total_stats(self):
         return 20 * 1000 * self.gr + 500 * self.reset + 6 * (self.lvl - 1)
 
-    def _distribute_relativety(self, stats_to_distribute: int) -> None:
-        parts = sum(int(self.stats[key][1:])
-                    for key in self.stats if self.stats[key][0] == "r")
+    @property
+    def lvl(self):
+        return read_lvl()
 
-        for stat in self.stats:
-            if self.stats[stat][0] == "r":
-                to_add = int(int(self.stats[stat][1:])
-                             * stats_to_distribute / parts)
-                _to_chat(f"/add{stat} {to_add}")
+    @property
+    def coords(self) -> tuple:
+        return read_coords()
+
+    @cached_property_with_ttl(ttl=12 * 60 * 60)
+    def gr(self):
+        resp = requests.get(
+            "https://eternmu.cz/old/profile/player/req/Marshall/")
+        gr_str = re.search("Grand resety</td><td>\d+", resp.text)[0]
+        return int(gr_str.split("</td><td>")[1])
+
+    @property
+    def warp(self):
+        return self._warp
+
+    @warp.setter
+    def warp(self, value: str):
+        def warp_to(warp: str) -> None:
+            """Used only when required level is met.
+            """
+            def stadium_city():
+                mu_window.press(ord("m"))
+                time.sleep(0.5)
+                mu_window.click_on_pixel((100, 115))
+
+            def peaceswamp1():
+                warp_to("peaceswamp")
+                self._go_to_coords((139, 125))
+
+            tmp = self.coords
+
+            if warp in locals():
+                locals()[warp]()
+            else:
+                _to_chat(f"/warp {warp}")
+            time.sleep(3)
+
+            if self.coords == tmp:
+                raise WarpException("Warp failed")
+
+        warp_to(value)
+        self.warp = value
 
     def distribute_stats(self) -> None:
+        """If stats should be distributed, distribute them.
+        """
         self.distribute_stats.last_lvl = getattr(
             self.distribute_stats, "last_lvl", 1)
         lvl = self.lvl
@@ -52,28 +103,59 @@ class Player:
             self.distribute_stats.last_lvl = lvl
             self._distribute_relativety(total)
 
-    @property
-    def lvl(self):
-        return read_lvl()
+    def check_best_spot(self):
+        """Go to best spot if not on it.
+        """
+        if self._is_on_best_spot():
+            return
+        self._go_to_best_spot()
 
-    @property
-    def coords(self) -> tuple:
-        return read_coords()
-
-    @cached_property_with_ttl(ttl=12 * 60 * 60)
-    def gr(self):
-        resp = requests.get(
-            "https://eternmu.cz/old/profile/player/req/Marshall/")
-        gr_str = re.search("Grand resety</td><td>\d+", resp.text)[0]
-        return int(gr_str.split("</td><td>")[1])
-
-    def _reset():
-        reset()
-
-    def try_reset(self):
+    def try_reset(self) -> bool:
+        """Do reset if required level is met.
+        """
         # first 10 resets
         level_needed = 400
         if self.gr == 0 and self.reset < 10:
             level_needed = 300 + 10 * self.reset
         if self.lvl >= level_needed:
+            game_menu.server_selection()
             self._reset()
+            mu_window.activate_window()
+            game_menu.game_login()
+            time.sleep(2)
+            return True
+        return False
+
+    def farm(self):
+        game_methods.start_helper()
+        time.sleep(5)
+
+    def _distribute_relativety(self, stats_to_distribute: int) -> None:
+        parts = sum(int(self.stats[key][1:])
+                    for key in self.stats if self.stats[key][0] == "r")
+
+        for stat in self.stats:
+            if self.stats[stat][0] == "r":
+                to_add = int(int(self.stats[stat][1:])
+                             * stats_to_distribute / parts)
+                _to_chat(f"/add{stat} {to_add}")
+
+    def _reset():
+        reset()
+
+    def _is_on_best_spot(self) -> bool:
+        if self.current_spot_index + 1 == len(self.leveling_plan):
+            return True
+        return self.lvl < self.leveling_plan[self.current_spot_index + 1]["min_lvl"]
+
+    def _go_to_best_spot(self):
+        while not self._is_on_best_spot():
+            self.current_spot_index += 1
+        self.warp = self.leveling_plan[self.current_spot_index]["warp"]
+        self._go_to_coords(
+            self.leveling_plan[self.current_spot_index]["coords"])
+        game_methods.kill_runaway_units()
+
+    def _go_to_coords(self, coords: tuple):
+        area = "".join(i for i in self.warp if i.isalpha())
+        game_methods.go_to(coords, area)
