@@ -25,7 +25,8 @@ def _distance(x1, y1, x2, y2) -> float:
 
 
 def surrounding_units() -> list[Unit]:
-
+    """Return 6 closest same units.
+    """
     d0 = 0x00A7A224
     d1 = 0x8
     d2 = 0x38

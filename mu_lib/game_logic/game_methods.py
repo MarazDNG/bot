@@ -77,6 +77,7 @@ def _detect_ok() -> bool:
 
 
 def start_helper() -> bool:
+    """Starts helper if it is not on."""
     if not _is_helper_on():
         mu_window.press(KEY_HOME)
     time.sleep(0.5)

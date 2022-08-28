@@ -5,3 +5,7 @@ class StuckedException(Exception):
 
 class TooManyIterationsException(Exception):
     pass
+
+
+class WarpException(Exception):
+    pass
