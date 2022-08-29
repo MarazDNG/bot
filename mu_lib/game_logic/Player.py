@@ -14,6 +14,7 @@ from mu_window import mu_window
 from . import game_menu
 from .game_methods import go_to
 from mu_lib.game_logic import game_methods
+from .meth import distance
 
 
 class Player:
@@ -22,12 +23,17 @@ class Player:
         self.reset = read_reset()
         self._warp = "lorencia"
         self.stats = stats
-        self.leveling_plan = {
+        self.leveling_plan = [
             n_BUDGE_DRAGONS,
             n_WEREWOLVES,
             n_BLUE_GOLEMS,
+        ]
+        self.current_spot_index = 0
+        self.farming = {
+            "flag": False,
+            "coords": None,
         }
-        self.current_spot_index = 1
+        self.death_spots = set()
 
     @property
     def total_stats(self):
@@ -80,6 +86,9 @@ class Player:
         warp_to(value)
         self.warp = value
 
+        # update flag
+        self.farming["flag"] = False
+
     def distribute_stats(self) -> None:
         """If stats should be distributed, distribute them.
         """
@@ -123,12 +132,24 @@ class Player:
             mu_window.activate_window()
             game_menu.game_login()
             time.sleep(2)
+            self.__init__()
             return True
         return False
 
     def farm(self):
+        if not self.farming["flag"]:
+            self.farming["flag"] = True
+            self.farming["coords"] = self.coords
         game_methods.start_helper()
         time.sleep(5)
+
+    def check_death(self):
+        if self.farming["flag"] and distance(self.coords, self.farming["coords"]) > 7:
+            # we died
+            self.farming["flag"] = False
+            del self.leveling_plan[self.current_spot_index]
+            self.current_spot_index -= 1
+            self._go_to_best_spot()
 
     def _distribute_relativety(self, stats_to_distribute: int) -> None:
         parts = sum(int(self.stats[key][1:])

@@ -19,19 +19,13 @@ if __name__ == "__main__":
                         datefmt="%Y/%m/%d %H:%M:%S",)
     activate_window()
     player = Player()
-    spot_sequence_counter = 0
-    f_go_to_spot = True
 
     while True:
         lvl = player.lvl
 
         player.distribute_stats()
 
-        # level reset
-        if player.try_reset():
-            spot_sequence_counter = 0
-            f_go_to_spot = True
-            continue
+        player.try_reset()
 
         player.check_best_spot()
 
