@@ -1,7 +1,7 @@
 
-from scripts import activate_window
+from mu_window.mu_window import activate_window
 from PIL import Image
-from game_logic.game_methods import read_coords
+from game_logic.reading import read_coords
 import sys
 
 

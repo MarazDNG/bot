@@ -23,6 +23,8 @@ if __name__ == "__main__":
     while True:
         lvl = player.lvl
 
+        player.check_death()
+
         player.distribute_stats()
 
         player.try_reset()

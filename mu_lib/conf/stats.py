@@ -1,10 +1,11 @@
 # stats
 
+# BK stats
 stats = {
-    "str": "f500",
-    "agi": "r1",
-    "vit": "f3000",
-    "ene": "r1",
+    "str": "r3",
+    "agi": "r2",
+    "vit": "f100",
+    "ene": "r5",
 }
 
 STR = 500

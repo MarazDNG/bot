@@ -6,7 +6,8 @@ Arduino mouse and keyboard API for python.
 import numpy
 import pyautogui
 from serial.serialwin32 import Serial
-from conf.conf import PORT
+
+PORT = "COM12"
 
 UPPER_LIMIT = 120
 LOWER_LIMIT = -120

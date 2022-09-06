@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from threading import local
 import requests
 import re
@@ -100,6 +101,7 @@ class Player:
             total = self.gr * 10*1000 + self.reset * 500
             for stat in self.stats:
                 if self.stats[stat][0] == "f":
+                    # distribute flat
                     to_add = int(self.stats[stat][1:])
                     total -= to_add
                     _to_chat(f"/add{stat} {to_add}")
@@ -108,7 +110,7 @@ class Player:
         if self.reset < 15:
             if self.lvl < self.distribute_stats.last_lvl:
                 self.distribute_stats.last_lvl = 1
-            total += (self.lvl - self.distribute_stats.last_lvl) * 6
+            total = (self.lvl - self.distribute_stats.last_lvl) * 6
             self.distribute_stats.last_lvl = lvl
             self._distribute_relativety(total)
 

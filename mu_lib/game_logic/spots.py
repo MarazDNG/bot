@@ -52,3 +52,15 @@ n_SAPI_DUOS = {
     "min_lvl": 300,
     "coords": (173, 217),
 }
+
+n_GRIZZLYS_1 = {
+    "warp": "elbeland3",
+    "min_lvl": 50,
+    "coords": (192, 92),
+}
+
+n_GRIZZLYS_2 = {
+    "warp": "elbeland3",
+    "min_lvl": 50,
+    "coords": (184, 75),
+}
