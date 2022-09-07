@@ -1,8 +1,6 @@
 #include "Mouse.h"
 #include <Keyboard.h>
 
-bool home_flag;
-
 void setup()
 {
   // put your setup code here, to run once:
@@ -10,8 +8,9 @@ void setup()
   Keyboard.begin();
   // stream.setTimeout(50);
   Serial.begin(9600);
-  home_flag = false;
 }
+
+bool home_flag = false;
 
 void loop()
 {

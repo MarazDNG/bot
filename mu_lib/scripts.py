@@ -1,13 +1,12 @@
-from cgi import test
 
 from game_logic import game_methods
 from game_logic.djikstra import djikstra8
-from game_logic.map import get_mu_map_list
+from game_logic import map
 from game_logic import game_menu
 from game_logic import warps_mapping
 from game_logic import spots
 from game_logic import reading
-
+from mu_window import mu_window
 from main import activate_window
 import time
 import os
@@ -29,7 +28,7 @@ def test_walking_porting():
 
 
 def test_go_to_sapi_duo():
-    game_methods.go_to_spot(spots.SAPI_DUOS)
+    game_methods.go_to_spot(spots.BLUE_GOLEMS)
 
 
 path_dev4 = [
@@ -44,15 +43,18 @@ path_dev4 = [
     (80, 182),
 ]
 
+
+def bk_combo_helper():
+    while True:
+        while not game_methods._is_helper_on():
+            mu_window.press(game_methods.KEY_HOME)
+            time.sleep(0.5)
+        mu_window.flashing_helper()
+        time.sleep(20)
+        mu_window.flashing_helper()
+
+
 if __name__ == "__main__":
-    # activate_window()
-    # game_methods.distribute_stats()
-    # game_menu.server_selection()
-    # game_methods.go_to((173, 217), "peaceswamp")
-    # game_methods.go_through_portal((139, 126))
-    # warps_mapping.warp_peace_swamp1()
-    # game_methods.get_to2(path_dev4)
-    # test_walking_porting()
-    # while True:
-    print(reading.read_coords())
-    # test_go_to_sapi_duo()
+
+    activate_window()
+    bk_combo_helper()

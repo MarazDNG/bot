@@ -11,6 +11,7 @@ from arduino_api.arduino_api import hold_left
 from arduino_api.arduino_api import hold_right
 from arduino_api.arduino_api import release_buttons
 from arduino_api.arduino_api import send_ascii
+from arduino_api.arduino_api import _send
 
 WINDOW_PARTIAL_TEXT = "Player:"
 
@@ -99,6 +100,10 @@ def write_text(text: str):
 
 def wait(time_sec: int):
     time.sleep(time_sec)
+
+
+def flashing_helper():
+    _send("h")
 
 
 def mouse_event(event):

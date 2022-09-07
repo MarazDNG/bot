@@ -14,7 +14,7 @@ from .spots import *
 from mu_window import mu_window
 from . import game_menu
 from .game_methods import go_to
-from mu_lib.game_logic import game_methods
+from . import game_methods
 from .meth import distance
 
 
