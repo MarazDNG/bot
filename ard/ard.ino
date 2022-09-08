@@ -1,6 +1,8 @@
 #include "Mouse.h"
 #include <Keyboard.h>
 
+bool home_flag;
+
 void setup()
 {
   // put your setup code here, to run once:
@@ -8,22 +10,15 @@ void setup()
   Keyboard.begin();
   // stream.setTimeout(50);
   Serial.begin(9600);
+  home_flag = false;
 }
-
-bool home_flag = false;
 
 void loop()
 {
   // put your main code here, to run repeatedly:
   // Mouse.move(10, 0, 0);
   // Serial.println("kokot");
-  if (home_flag)
-  {
-    click_key(210);
-    delay(50);
-    click_key(210);
-    delay(1000);
-  }
+
   if (Serial.available() > 0)
   {
     String input = Serial.readStringUntil('`');
@@ -57,10 +52,6 @@ void loop()
     {
       Mouse.release();
       Mouse.release(MOUSE_RIGHT);
-    }
-    else if (input[0] == 'h')
-    {
-      home_flag = !home_flag;
     }
     else
     {
