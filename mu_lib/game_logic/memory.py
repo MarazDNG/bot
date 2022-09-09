@@ -64,16 +64,16 @@ def surrounding_units() -> list[Unit]:
 
 def my_coords() -> tuple:
 
-    dx = 0x7dbe38C
-    dy = 0x7dbe388
-
+    d0 = 0x077C2F04
+    dx = 0xac
     rwm = ReadWriteMemory()
     process = rwm.get_process_by_name(process_name)
-    # print(process)
     process.open()
 
-    x = process.read(base_addr + dx)
-    y = process.read(base_addr + dy)
+    p = process.get_pointer(base_addr + d0, offsets=[dx])
+
+    x = process.read(p)
+    y = process.read(p + 0x4)
 
     process.close()
     return x, y
