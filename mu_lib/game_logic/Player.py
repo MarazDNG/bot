@@ -19,8 +19,8 @@ from .meth import distance
 
 class Player:
 
-    def __init__(self):
-        self.config = config["Silco"]
+    def __init__(self, char_name: str):
+        self.config = config[char_name]
         self.reset = read_reset()
         self._warp = "lorencia"
         self.stats = self.config["stats"]

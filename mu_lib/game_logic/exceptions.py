@@ -9,3 +9,6 @@ class TooManyIterationsException(Exception):
 
 class WarpException(Exception):
     pass
+
+class WrongArgumentsException(Exception):
+    pass

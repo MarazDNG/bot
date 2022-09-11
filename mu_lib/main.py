@@ -1,24 +1,22 @@
-
-from game_logic import game_methods
-from game_logic import game_menu
-from game_logic import reading
-from game_logic import map
-from game_logic.reset import reset
-from conf.conf import SPOT_SEQUENCE
 from mu_window.mu_window import activate_window
 from game_logic.Player import Player
+from game_logic.exceptions import WrongArgumentsException
 
-import time
-import contextlib
 import logging
+import sys
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
                         filename="mu.log",
                         filemode="w",
                         datefmt="%Y/%m/%d %H:%M:%S",)
+
+    if len(sys.argv) != 2:
+        raise WrongArgumentsException("Character name is required.")
+
     activate_window()
-    player = Player()
+    player = Player(sys.argv[1])
 
     while True:
         lvl = player.lvl
