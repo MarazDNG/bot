@@ -9,8 +9,7 @@ from .reset import reset
 from .reading import read_lvl, read_reset, read_coords
 from .game_methods import _to_chat
 from .exceptions import WarpException
-from conf.stats import stats
-from .spots import *
+from conf.stats import config
 from mu_window import mu_window
 from . import game_menu
 from .game_methods import go_to
@@ -21,21 +20,11 @@ from .meth import distance
 class Player:
 
     def __init__(self):
+        self.config = config["Silco"]
         self.reset = read_reset()
         self._warp = "lorencia"
-        self.stats = stats
-        self.leveling_plan = [
-            n_BUDGE_DRAGONS,
-            n_WEREWOLVES,
-            n_POISON_BULL_FIGHTERS_1,
-            n_DARK_KNIGHTS_2,
-            n_DARK_KNIGHTS_1,
-            n_THUNDER_LICHES_1,
-            n_MUTANTS_2,
-            n_MUTANTS_1,
-            n_SPLINTER_WOLVES_1,
-            n_SPLINTER_WOLVES_2,
-        ]
+        self.stats = self.config["stats"]
+        self.leveling_plan = self.config["leveling_plan"]
         self.last_dist_lvl = 1
         self.current_spot_index = 0
         self.farming = {
@@ -133,7 +122,8 @@ class Player:
             level_needed = 300 + 10 * self.reset
         if self.lvl >= level_needed:
             game_menu.server_selection()
-            self._reset()
+            self._reset(self.config["account"]["id"],
+                        self.config["account"]["pass"])
             mu_window.activate_window()
             game_menu.game_login()
             time.sleep(2)
@@ -166,8 +156,8 @@ class Player:
                              * stats_to_distribute / parts)
                 _to_chat(f"/add{stat} {to_add}")
 
-    def _reset():
-        reset()
+    def _reset(self, id: str, password: str) -> None:
+        reset(id, password)
 
     def _is_on_best_spot(self) -> bool:
         # print("current spot: ", self.leveling_plan[self.current_spot_index])

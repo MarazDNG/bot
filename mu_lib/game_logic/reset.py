@@ -6,26 +6,23 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 from datetime import datetime, timedelta
 
-from conf.conf import ID, PW
-# Done
-
 
 class ResetError(Exception):
     pass
 
 
-def do_reset():
+def do_reset(id: str, password: str):
     driver = webdriver.Firefox()
     driver.maximize_window()
     driver.get("https://eternmu.cz/")
 
     login = driver.find_element(By.ID, value='loginBox1')
     login.clear()
-    login.send_keys(ID)
+    login.send_keys(id)
 
     pw = driver.find_element(By.ID, value='loginBox2')
     pw.clear()
-    pw.send_keys(PW)
+    pw.send_keys(password)
 
     btn = driver.find_element(By.CLASS_NAME, value='button-login')
     btn.click()
@@ -46,13 +43,13 @@ def do_reset():
     driver.close()
 
 
-def reset():
+def reset(id: str, password: str):
     reset.last_time = getattr(reset, "last_time", datetime.now())
     if datetime.now() - reset.last_time < timedelta(seconds=1200):
         return
 
     for _ in range(3):
-        p = Process(target=do_reset)
+        p = Process(target=do_reset, args=(id, password))
         p.start()
         p.join(30)
         if p.exitcode == 0:
