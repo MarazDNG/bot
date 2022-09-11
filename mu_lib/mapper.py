@@ -1,9 +1,9 @@
 
 from mu_window.mu_window import activate_window
-from PIL import Image
 from game_logic.reading import read_coords
-import sys
 
+from PIL import Image
+import sys
 
 if len(sys.argv) != 2:
     raise Exception("Please provide a map name as an argument!")
@@ -22,13 +22,13 @@ activate_window()
 coords_set = set()
 while True:
     coords = read_coords()
-    if not coords:
+    if coords == (25, 27):
         break
+    print(coords)
     coords_set.add(coords)
 
 for i in coords_set:
     idk[
         i[0], i[1]
     ] = (255, 255, 255)
-
 img.save('mapper.png')
