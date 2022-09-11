@@ -27,8 +27,16 @@ class Player:
         self.leveling_plan = [
             n_BUDGE_DRAGONS,
             n_WEREWOLVES,
-            n_BLUE_GOLEMS,
+            n_POISON_BULL_FIGHTERS_1,
+            n_DARK_KNIGHTS_2,
+            n_DARK_KNIGHTS_1,
+            n_THUNDER_LICHES_1,
+            n_MUTANTS_2,
+            n_MUTANTS_1,
+            n_SPLINTER_WOLVES_1,
+            n_SPLINTER_WOLVES_2,
         ]
+        self.last_dist_lvl = 1
         self.current_spot_index = 0
         self.farming = {
             "flag": False,
@@ -53,6 +61,7 @@ class Player:
         resp = requests.get(
             "https://eternmu.cz/old/profile/player/req/Marshall/")
         gr_str = re.search("Grand resety</td><td>\d+", resp.text)[0]
+        return 0
         return int(gr_str.split("</td><td>")[1])
 
     @property
@@ -64,11 +73,6 @@ class Player:
         def warp_to(warp: str) -> None:
             """Used only when required level is met.
             """
-            def stadium_city():
-                mu_window.press(ord("m"))
-                time.sleep(0.5)
-                mu_window.click_on_pixel((100, 115))
-
             def peaceswamp1():
                 warp_to("peaceswamp")
                 self._go_to_coords((139, 125))
@@ -85,7 +89,7 @@ class Player:
                 raise WarpException("Warp failed")
 
         warp_to(value)
-        self.warp = value
+        self._warp = value
 
         # update flag
         self.farming["flag"] = False
@@ -93,8 +97,6 @@ class Player:
     def distribute_stats(self) -> None:
         """If stats should be distributed, distribute them.
         """
-        self.distribute_stats.last_lvl = getattr(
-            self.distribute_stats, "last_lvl", 1)
         lvl = self.lvl
 
         if lvl == 1:
@@ -108,11 +110,12 @@ class Player:
             self._distribute_relativety(total)
 
         if self.reset < 15:
-            if self.lvl < self.distribute_stats.last_lvl:
-                self.distribute_stats.last_lvl = 1
-            total = (self.lvl - self.distribute_stats.last_lvl) * 6
-            self.distribute_stats.last_lvl = lvl
-            self._distribute_relativety(total)
+            if self.lvl < self.last_dist_lvl:
+                self.last_dist_lvl = 1
+            if self.lvl > self.last_dist_lvl + 50:
+                total = (self.lvl - self.last_dist_lvl) * 6
+                self.last_dist_lvl = lvl
+                self._distribute_relativety(total)
 
     def check_best_spot(self):
         """Go to best spot if not on it.
@@ -142,7 +145,7 @@ class Player:
         if not self.farming["flag"]:
             self.farming["flag"] = True
             self.farming["coords"] = self.coords
-        game_methods.start_helper()
+        game_methods.turn_helper_on()
         time.sleep(5)
 
     def check_death(self):
@@ -167,7 +170,11 @@ class Player:
         reset()
 
     def _is_on_best_spot(self) -> bool:
+        # print("current spot: ", self.leveling_plan[self.current_spot_index])
+        # print("self.current_spot_index + 1 == len(self.leveling_plan): ",
+        #       self.current_spot_index, len(self.leveling_plan))
         if self.current_spot_index + 1 == len(self.leveling_plan):
+            print("RET TRUE")
             return True
         return self.lvl < self.leveling_plan[self.current_spot_index + 1]["min_lvl"]
 
@@ -175,6 +182,7 @@ class Player:
         while not self._is_on_best_spot():
             self.current_spot_index += 1
         self.warp = self.leveling_plan[self.current_spot_index]["warp"]
+        print("GOING TO BEST SPOT")
         self._go_to_coords(
             self.leveling_plan[self.current_spot_index]["coords"])
         game_methods.kill_runaway_units()
