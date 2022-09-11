@@ -38,10 +38,13 @@ def go_direction(target_coords: tuple) -> None:
 
 def go_through_path(path: list) -> None:
     """ Works nicely."""
+
     ct = 0
     origin = SURR[0, 0]
     path_len = len(path)
     ahead = 5
+    mouse_to_pos(origin)
+    time.sleep(0.3)
     mouse_event("hold_left")
     while ct < path_len - 1:
         my_coords = read_coords()
