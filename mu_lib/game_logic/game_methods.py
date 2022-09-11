@@ -172,6 +172,6 @@ def kill_runaway_units() -> None:
     my_coords = read_coords()
     turn_helper_on()
     for u in units:
-        if distance(my_coords, u.coords) > 5:
+        if (dist := distance(my_coords, u.coords)) > 5 and dist < 12:
             go_direction(u.coords)
             time.sleep(2)
