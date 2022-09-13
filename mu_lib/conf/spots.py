@@ -10,16 +10,22 @@ n_WEREWOLVES = {
     "coords": (57, 69),
 }
 
-n_GREAT_BAHAMUTS = {
-    "warp": "atlans2",
-    "min_lvl": 80,
-    "coords": (239, 50),
+n_GHOSTS_1 = {
+    "warp": "dungeon2",
+    "min_lvl": 40,
+    "coords": (214, 218),
 }
 
-n_SAPI_DUOS = {
-    "warp": "peaceswamp1",
-    "min_lvl": 300,
-    "coords": (173, 217),
+n_GHOSTS_2 = {
+    "warp": "dungeon2",
+    "min_lvl": 40,
+    "coords": (179, 119),
+}
+
+n_HELL_HOUNDS = {
+    "warp": "dungeon2",
+    "min_lvl": 40,
+    "coords": (163, 115),
 }
 
 n_GRIZZLYS_1 = {
@@ -65,6 +71,42 @@ n_THUNDER_LICHES_1 = {
     "coords": (24, 54)
 }
 
+n_DEATH_KNIGHTS_1 = {
+    "warp": "losttower6",
+    "min_lvl": 90,
+    "coords": (37, 50),
+}
+
+n_DEATH_KNIGHTS_2 = {
+    "warp": "losttower6",
+    "min_lvl": 90,
+    "coords": (54, 11),
+}
+
+n_DEATH_KNIGHTS_3 = {
+    "warp": "losttower6",
+    "min_lvl": 90,
+    "coords": (24, 10),
+}
+
+n_DEATH_KNIGHTS_4 = {
+    "warp": "losttower6",
+    "min_lvl": 90,
+    "coords": (7, 16),
+}
+
+n_GREAT_BAHAMUTS_1 = {
+    "warp": "atlans2",
+    "min_lvl": 80,
+    "coords": (239, 50),
+}
+
+n_GREAT_BAHAMUTS_2 = {
+    "warp": "atlans2",
+    "min_lvl": 80,
+    "coords": (241, 31),
+}
+
 
 # LVL 100 SPOTS
 
@@ -78,6 +120,12 @@ n_MUTANTS_2 = {
     "warp": "tarkan",
     "min_lvl": 140,
     "coords": (134, 18),
+}
+
+n_BLOODY_WOLVES = {
+    "warp": "tarkan",
+    "min_lvl": 140,
+    "coords": (100, 46),
 }
 
 
@@ -105,4 +153,10 @@ n_SPLINTER_WOLVES_2 = {
     "warp": "kantururuins1",
     "min_lvl": 200,
     "coords": (84, 240),
+}
+
+n_SAPI_DUOS = {
+    "warp": "peaceswamp1",
+    "min_lvl": 300,
+    "coords": (173, 217),
 }
