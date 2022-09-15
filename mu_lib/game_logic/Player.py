@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import logging
 from threading import local
 import requests
 import re
@@ -8,7 +9,7 @@ from cached_property import cached_property_with_ttl
 from .reset import reset
 from .reading import read_lvl, read_reset, read_coords
 from .game_methods import _to_chat
-from .exceptions import WarpException
+from .exceptions import DeathException, WarpException
 from conf.stats import config
 from mu_window import mu_window
 from . import game_menu
@@ -21,21 +22,17 @@ class Player:
 
     def __init__(self, char_name: str):
         self.config = config[char_name]
+        print(self.config)
         self.reset = read_reset()
         self._warp = "lorencia"
         self.stats = self.config["stats"]
         self.leveling_plan = self.config["leveling_plan"]
         self.last_dist_lvl = 1
-        self.current_spot_index = 0
+        self.farming_spot_index = 0
         self.farming = {
             "flag": False,
             "coords": None,
         }
-        self.death_spots = set()
-
-    @property
-    def total_stats(self):
-        return 20 * 1000 * self.gr + 500 * self.reset + 6 * (self.lvl - 1)
 
     @property
     def lvl(self):
@@ -74,7 +71,7 @@ class Player:
                 _to_chat(f"/warp {warp}")
             time.sleep(3)
 
-            if self.coords == tmp:
+            if self.coords == tmp and self.lvl > 10:
                 raise WarpException("Warp failed")
 
         warp_to(value)
@@ -106,12 +103,29 @@ class Player:
                 self.last_dist_lvl = lvl
                 self._distribute_relativety(total)
 
-    def check_best_spot(self):
-        """Go to best spot if not on it.
-        """
-        if self._is_on_best_spot():
-            return
-        self._go_to_best_spot()
+    def _is_on_place(self, warp: str, coords: tuple) -> bool:
+        """Check if player is on place.
+            """
+        return self.warp == warp and distance(self.coords, coords) < 7
+
+    def _update_best_spot_index(self):
+        while self.farming_spot_index + 1 < len(self.leveling_plan) and self.lvl >= self.leveling_plan[self.farming_spot_index + 1]["min_lvl"]:
+            self.farming_spot_index += 1
+
+    def ensure_on_best_spot(self):
+        self._update_best_spot_index()
+        spot = self.leveling_plan[self.farming_spot_index]
+        if not self._is_on_place(spot["warp"], spot["coords"]):
+            self.warp = spot["warp"]
+            try:
+                self._go_to_coords(spot["coords"])
+                game_methods.kill_runaway_units()
+            except DeathException as e:
+                logging.info(
+                    "Player died while trying to get to the best spot")
+                del self.leveling_plan[self.farming_spot_index]
+                self.farming_spot_index -= 1
+                self.ensure_on_best_spot()
 
     def try_reset(self) -> bool:
         """Do reset if required level is met.
@@ -127,7 +141,7 @@ class Player:
             mu_window.activate_window()
             game_menu.game_login()
             time.sleep(2)
-            self.__init__()
+            self.__init__(self.char_name)
             return True
         return False
 
@@ -139,12 +153,15 @@ class Player:
         time.sleep(5)
 
     def check_death(self):
-        if self.farming["flag"] and distance(self.coords, self.farming["coords"]) > 7:
-            # we died
+        """
+        Check if died during farming.
+        """
+        if self.farming["flag"] and distance(self.coords, self.farming["coords"]) > 13:
+            logging.info("Player died while farming")
             self.farming["flag"] = False
-            del self.leveling_plan[self.current_spot_index]
-            self.current_spot_index -= 1
-            self._go_to_best_spot()
+            del self.leveling_plan[self.farming_spot_index]
+            self.farming_spot_index -= 1
+            self.ensure_on_best_spot()
 
     def _distribute_relativety(self, stats_to_distribute: int) -> None:
         parts = sum(int(self.stats[key][1:])
@@ -158,24 +175,6 @@ class Player:
 
     def _reset(self, id: str, password: str) -> None:
         reset(id, password)
-
-    def _is_on_best_spot(self) -> bool:
-        # print("current spot: ", self.leveling_plan[self.current_spot_index])
-        # print("self.current_spot_index + 1 == len(self.leveling_plan): ",
-        #       self.current_spot_index, len(self.leveling_plan))
-        if self.current_spot_index + 1 == len(self.leveling_plan):
-            print("RET TRUE")
-            return True
-        return self.lvl < self.leveling_plan[self.current_spot_index + 1]["min_lvl"]
-
-    def _go_to_best_spot(self):
-        while not self._is_on_best_spot():
-            self.current_spot_index += 1
-        self.warp = self.leveling_plan[self.current_spot_index]["warp"]
-        print("GOING TO BEST SPOT")
-        self._go_to_coords(
-            self.leveling_plan[self.current_spot_index]["coords"])
-        game_methods.kill_runaway_units()
 
     def _go_to_coords(self, coords: tuple):
         area = "".join(i for i in self.warp if i.isalpha())

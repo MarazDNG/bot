@@ -3,6 +3,7 @@ from .meth import _if_stucked
 from mu_window.mu_window import mouse_to_pos, mouse_event
 from conf.conf import SURR
 from .decorators import d_logger
+from .exceptions import DeathException
 
 from math import sqrt, cos, sin, pi
 import time
@@ -45,10 +46,12 @@ def go_through_path(path: list) -> None:
     ahead = 5
     mouse_to_pos(origin)
     time.sleep(0.3)
-    mouse_event("hold_left")
+    last_coords = read_coords()
     while ct < path_len - 1:
+        mouse_event("hold_left")
         my_coords = read_coords()
-
+        if distance(last_coords, my_coords) > 10:
+            raise DeathException("Player died!")
         # next square in path
         try:
             ahead_coords = path[ct + ahead]
@@ -60,7 +63,7 @@ def go_through_path(path: list) -> None:
         # stuck protection
         if _if_stucked(my_coords):
             vector = get_vector(ahead_coords, my_coords)
-            vector = transform_vector(vector, k=250)
+            vector = transform_vector(vector, k=300)
             mouse_pos = origin[0] + vector[0], origin[1] + vector[1]
             mouse_to_pos(mouse_pos)
             time.sleep(0.5)
@@ -124,5 +127,5 @@ def perspective_transform(vector: tuple):
     return (vector[0], coeff * vector[1])
 
 
-def distance(a, b):
+def distance(a: tuple, b: tuple) -> float:
     return sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)

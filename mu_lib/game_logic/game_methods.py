@@ -56,23 +56,10 @@ SURR = {
 }
 
 
-def prebihani(path: list, time_length: int = None) -> None:
-    """ Run to the end of path and back."""
-    start = datetime.now()
-    time.sleep(3)
-    go_through_path(path)
-    time.sleep(3)
-    path.reverse()
-    go_through_path(path)
-    path.reverse()
-    if time_length:
-        end = datetime.now()
-        rem = end - start
-        with contextlib.suppress(ValueError):
-            time.sleep(time_length - rem.total_seconds() + 2)
-
-
 def go_to(target_coords: tuple, map_name: str):
+    """
+    Goes to target coordinates on current map.
+    """
     current_coords = read_coords()
     path = djikstra8(
         current_coords, target_coords, get_mu_map_list(map_name))
@@ -87,7 +74,7 @@ def go_to_spot(spot) -> None:
         warp_to(spot.warp)
     go_to(spot.coords, spot.map)
     kill_runaway_units()
-    _walk_on_shortest_straight(spot.coords)
+    go_direction(spot.coords)
 
 
 def _is_helper_on() -> bool:
@@ -100,7 +87,7 @@ def _is_helper_on() -> bool:
 
 def _detect_ok() -> bool:
     """
-        Detects if OK button is on the screen.
+    Detects if OK button is on the screen.
     """
     # 600 235 30 1
     bbox = (600, 235, 30, 1)
@@ -149,13 +136,6 @@ def _to_chat(msg: str) -> None:
 def warp_to(area: str) -> None:
     _to_chat(f'/warp {area}')
     time.sleep(3)
-
-
-def distribute_stats() -> None:
-    _to_chat(f"/addstr {STR}")
-    _to_chat(f"/addagi {AGI}")
-    _to_chat(f"/addvit {VIT}")
-    _to_chat(f"/addene {ENE}")
 
 
 def go_through_portal(portal_coords: tuple) -> None:

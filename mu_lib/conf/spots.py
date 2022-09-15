@@ -22,7 +22,7 @@ n_GHOSTS_2 = {
     "coords": (179, 119),
 }
 
-n_HELL_HOUNDS = {
+n_HELL_HOUNDS_1 = {
     "warp": "dungeon2",
     "min_lvl": 40,
     "coords": (163, 115),
@@ -122,7 +122,7 @@ n_MUTANTS_2 = {
     "coords": (134, 18),
 }
 
-n_BLOODY_WOLVES = {
+n_BLOODY_WOLVES_1 = {
     "warp": "tarkan",
     "min_lvl": 140,
     "coords": (100, 46),

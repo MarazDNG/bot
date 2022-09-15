@@ -19,14 +19,12 @@ if __name__ == "__main__":
     player = Player(sys.argv[1])
 
     while True:
-        lvl = player.lvl
-
         player.check_death()
 
         player.distribute_stats()
 
         player.try_reset()
 
-        player.check_best_spot()
+        player.ensure_on_best_spot()
 
         player.farm()
