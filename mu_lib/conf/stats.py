@@ -20,11 +20,11 @@ config = {
             n_HELL_HOUNDS_1,
         ]
     },
-    "account": {
-        "id": "Maraz",
-        "pass": "***REMOVED***"
-    },
     "Consumer": {
+        "account": {
+            "id": "Maraz",
+            "pass": "***REMOVED***"
+        },
         "stats": {
             "str": "r3",
             "agi": "r2",

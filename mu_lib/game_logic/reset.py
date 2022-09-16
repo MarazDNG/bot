@@ -44,8 +44,8 @@ def do_reset(id: str, password: str):
 
 
 def reset(id: str, password: str):
-    reset.last_time = getattr(reset, "last_time", datetime.now())
-    if datetime.now() - reset.last_time < timedelta(seconds=1200):
+    reset.last_time = getattr(reset, "last_time", 0)
+    if reset.last_time and datetime.now() - reset.last_time < timedelta(seconds=1200):
         return
 
     for _ in range(3):

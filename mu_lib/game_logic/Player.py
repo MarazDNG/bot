@@ -3,6 +3,8 @@ import requests
 import re
 import time
 from cached_property import cached_property_with_ttl
+import logging
+
 
 from .reset import reset
 from .reading import read_lvl, read_reset, read_coords
@@ -18,6 +20,7 @@ from .meth import distance
 class Player:
 
     def __init__(self, char_name: str):
+        self.name = char_name
         self.config = config[char_name]
         self.name = char_name
         print(self.config)
@@ -133,6 +136,8 @@ class Player:
         level_needed = 400
         if self.gr == 0 and self.reset < 10:
             level_needed = 300 + 10 * self.reset
+        logging.info(f"level_needed: {level_needed}")
+        logging.info(f"self.lvl: {self.lvl}")
         if self.lvl >= level_needed:
             game_menu.server_selection()
             self._reset(self.config["account"]["id"],
@@ -173,6 +178,7 @@ class Player:
                 _to_chat(f"/add{stat} {to_add}")
 
     def _reset(self, id: str, password: str) -> None:
+        logging.info("Starting reset")
         reset(id, password)
 
     def _go_to_coords(self, coords: tuple):

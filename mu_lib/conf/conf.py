@@ -1,31 +1,12 @@
-from game_logic import spots
-
-# stats
-STR = 500
-AGI = 23000
-VIT = 3000
-ENE = 24000
 
 # port
 PORT = "COM12"
-
-# spot sequence
-SPOT_SEQUENCE = [
-    spots.BUDGE_DRAGONS,
-    spots.WEREWOLVES,
-    spots.BLUE_GOLEMS,
-    spots.SAPI_DUOS,
-    # spots.SAPI_TRES_SHADOW
-]
 
 # keys
 KEY_ESC = 177
 KEY_RETURN = 176
 KEY_HOME = 210
 
-# account
-ID = 'Maraz'
-PW = '***REMOVED***'
 
 WHITE_COLOR = (255, 255, 255)
 
