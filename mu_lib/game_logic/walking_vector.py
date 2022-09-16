@@ -76,6 +76,7 @@ def go_through_path(path: list) -> None:
         mouse_pos = origin[0] + vector[0], origin[1] + vector[1]
         mouse_to_pos(mouse_pos)
         time.sleep(0.02)
+        last_coords = my_coords
 
     mouse_event("release_buttons")
     mouse_to_pos(origin)

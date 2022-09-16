@@ -1,6 +1,4 @@
-from datetime import datetime, timedelta
 import logging
-from threading import local
 import requests
 import re
 import time
@@ -13,7 +11,6 @@ from .exceptions import DeathException, WarpException
 from conf.stats import config
 from mu_window import mu_window
 from . import game_menu
-from .game_methods import go_to
 from . import game_methods
 from .meth import distance
 
@@ -22,6 +19,7 @@ class Player:
 
     def __init__(self, char_name: str):
         self.config = config[char_name]
+        self.name = char_name
         print(self.config)
         self.reset = read_reset()
         self._warp = "lorencia"
@@ -45,9 +43,8 @@ class Player:
     @cached_property_with_ttl(ttl=12 * 60 * 60)
     def gr(self):
         resp = requests.get(
-            "https://eternmu.cz/old/profile/player/req/Marshall/")
+            f"https://eternmu.cz/profile/player/req/{self.name}/")
         gr_str = re.search("Grand resety</td><td>\d+", resp.text)[0]
-        return 0
         return int(gr_str.split("</td><td>")[1])
 
     @property
@@ -110,6 +107,8 @@ class Player:
 
     def _update_best_spot_index(self):
         while self.farming_spot_index + 1 < len(self.leveling_plan) and self.lvl >= self.leveling_plan[self.farming_spot_index + 1]["min_lvl"]:
+            print(
+                f"lvl: {self.lvl} is enough for spot {self.leveling_plan[self.farming_spot_index + 1]}")
             self.farming_spot_index += 1
 
     def ensure_on_best_spot(self):
@@ -141,7 +140,7 @@ class Player:
             mu_window.activate_window()
             game_menu.game_login()
             time.sleep(2)
-            self.__init__(self.char_name)
+            self.__init__(self.name)
             return True
         return False
 
