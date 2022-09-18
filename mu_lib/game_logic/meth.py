@@ -1,3 +1,5 @@
+import re
+import requests
 from datetime import datetime, timedelta
 import math
 
@@ -25,3 +27,13 @@ def _if_stucked(coords: tuple, recovery: callable = None, wait_time: int = 2) ->
         _if_stucked.cache_time = time_now
         return True
     return False
+
+
+def get_online_players():
+    r = requests.get("https://eternmu.cz/rankings/online/")
+    return re.findall(
+        r"https://eternmu.cz/profile/player/req/(.{1,10})/", r.text)
+
+
+if __name__ == '__main__':
+    print(get_online_players())

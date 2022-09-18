@@ -21,4 +21,4 @@ def read_lvl() -> int:
 
 
 def surrounding_units() -> list:
-    return memory.surrounding_units()
+    return memory.get_surrounding_units()

@@ -15,8 +15,8 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         raise WrongArgumentsException("Character name is required.")
 
-    activate_window()
     player = Player(sys.argv[1])
+    activate_window(player.name)
 
     while True:
         player.check_death()

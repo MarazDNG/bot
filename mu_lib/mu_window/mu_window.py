@@ -5,6 +5,7 @@ import time
 from PIL import Image
 import pygetwindow as gw
 
+import logging
 from arduino_api.arduino_api import ard_mouse_to_pos, send_string
 from arduino_api.arduino_api import click
 from arduino_api.arduino_api import hold_left
@@ -16,8 +17,9 @@ from arduino_api.arduino_api import _send
 WINDOW_PARTIAL_TEXT = "Player:"
 
 
-def activate_window():
-    win = gw.getWindowsWithTitle("Player")[0]
+def activate_window(partial_title: str):
+    win = gw.getWindowsWithTitle(f"Player: {partial_title}")[0]
+    logging.debug(win)
     win.activate()
     time.sleep(2)
 

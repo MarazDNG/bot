@@ -7,14 +7,14 @@ import logging
 
 
 from .reset import reset
-from .reading import read_lvl, read_reset, read_coords
+from .reading import read_lvl, read_reset, read_coords, surrounding_units
 from .game_methods import _to_chat
 from .exceptions import DeathException, WarpException
 from conf.stats import config
 from mu_window import mu_window
 from . import game_menu
 from . import game_methods
-from .meth import distance
+from .meth import distance, get_online_players
 
 
 class Player:
@@ -23,7 +23,7 @@ class Player:
         self.name = char_name
         self.config = config[char_name]
         self.name = char_name
-        print(self.config)
+        self.allies = []
         self.reset = read_reset()
         self._warp = "lorencia"
         self.stats = self.config["stats"]
@@ -34,6 +34,7 @@ class Player:
             "flag": False,
             "coords": None,
         }
+        logging.info(f"Initialized player {self.name}")
 
     @property
     def lvl(self):
@@ -45,6 +46,7 @@ class Player:
 
     @cached_property_with_ttl(ttl=12 * 60 * 60)
     def gr(self):
+        return 0
         resp = requests.get(
             f"https://eternmu.cz/profile/player/req/{self.name}/")
         gr_str = re.search("Grand resety</td><td>\d+", resp.text)[0]
@@ -72,7 +74,8 @@ class Player:
             time.sleep(3)
 
             if self.coords == tmp and self.lvl > 10:
-                raise WarpException("Warp failed")
+                raise WarpException(
+                    f"Warp failed from {self.warp} {self.coords} to {warp}")
 
         warp_to(value)
         self._warp = value
@@ -105,8 +108,12 @@ class Player:
 
     def _is_on_place(self, warp: str, coords: tuple) -> bool:
         """Check if player is on place.
-            """
-        return self.warp == warp and distance(self.coords, coords) < 7
+        """
+        ret = self.warp == warp and distance(self.coords, coords) < 10
+        if not ret:
+            logging.info(
+                f"Player, {self.warp} {self.coords}, is not on place {warp} {coords}")
+        return ret
 
     def _update_best_spot_index(self):
         while self.farming_spot_index + 1 < len(self.leveling_plan) and self.lvl >= self.leveling_plan[self.farming_spot_index + 1]["min_lvl"]:
@@ -121,12 +128,25 @@ class Player:
             self.warp = spot["warp"]
             try:
                 self._go_to_coords(spot["coords"])
+                units = surrounding_units()
+                my_coords = self.coords
+                units = filter(lambda x: distance(
+                    x.coords, my_coords) < 10, units)
+                players = get_online_players()
+                [players.remove(ally) for ally in self.allies]
+                if units := [unit for unit in units if unit.name in players]:
+                    logging.info(
+                        f"Someone is here: {[{unit.name: unit.coords} for unit in units]}")
+
+                    self._exclude_current_spot()
+                    self.ensure_on_best_spot()
+                    return
                 game_methods.kill_runaway_units()
+                self._go_to_coords(spot["coords"])
             except DeathException as e:
                 logging.info(
                     "Player died while trying to get to the best spot")
-                del self.leveling_plan[self.farming_spot_index]
-                self.farming_spot_index -= 1
+                self._exclude_current_spot()
                 self.ensure_on_best_spot()
 
     def try_reset(self) -> bool:
@@ -142,7 +162,7 @@ class Player:
             game_menu.server_selection()
             self._reset(self.config["account"]["id"],
                         self.config["account"]["pass"])
-            mu_window.activate_window()
+            mu_window.activate_window(self.name)
             game_menu.game_login()
             time.sleep(2)
             self.__init__(self.name)
@@ -184,3 +204,7 @@ class Player:
     def _go_to_coords(self, coords: tuple):
         area = "".join(i for i in self.warp if i.isalpha())
         game_methods.go_to(coords, area)
+
+    def _exclude_current_spot(self):
+        del self.leveling_plan[self.farming_spot_index]
+        self.farming_spot_index -= 1

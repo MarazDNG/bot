@@ -24,6 +24,30 @@ def _distance(x1, y1, x2, y2) -> float:
     return ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
 
 
+def get_surrounding_units():
+    """Return surrounding units sorted closest first.
+    """
+    d0 = 0x00A7A224
+    d1 = 0x8
+    d2 = 0x38
+    size = 1432
+    rwm = ReadWriteMemory()
+    process = rwm.get_process_by_name(process_name)
+    process.open()
+
+    p = process.get_pointer(base_addr + d0, offsets=[d1, d2])
+
+    units = []
+    while (name := process.readString(p, 2000)) != "":
+        x = process.read(p + 0x74)
+        y = process.read(p + 0x78)
+        units.append(Unit(name, (x, y)))
+        p += size
+
+    units.sort(key=lambda unit: _distance(*unit.coords, *my_coords()))
+    process.close()
+    return units
+
 def surrounding_units() -> list[Unit]:
     """Return 6 closest same units.
     """

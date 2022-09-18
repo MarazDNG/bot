@@ -27,6 +27,8 @@ def djikstra4(start: tuple, goal: tuple, array_map: list) -> list:
 
 def _djikstra_body(start: tuple, goal: tuple, array_map: list, neighbor_fnc: callable) -> list:
     logging.info(f"Start: { start}, Goal: {goal}")
+    if start == goal:
+        return [start]
     sets = [
         {start, }
     ]

@@ -17,7 +17,7 @@ except:
     raise Exception("Could not open image!")
 idk = img.load()
 
-activate_window()
+activate_window("Player")
 
 coords_set = set()
 while True:
