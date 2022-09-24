@@ -29,7 +29,7 @@ class Player:
         self._warp = "lorencia"
         self.stats = self.config["stats"]
         self.leveling_plan = self.config["leveling_plan"]
-        self.last_dist_lvl = 1
+        self.last_dist_lvl = self.coords
         self.farming_spot_index = 0
         self.farming = {
             "flag": False,
@@ -142,7 +142,7 @@ class Player:
                     self._exclude_current_spot()
                     self.ensure_on_best_spot()
                     return
-                game_methods.kill_runaway_units()
+                # game_methods.kill_runaway_units()
                 self._go_to_coords(spot["coords"])
             except DeathException as e:
                 logging.info(
@@ -164,7 +164,8 @@ class Player:
             self._reset(self.config["account"]["id"],
                         self.config["account"]["pass"])
             mu_window.activate_window(self.name)
-            game_menu.game_login()
+            game_menu.game_login(
+                self["account"]["id"], self["account"]["pass"])
             time.sleep(2)
             self.__init__(self.name)
             return True
@@ -204,7 +205,7 @@ class Player:
 
     def _go_to_coords(self, coords: tuple):
         area = "".join(i for i in self.warp if i.isalpha())
-        game_methods.go_to(coords, area)
+        game_methods.go_to(coords, area, lambda: self.coords)
 
     def _exclude_current_spot(self):
         del self.leveling_plan[self.farming_spot_index]

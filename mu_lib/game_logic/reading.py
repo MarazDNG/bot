@@ -5,7 +5,7 @@ import re
 
 
 def read_coords(window_id: int) -> tuple:
-    return memory.my_coords(window_id.int)
+    return memory.my_coords(window_id)
 
 
 def read_reset() -> int:

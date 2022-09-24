@@ -1,3 +1,4 @@
+from subprocess import call
 from .reading import read_coords
 from .meth import _if_stucked
 from mu_window.mu_window import mouse_to_pos, mouse_event
@@ -37,7 +38,7 @@ def go_direction(target_coords: tuple) -> None:
     print("Finish!")
 
 
-def go_through_path(path: list) -> None:
+def go_through_path(path: list, read_coords: callable) -> None:
     """ Works nicely."""
 
     ct = 0

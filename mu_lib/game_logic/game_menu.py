@@ -19,7 +19,7 @@ def server_selection():
     time.sleep(6)
 
 
-def game_login():
+def game_login(login: str, password: str):
     """ Log in from the server selection and
     choose character.
     """
@@ -30,8 +30,19 @@ def game_login():
     # select server
     mu_window.click_on_pixel((600, 305))
 
+    # click login
+    mu_window.click_on_pixel((650, 460))
+    mu_window.send_string(login)
+
+    # click password
+    mu_window.click_on_pixel((650, 490))
+    mu_window.send_string(password)
+
+    # click ok
+    mu_window.click_on_pixel((660, 540))
+
     # click auto-login
-    mu_window.click_on_pixel((520, 590))
+    # mu_window.click_on_pixel((520, 590))
 
     # click on character
     mu_window.click_on_pixel((360, 530))

@@ -56,25 +56,16 @@ SURR = {
 }
 
 
-def go_to(target_coords: tuple, map_name: str):
+def go_to(target_coords: tuple, map_name: str, read_coords: callable):
     """
     Goes to target coordinates on current map.
     """
     current_coords = read_coords()
     path = djikstra8(
         current_coords, target_coords, get_mu_map_list(map_name))
-    go_through_path(path)
-    _walk_on_shortest_straight(target_coords)
-
-
-def go_to_spot(spot) -> None:
-    if callable(spot.warp):
-        spot.warp()
-    else:
-        warp_to(spot.warp)
-    go_to(spot.coords, spot.map)
-    kill_runaway_units()
-    go_direction(spot.coords)
+    go_through_path(path, read_coords)
+    while _walk_on_shortest_straight(read_coords(), target_coords):
+        pass
 
 
 def _is_helper_on() -> bool:

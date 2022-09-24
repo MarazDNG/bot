@@ -32,7 +32,7 @@ def get_surrounding_units(id: int):
     d2 = 0x38
     size = 1432
     rwm = ReadWriteMemory()
-    process = rwm.get_process_by_name(id)
+    process = rwm.get_process_by_id(id)
     process.open()
 
     p = process.get_pointer(base_addr + d0, offsets=[d1, d2])
@@ -44,7 +44,7 @@ def get_surrounding_units(id: int):
         units.append(Unit(name, (x, y)))
         p += size
 
-    units.sort(key=lambda unit: _distance(*unit.coords, *my_coords()))
+    units.sort(key=lambda unit: _distance(*unit.coords, *my_coords(id)))
     process.close()
     return units
 
@@ -57,7 +57,7 @@ def surrounding_units(id: int) -> list[Unit]:
     d2 = 0x38
     size = 1432
     rwm = ReadWriteMemory()
-    process = rwm.get_process_by_name(id)
+    process = rwm.get_process_by_id(id)
     process.open()
 
     p = process.get_pointer(base_addr + d0, offsets=[d1, d2])
@@ -69,7 +69,7 @@ def surrounding_units(id: int) -> list[Unit]:
         units.append(Unit(name, (x, y)))
         p += size
 
-    units.sort(key=lambda unit: _distance(*unit.coords, *my_coords()))
+    units.sort(key=lambda unit: _distance(*unit.coords, *my_coords(id)))
 
     i = 0
     # count monsters

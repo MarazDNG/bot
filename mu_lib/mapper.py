@@ -1,5 +1,5 @@
 
-from mu_window.mu_window import activate_window
+from mu_window.mu_window import activate_window, window_id_by_title
 from game_logic.reading import read_coords
 
 from PIL import Image
@@ -17,11 +17,12 @@ except:
     raise Exception("Could not open image!")
 idk = img.load()
 
-activate_window("Player")
+# activate_window("Silco")
+win_id = window_id_by_title("Silco")
 
 coords_set = set()
 while True:
-    coords = read_coords()
+    coords = read_coords(win_id)
     if coords == (25, 27):
         break
     print(coords)
