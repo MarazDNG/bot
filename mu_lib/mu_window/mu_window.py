@@ -13,6 +13,7 @@ from arduino_api.arduino_api import hold_right
 from arduino_api.arduino_api import release_buttons
 from arduino_api.arduino_api import send_ascii
 from arduino_api.arduino_api import _send
+import win32process
 
 WINDOW_PARTIAL_TEXT = "Player:"
 
@@ -139,3 +140,10 @@ def click_on_pixel(window_pixel: tuple, delay: bool = True):
         time.sleep(0.5)
     else:
         time.sleep(0.05)
+
+
+def window_id_by_title(char_name: str):
+    """Get mu game window process id with given player name.
+    """
+    win = gw.getWindowsWithTitle(f"Player: {char_name}")[0]
+    return win32process.GetWindowThreadProcessId(win._hWnd)[1]

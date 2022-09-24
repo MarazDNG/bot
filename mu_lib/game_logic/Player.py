@@ -23,6 +23,7 @@ class Player:
         self.name = char_name
         self.config = config[char_name]
         self.name = char_name
+        self.window_id = mu_window.window_id_by_title(char_name)
         self.allies = []
         self.reset = read_reset()
         self._warp = "lorencia"
@@ -42,7 +43,7 @@ class Player:
 
     @property
     def coords(self) -> tuple:
-        return read_coords()
+        return read_coords(self.window_id)
 
     @cached_property_with_ttl(ttl=12 * 60 * 60)
     def gr(self):
@@ -128,7 +129,7 @@ class Player:
             self.warp = spot["warp"]
             try:
                 self._go_to_coords(spot["coords"])
-                units = surrounding_units()
+                units = surrounding_units(self.window_id)
                 my_coords = self.coords
                 units = filter(lambda x: distance(
                     x.coords, my_coords) < 10, units)

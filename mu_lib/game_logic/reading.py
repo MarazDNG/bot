@@ -4,8 +4,8 @@ from . import memory
 import re
 
 
-def read_coords() -> tuple:
-    return memory.my_coords()
+def read_coords(window_id: int) -> tuple:
+    return memory.my_coords(window_id.int)
 
 
 def read_reset() -> int:
@@ -20,5 +20,5 @@ def read_lvl() -> int:
     return int(lvl_str.split()[1])
 
 
-def surrounding_units() -> list:
-    return memory.get_surrounding_units()
+def surrounding_units(window_id: int) -> list:
+    return memory.get_surrounding_units(window_id)

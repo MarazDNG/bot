@@ -16,7 +16,7 @@ class Unit:
     coords: tuple
 
 
-process_name = "main.exe"
+# process_name = "main.exe"
 base_addr = 0x00400000
 
 
@@ -24,7 +24,7 @@ def _distance(x1, y1, x2, y2) -> float:
     return ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
 
 
-def get_surrounding_units():
+def get_surrounding_units(id: int):
     """Return surrounding units sorted closest first.
     """
     d0 = 0x00A7A224
@@ -32,7 +32,7 @@ def get_surrounding_units():
     d2 = 0x38
     size = 1432
     rwm = ReadWriteMemory()
-    process = rwm.get_process_by_name(process_name)
+    process = rwm.get_process_by_name(id)
     process.open()
 
     p = process.get_pointer(base_addr + d0, offsets=[d1, d2])
@@ -48,7 +48,8 @@ def get_surrounding_units():
     process.close()
     return units
 
-def surrounding_units() -> list[Unit]:
+
+def surrounding_units(id: int) -> list[Unit]:
     """Return 6 closest same units.
     """
     d0 = 0x00A7A224
@@ -56,7 +57,7 @@ def surrounding_units() -> list[Unit]:
     d2 = 0x38
     size = 1432
     rwm = ReadWriteMemory()
-    process = rwm.get_process_by_name(process_name)
+    process = rwm.get_process_by_name(id)
     process.open()
 
     p = process.get_pointer(base_addr + d0, offsets=[d1, d2])
@@ -86,12 +87,12 @@ def surrounding_units() -> list[Unit]:
     return units
 
 
-def my_coords() -> tuple:
+def my_coords(id: int) -> tuple:
 
     d0 = 0x077C2F04
     dx = 0xac
     rwm = ReadWriteMemory()
-    process = rwm.get_process_by_name(process_name)
+    process = rwm.get_process_by_id(id)
     process.open()
 
     p = process.get_pointer(base_addr + d0, offsets=[dx])
@@ -101,7 +102,3 @@ def my_coords() -> tuple:
 
     process.close()
     return x, y
-
-
-if __name__ == "__main__":
-    pprint(surrounding_units())
