@@ -1,6 +1,5 @@
-
 # port
-PORT = "COM12"
+PORT = "COM6"
 
 # keys
 KEY_ESC = 177

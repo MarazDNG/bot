@@ -23,6 +23,7 @@ def game_login():
     """ Log in from the server selection and
     choose character.
     """
+    # TODO
     # pop up server selection
     mu_window.click_on_pixel((450, 305))
 

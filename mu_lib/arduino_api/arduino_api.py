@@ -7,7 +7,7 @@ import numpy
 import pyautogui
 from serial.serialwin32 import Serial
 
-PORT = "COM12"
+PORT = "COM6"
 
 UPPER_LIMIT = 120
 LOWER_LIMIT = -120

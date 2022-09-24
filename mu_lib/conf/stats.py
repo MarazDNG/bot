@@ -15,9 +15,8 @@ config = {
         "leveling_plan": [
             n_BUDGE_DRAGONS,
             n_WEREWOLVES,
-            n_GHOSTS_1,
-            n_GHOSTS_2,
-            n_HELL_HOUNDS_1,
+            n_GRIZZLYS_2,
+            n_GRIZZLYS_1,
         ]
     },
     "Consumer": {

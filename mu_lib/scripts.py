@@ -3,13 +3,14 @@ from game_logic import game_methods
 from game_logic.djikstra import djikstra8
 from game_logic import map
 from game_logic import game_menu
-from game_logic import warps_mapping
-from game_logic import spots
 from game_logic import reading
+from game_logic.Player import Player
+from game_logic.reading import read_coords
 from mu_window import mu_window
 from main import activate_window
 import time
 import os
+from game_logic import memory
 
 
 def test_warp(map):
@@ -25,10 +26,6 @@ def test_read_lvl():
 def test_walking_porting():
     # game_methods.warp_to("lorencia")
     game_methods.go_to((134, 103), 'lorencia')
-
-
-def test_go_to_sapi_duo():
-    game_methods.go_to_spot(spots.BLUE_GOLEMS)
 
 
 path_dev4 = [
@@ -55,6 +52,23 @@ def bk_combo_helper():
 
 
 if __name__ == "__main__":
-
-    activate_window()
-    bk_combo_helper()
+    # activate_window("Silco")
+    # print(Player("Silco").coords)
+    # bk_combo_helper()
+    # while True:
+    #     try:
+    #         i = 0
+    #         while True:
+    #             print(i, ": ", read_coords())
+    #             i += 1
+    #     finally:
+    #         pass
+    # p.distribute_stats()
+    # print(memory.my_coords_by_id(mu_window.window_id_by_title("Consumer")))
+    # print(memory.my_coords_by_id(14008))
+    # print(memory.my_coords_by_id(16084))
+    while True:
+        units = memory.get_surrounding_units()
+        [print(unit.name, unit.coords)
+         for unit in units if "Lunar" in unit.name]
+        time.sleep(1)
