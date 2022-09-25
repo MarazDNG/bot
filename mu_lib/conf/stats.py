@@ -17,6 +17,9 @@ config = {
             n_WEREWOLVES,
             n_GRIZZLYS_2,
             n_GRIZZLYS_1,
+            n_POISON_BULL_FIGHTERS_2,
+            n_DARK_KNIGHTS_2,
+            n_DARK_KNIGHTS_1
         ]
     },
     "Consumer": {
@@ -25,10 +28,10 @@ config = {
             "pass": "***REMOVED***"
         },
         "stats": {
-            "str": "r3",
+            "str": "r2",
             "agi": "r2",
             "vit": "f1000",
-            "ene": "r2",
+            "ene": "r3",
         },
         "leveling_plan": [
             n_BUDGE_DRAGONS,

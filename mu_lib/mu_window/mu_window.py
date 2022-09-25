@@ -15,7 +15,7 @@ from arduino_api.arduino_api import send_ascii
 from arduino_api.arduino_api import _send
 import win32process
 
-WINDOW_PARTIAL_TEXT = "Player:"
+WINDOW_PARTIAL_TEXT = "Launcher"
 
 
 def activate_window(partial_title: str):
@@ -25,15 +25,15 @@ def activate_window(partial_title: str):
     time.sleep(2)
 
 
-def _game_start_pixel() -> tuple:
+def _game_start_pixel(partial_text="Player:") -> tuple:
     """ Return starting pixel of the game."""
-    if hasattr(_game_start_pixel, "window"):
-        return _game_start_pixel.window
+    # if hasattr(_game_start_pixel, "window"):
+    #     return _game_start_pixel.window
 
     h = []
 
     def winEnumHandler(hwnd, ctx):
-        if win32gui.IsWindowVisible(hwnd) and WINDOW_PARTIAL_TEXT in win32gui.GetWindowText(hwnd):
+        if win32gui.IsWindowVisible(hwnd) and partial_text in win32gui.GetWindowText(hwnd):
             #print(hex(hwnd), win32gui.GetWindowText(hwnd))
             h.append(hwnd)
     win32gui.EnumWindows(winEnumHandler, None)
@@ -46,7 +46,7 @@ def _game_start_pixel() -> tuple:
     return (x, y)
 
 
-def get_window_title() -> str:
+def get_window_title(partial_window_title: str) -> str:
     """Return window title."""
     if hasattr(get_window_title, "window"):
         return get_window_title.window
@@ -54,7 +54,7 @@ def get_window_title() -> str:
     h = []
 
     def winEnumHandler(hwnd, ctx):
-        if win32gui.IsWindowVisible(hwnd) and WINDOW_PARTIAL_TEXT in win32gui.GetWindowText(hwnd):
+        if win32gui.IsWindowVisible(hwnd) and partial_window_title in win32gui.GetWindowText(hwnd):
             #print(hex(hwnd), win32gui.GetWindowText(hwnd))
             h.append(hwnd)
     win32gui.EnumWindows(winEnumHandler, None)
@@ -128,7 +128,7 @@ def mouse_to_pos(game_pos):
     ard_mouse_to_pos(screen_position)
 
 
-def click_on_pixel(window_pixel: tuple, delay: bool = True):
+def click_on_pixel(window_pixel: tuple, delay: bool = True, ):
     """Click on given pixel."""
     mouse_to_pos(window_pixel)
     if delay:

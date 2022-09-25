@@ -7,6 +7,8 @@ import numpy
 import time
 import itertools
 from datetime import datetime, timedelta
+
+from .exceptions import DeathException
 from .meth import distance
 from .memory import surrounding_units
 from .walking_straight import _walk_on_shortest_straight
@@ -58,12 +60,16 @@ SURR = {
 
 def go_to(target_coords: tuple, map_name: str, read_coords: callable):
     """
-    Goes to target coordinates on current map.
+    Go to target coordinates on current map. Return True if player dies.
     """
     current_coords = read_coords()
     path = djikstra8(
         current_coords, target_coords, get_mu_map_list(map_name))
-    go_through_path(path, read_coords)
+    try:
+        go_through_path(path, read_coords)
+    except DeathException as e:
+        return True
+
     while _walk_on_shortest_straight(read_coords(), target_coords):
         pass
 

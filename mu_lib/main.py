@@ -1,3 +1,4 @@
+from game_logic import game_menu
 from mu_window.mu_window import activate_window
 from game_logic.Player import Player
 from game_logic.exceptions import WrongArgumentsException
@@ -16,6 +17,9 @@ if __name__ == "__main__":
         raise WrongArgumentsException("Character name is required.")
 
     player = Player(sys.argv[1])
+    game_menu.start_game()
+    game_menu.game_login(
+        player.config["account"]["id"], player.config["account"]["pass"])
     activate_window(player.name)
 
     while True:

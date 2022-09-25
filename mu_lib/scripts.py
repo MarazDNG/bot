@@ -1,4 +1,6 @@
-
+import win32api
+import time
+import pyautogui
 from game_logic import game_methods
 from game_logic.djikstra import djikstra8
 from game_logic import map
@@ -52,23 +54,27 @@ def bk_combo_helper():
 
 
 if __name__ == "__main__":
-    # activate_window("Silco")
-    # print(Player("Silco").coords)
-    # bk_combo_helper()
+    # win_id = mu_window.window_id_by_title("Consumer")
     # while True:
-    #     try:
-    #         i = 0
-    #         while True:
-    #             print(i, ": ", read_coords())
-    #             i += 1
-    #     finally:
-    #         pass
-    # p.distribute_stats()
-    # print(memory.my_coords_by_id(mu_window.window_id_by_title("Consumer")))
-    # print(memory.my_coords_by_id(14008))
-    # print(memory.my_coords_by_id(16084))
+    #     [print(unit.name, unit.coords)
+    #      for unit in memory.get_surrounding_units(win_id) if "rc" in unit.name]
+    # exit()
+    p_start = mu_window._game_start_pixel()
+    counter = 0
+    down = False
+    coors = None
     while True:
-        units = memory.get_surrounding_units()
-        [print(unit.name, unit.coords)
-         for unit in units if "Lunar" in unit.name]
-        time.sleep(1)
+        a = win32api.GetKeyState(0x01)
+
+        if a < -1:
+            if not down:
+                coords = pyautogui.position()
+                down = not down
+            # print(counter, 'mouse down')
+        elif down:
+            down = not down
+            counter += 1
+            # print(counter, coords)
+            print(counter, f'x={coords.x-p_start[0]}, y={coords.y-p_start[1]}')
+
+        time.sleep(0.001)

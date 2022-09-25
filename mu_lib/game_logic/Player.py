@@ -23,13 +23,12 @@ class Player:
         self.name = char_name
         self.config = config[char_name]
         self.name = char_name
-        self.window_id = mu_window.window_id_by_title(char_name)
+        self._window_id = None
         self.allies = []
-        self.reset = read_reset()
         self._warp = "lorencia"
         self.stats = self.config["stats"]
         self.leveling_plan = self.config["leveling_plan"]
-        self.last_dist_lvl = self.coords
+        self._last_dist_lvl = None
         self.farming_spot_index = 0
         self.farming = {
             "flag": False,
@@ -38,8 +37,28 @@ class Player:
         logging.info(f"Initialized player {self.name}")
 
     @property
+    def last_dist_lvl(self):
+        if self._last_dist_lvl is None:
+            self._last_dist_lvl = self.lvl
+        return self._last_dist_lvl
+
+    @last_dist_lvl.setter
+    def last_dist_lvl(self, value):
+        self._last_dist_lvl = value
+
+    @property
+    def window_id(self):
+        if self._window_id is None:
+            self._window_id = mu_window.window_id_by_title(self.name)
+        return self._window_id
+
+    @property
+    def reset(self) -> int:
+        return read_reset(self._window_id)
+
+    @property
     def lvl(self):
-        return read_lvl()
+        return read_lvl(self._window_id)
 
     @property
     def coords(self) -> tuple:
@@ -99,13 +118,16 @@ class Player:
                     _to_chat(f"/add{stat} {to_add}")
             self._distribute_relativety(total)
 
+        step = 100
         if self.reset < 15:
-            if self.lvl < self.last_dist_lvl:
-                self.last_dist_lvl = 1
-            if self.lvl > self.last_dist_lvl + 50:
-                total = (self.lvl - self.last_dist_lvl) * 6
-                self.last_dist_lvl = lvl
-                self._distribute_relativety(total)
+            step = 50
+
+        if self.lvl < self.last_dist_lvl:
+            self.last_dist_lvl = 1
+        if self.lvl > self.last_dist_lvl + step:
+            total = (self.lvl - self.last_dist_lvl) * 6
+            self.last_dist_lvl = lvl
+            self._distribute_relativety(total)
 
     def _is_on_place(self, warp: str, coords: tuple) -> bool:
         """Check if player is on place.
@@ -128,7 +150,10 @@ class Player:
         if not self._is_on_place(spot["warp"], spot["coords"]):
             self.warp = spot["warp"]
             try:
-                self._go_to_coords(spot["coords"])
+                if self._go_to_coords(spot["coords"]):
+                    self._exclude_current_spot()
+                    self.ensure_on_best_spot()
+                    return
                 units = surrounding_units(self.window_id)
                 my_coords = self.coords
                 units = filter(lambda x: distance(
@@ -205,7 +230,7 @@ class Player:
 
     def _go_to_coords(self, coords: tuple):
         area = "".join(i for i in self.warp if i.isalpha())
-        game_methods.go_to(coords, area, lambda: self.coords)
+        return game_methods.go_to(coords, area, lambda: self.coords)
 
     def _exclude_current_spot(self):
         del self.leveling_plan[self.farming_spot_index]

@@ -2,11 +2,37 @@
 # Game login and game logout
 #
 
+import multiprocessing
 from mu_window import mu_window
 from arduino_api import arduino_api
 from conf.conf import KEY_ESC, KEY_RETURN
 
 import time
+import subprocess
+import multiprocessing
+
+
+def _start_launcher():
+    subprocess.call(r"C:\Users\Public\Desktop\ETERNMU.lnk", shell=True)
+    print("\a")
+
+
+def start_game():
+    import os
+    # run launcher.exe
+    # os.system(r"C:\Users\Public\Desktop\ETERNMU.lnk")
+    p = multiprocessing.Process(target=_start_launcher)
+    p.start()
+    time.sleep(1)
+
+    # find launcher start_pixel
+    mu_window._game_start_pixel("Launcher")
+
+    # click start
+    mu_window.click_on_pixel((730, 410))
+
+    # sleep
+    time.sleep(5)
 
 
 def server_selection():
@@ -23,7 +49,6 @@ def game_login(login: str, password: str):
     """ Log in from the server selection and
     choose character.
     """
-    # TODO
     # pop up server selection
     mu_window.click_on_pixel((450, 305))
 
