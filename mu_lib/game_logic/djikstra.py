@@ -43,7 +43,7 @@ def _djikstra_body(start: tuple, goal: tuple, array_map: list, neighbor_fnc: cal
                 array_map) and y >= 0 and y < len(array_map[x])}
             new_set = new_set.union({(x, y)
                                      for x, y in neighbors if array_map[x][y]})
-        logging.debug(f"New set: {new_set}")
+        # logging.debug(f"New set: {new_set}")
         if distance > 0:
             new_set.difference_update(sets[distance - 1])
         new_set.difference_update(sets[distance])

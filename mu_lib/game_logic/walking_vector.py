@@ -110,7 +110,6 @@ def transform_vector(vector, k: int = 200):
     return (nx, ny)
 
 
-@d_logger
 def perspective_transform(vector: tuple):
     # perspective formula
     # ys/n = y/z

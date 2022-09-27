@@ -118,10 +118,8 @@ class Player:
                     _to_chat(f"/add{stat} {to_add}")
             self._distribute_relativety(total)
 
-        step = 100
-        if self.reset < 15:
-            step = 50
-
+        step = 50 if self.reset < 15 else 100
+    
         if self.lvl < self.last_dist_lvl:
             self.last_dist_lvl = 1
         if self.lvl > self.last_dist_lvl + step:
@@ -160,6 +158,7 @@ class Player:
                     x.coords, my_coords) < 10, units)
                 players = get_online_players()
                 [players.remove(ally) for ally in self.allies]
+                players.remove(self.name)
                 if units := [unit for unit in units if unit.name in players]:
                     logging.info(
                         f"Someone is here: {[{unit.name: unit.coords} for unit in units]}")
