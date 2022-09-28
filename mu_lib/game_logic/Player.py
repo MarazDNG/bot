@@ -4,12 +4,14 @@ import re
 import time
 from cached_property import cached_property_with_ttl
 import logging
+import window_api
+from multiprocessing import Process
+from datetime import datetime, timedelta
 
-
-from .reset import reset
-from .reading import read_lvl, read_reset, read_coords, surrounding_units
+from . import memory
+from .browser import do_reset
 from .game_methods import _to_chat
-from .exceptions import DeathException, WarpException
+from .exceptions import DeathException, WarpException, ResetError
 from conf.stats import config
 from mu_window import mu_window
 from . import game_menu
@@ -24,6 +26,7 @@ class Player:
         self.config = config[char_name]
         self.name = char_name
         self._window_id = None
+        self._hwnd = None
         self.allies = []
         self._warp = "lorencia"
         self.stats = self.config["stats"]
@@ -36,6 +39,7 @@ class Player:
         }
         logging.info(f"Initialized player {self.name}")
 
+    # PROPS
     @property
     def last_dist_lvl(self):
         if self._last_dist_lvl is None:
@@ -54,15 +58,19 @@ class Player:
 
     @property
     def reset(self) -> int:
-        return read_reset(self._window_id)
+        window_title = window_api.window_title_by_handler(self._hwnd)
+        reset_str = re.search("Reset: \d+", window_title)[0]
+        return int(reset_str.split()[1])
 
     @property
     def lvl(self):
-        return read_lvl(self._window_id)
+        window_title = window_api.window_title_by_handler(self._hwnd)
+        lvl_str = re.search("Level: \d+", window_title)[0]
+        return int(lvl_str.split()[1])
 
     @property
     def coords(self) -> tuple:
-        return read_coords(self.window_id)
+        return memory.my_coords(self._window_id)
 
     @cached_property_with_ttl(ttl=12 * 60 * 60)
     def gr(self):
@@ -103,6 +111,10 @@ class Player:
         # update flag
         self.farming["flag"] = False
 
+    # PUBLIC METHODS
+    def surrounding_units(self) -> list:
+        return memory.get_surrounding_units(self._window_id)
+        
     def distribute_stats(self) -> None:
         """If stats should be distributed, distribute them.
         """
@@ -152,7 +164,7 @@ class Player:
                     self._exclude_current_spot()
                     self.ensure_on_best_spot()
                     return
-                units = surrounding_units(self.window_id)
+                units = self.surrounding_units()
                 my_coords = self.coords
                 units = filter(lambda x: distance(
                     x.coords, my_coords) < 10, units)
@@ -225,7 +237,19 @@ class Player:
 
     def _reset(self, id: str, password: str) -> None:
         logging.info("Starting reset")
-        reset(id, password)
+        self._reset.last_time = getattr(self._reset, "last_time", 0)
+        if self._reset.last_time and datetime.now() - self._reset.last_time < timedelta(seconds=1200):
+            return
+
+        for _ in range(3):
+            p = Process(target=do_reset, args=(id, password))
+            p.start()
+            p.join(30)
+            if p.exitcode == 0:
+                self._reset.last_time = datetime.now()
+                return
+
+        raise ResetError("Reset failed!")
 
     def _go_to_coords(self, coords: tuple):
         area = "".join(i for i in self.warp if i.isalpha())
@@ -234,3 +258,8 @@ class Player:
     def _exclude_current_spot(self):
         del self.leveling_plan[self.farming_spot_index]
         self.farming_spot_index -= 1
+
+    def _write_to_chat(self):
+        pass
+    
+    # PRIVATE METHODS

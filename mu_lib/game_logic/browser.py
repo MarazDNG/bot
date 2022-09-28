@@ -4,11 +4,6 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
-from datetime import datetime, timedelta
-
-
-class ResetError(Exception):
-    pass
 
 
 def do_reset(id: str, password: str):
@@ -41,19 +36,3 @@ def do_reset(id: str, password: str):
     logout_btn.click()
 
     driver.close()
-
-
-def reset(id: str, password: str):
-    reset.last_time = getattr(reset, "last_time", 0)
-    if reset.last_time and datetime.now() - reset.last_time < timedelta(seconds=1200):
-        return
-
-    for _ in range(3):
-        p = Process(target=do_reset, args=(id, password))
-        p.start()
-        p.join(30)
-        if p.exitcode == 0:
-            reset.last_time = datetime.now()
-            return
-
-    raise ResetError("Reset failed!")
