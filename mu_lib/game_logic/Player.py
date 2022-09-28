@@ -13,15 +13,15 @@ from game_logic import walking_vector
 
 from . import memory
 from .browser import do_reset
-from .game_methods import _to_chat
 from .exceptions import DeathException, WarpException, ResetError
 from conf.stats import config
-from mu_window import mu_window
 from . import game_menu
 from . import game_methods
 from .meth import distance, get_online_players
 from .map import get_mu_map_list
 from arduino_api import arduino_api
+
+KEY_RETURN = 176
 
 class Player:
 
@@ -100,7 +100,7 @@ class Player:
             """Used only when required level is met.
             """
             def peaceswamp1():
-                warp_to("peaceswamp")
+                self._warp_to("peaceswamp")
                 self._go_to_coords((139, 125))
 
             tmp = self.coords
@@ -108,7 +108,7 @@ class Player:
             if warp in locals():
                 locals()[warp]()
             else:
-                _to_chat(f"/warp {warp}")
+                self._write_to_chat(f"/warp {warp}")
             time.sleep(3)
 
             if self.coords == tmp and self.lvl > 10:
@@ -137,7 +137,7 @@ class Player:
                     # distribute flat
                     to_add = int(self.stats[stat][1:])
                     total -= to_add
-                    _to_chat(f"/add{stat} {to_add}")
+                    self._write_to_chat(f"/add{stat} {to_add}")
             self._distribute_relativety(total)
 
         step = 50 if self.reset < 15 else 100
@@ -206,10 +206,10 @@ class Player:
         logging.info(f"level_needed: {level_needed}")
         logging.info(f"self.lvl: {self.lvl}")
         if self.lvl >= level_needed:
-            game_menu.server_selection()
+            game_menu.server_selection(self.hwnd)
             self._reset(self.config["account"]["id"],
                         self.config["account"]["pass"])
-            mu_window.activate_window(self.name)
+            window_api.window_activate(self.name)
             game_menu.game_login(
                 self["account"]["id"], self["account"]["pass"])
             time.sleep(2)
@@ -243,7 +243,7 @@ class Player:
             if self.stats[stat][0] == "r":
                 to_add = int(int(self.stats[stat][1:])
                              * stats_to_distribute / parts)
-                _to_chat(f"/add{stat} {to_add}")
+                self._write_to_chat(f"/add{stat} {to_add}")
 
     def _reset(self, id: str, password: str) -> None:
         logging.info("Starting reset")
@@ -286,11 +286,19 @@ class Player:
 
         arduino_api.release_buttons()
 
+    # PRIVATE METHODS
     def _exclude_current_spot(self):
         del self.leveling_plan[self.farming_spot_index]
         self.farming_spot_index -= 1
 
-    def _write_to_chat(self):
-        pass
+    def _write_to_chat(self, msg: str):
+        arduino_api.send_ascii(KEY_RETURN)
+        time.sleep(0.5)
+        arduino_api.send_string(msg)
+        time.sleep(0.5)
+        arduino_api.send_ascii(KEY_RETURN)
+        time.sleep(0.5)
     
-    # PRIVATE METHODS
+    def _warp_to(self, area: str) -> None:        
+        self._write_to_chat(f'/warp {area}')
+        time.sleep(3)

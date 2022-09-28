@@ -2,15 +2,15 @@
 # Game login and game logout
 #
 
+from curses import window
 import multiprocessing
-from mu_window import mu_window
 from arduino_api import arduino_api
 from conf.conf import KEY_ESC, KEY_RETURN
 
 import time
 import subprocess
 import multiprocessing
-
+import window_api
 
 def _start_launcher():
     subprocess.call(r"C:\Users\Public\Desktop\ETERNMU.lnk", shell=True)
@@ -26,51 +26,52 @@ def start_game():
     time.sleep(1)
 
     # find launcher start_pixel
-    mu_window._game_start_pixel("Launcher")
+    window_api.window_start_pixel_by_title("Launcher")
 
     # click start
-    mu_window.click_on_pixel((730, 410))
+    arduino_api.ard_mouse_to_pos((730, 410))
 
     # sleep
     time.sleep(5)
 
 
-def server_selection():
+def server_selection(hwnd: int):
     """ Logout into server selection.
     """
 
     arduino_api.send_ascii(KEY_ESC)
     # click select
-    mu_window.click_on_pixel((600, 280))
+    arduino_api.ard_mouse_to_pos(window_api.window_pixel_to_screen_pixel(600, 280))
     time.sleep(6)
 
 
-def game_login(login: str, password: str):
+def game_login(hwnd: int, login: str, password: str):
     """ Log in from the server selection and
     choose character.
     """
     # pop up server selection
-    mu_window.click_on_pixel((450, 305))
+    
+    arduino_api.ard_mouse_to_pos(window_api.window_pixel_to_screen_pixel(450, 305))
 
     # select server
-    mu_window.click_on_pixel((600, 305))
+    arduino_api.ard_mouse_to_pos(window_api.window_pixel_to_screen_pixel(600, 305))
 
     # click login
-    mu_window.click_on_pixel((650, 460))
-    mu_window.send_string(login)
+    arduino_api.ard_mouse_to_pos(window_api.window_pixel_to_screen_pixel(650, 460))
+    arduino_api.send_string(login)
 
     # click password
-    mu_window.click_on_pixel((650, 490))
-    mu_window.send_string(password)
+    arduino_api.ard_mouse_to_pos(window_api.window_pixel_to_screen_pixel(650, 490))
+    arduino_api.send_string(password)
 
     # click ok
-    mu_window.click_on_pixel((660, 540))
+    arduino_api.ard_mouse_to_pos(window_api.window_pixel_to_screen_pixel(660, 540))
 
     # click auto-login
-    # mu_window.click_on_pixel((520, 590))
+    # arduino_api.ard_mouse_to_pos((520, 590))
 
     # click on character
-    mu_window.click_on_pixel((360, 530))
+    arduino_api.ard_mouse_to_pos(window_api.window_pixel_to_screen_pixel(360, 530))
 
     # load character
     arduino_api.send_ascii(KEY_RETURN)

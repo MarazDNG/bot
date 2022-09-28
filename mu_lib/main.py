@@ -1,11 +1,10 @@
 from game_logic import game_menu
-from mu_window.mu_window import activate_window
 from game_logic.Player import Player
 from game_logic.exceptions import WrongArgumentsException
 
 import logging
 import sys
-
+import window_api
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
@@ -18,9 +17,10 @@ if __name__ == "__main__":
 
     player = Player(sys.argv[1])
     game_menu.start_game()
-    game_menu.game_login(
+    hwnd = window_api.window_handler_by_regex("^MU$")
+    game_menu.game_login(hwnd,
         player.config["account"]["id"], player.config["account"]["pass"])
-    activate_window(player.name)
+    window_api.window_activate(player.name)
 
     while True:
         player.check_death()

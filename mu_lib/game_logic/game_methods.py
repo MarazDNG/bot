@@ -12,13 +12,12 @@ from .exceptions import DeathException
 from .meth import distance
 from .memory import surrounding_units
 from .walking_straight import _walk_on_shortest_straight
-from .walking_clicking import get_to2
 from .walking_vector import go_through_path, go_direction
-from .reading import read_coords
 from .map import get_mu_map_list
 from .djikstra import djikstra8
 import contextlib
-from mu_window import mu_window
+from arduino_api import arduino_api
+import window_api
 # from conf.conf import SURR, KEY_HOME, KEY_RETURN, STR, AGI, VIT, ENE
 
 KEY_RETURN = 176
@@ -76,7 +75,7 @@ def go_to(target_coords: tuple, map_name: str, read_coords: callable):
 
 def _is_helper_on() -> bool:
     on = 74, 53, 5
-    img = mu_window.grab_image_from_window(299, 35, 1, 1)
+    img = window_api.window_grab_image(299, 35, 1, 1)
     img = numpy.asarray(img)
     color = tuple(img[0][0])
     return color[0] == on[0] and color[1] == on[1] and color[2] == on[2]
@@ -89,7 +88,7 @@ def _detect_ok() -> bool:
     # 600 235 30 1
     bbox = (600, 235, 30, 1)
     test_indices = (6, 8, 20, 27)
-    img = mu_window.grab_image_from_window(*bbox)
+    img = window_api.window_grab_image(*bbox)
     img_1d = [tuple(x) for x in numpy.asarray(img)[0]]
     return all(img_1d[i][c] == 255 for i, c in itertools.product(test_indices, range(3)))
 
@@ -97,51 +96,28 @@ def _detect_ok() -> bool:
 def turn_helper_on(fast=False) -> bool:
     """Starts helper if it is not on."""
     if not _is_helper_on():
-        mu_window.press(KEY_HOME)
+        arduino_api.send_ascii(KEY_HOME)
         if not fast:
             time.sleep(0.5)
     if not _is_helper_on():
         if _detect_ok():
-            mu_window.press(KEY_RETURN)
+            arduino_api.send_ascii(KEY_RETURN)
         if not fast:
             time.sleep(0.5)
-        mu_window.press(ord("1"))
+        arduino_api.send_ascii(ord("1"))
         mu_window.mouse_to_pos(SURR[(0, 0)])
-        mu_window.mouse_event("hold_right")
+        arduino_api.hold_right()
         time.sleep(5)
-        mu_window.mouse_event("release_buttons")
+        arduino_api.release_buttons()
         return False
     return True
 
 
 def turn_helper_off(fast=False) -> None:
     if _is_helper_on():
-        mu_window.press(KEY_HOME)
+        arduino_api.send_ascii(KEY_HOME)
         if not fast:
             time.sleep(0.5)
-
-
-def _to_chat(msg: str) -> None:
-    mu_window.press(KEY_RETURN)
-    time.sleep(0.5)
-    mu_window.write_text(msg)
-    time.sleep(0.5)
-    mu_window.press(KEY_RETURN)
-    time.sleep(0.5)
-
-
-def warp_to(area: str) -> None:
-    _to_chat(f'/warp {area}')
-    time.sleep(3)
-
-
-def go_through_portal(portal_coords: tuple) -> None:
-    current_coords = read_coords()
-    diff = (portal_coords[0] - current_coords[0],
-            portal_coords[1] - current_coords[1],)
-    _walk_on_shortest_straight(portal_coords)
-    # mu_window.click_on_pixel(SURR[diff])
-    time.sleep(3)
 
 
 def kill_runaway_units() -> None:
