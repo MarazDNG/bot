@@ -8,6 +8,9 @@ import window_api
 from multiprocessing import Process
 from datetime import datetime, timedelta
 
+from game_logic.djikstra import djikstra8
+from game_logic import walking_vector
+
 from . import memory
 from .browser import do_reset
 from .game_methods import _to_chat
@@ -17,7 +20,8 @@ from mu_window import mu_window
 from . import game_menu
 from . import game_methods
 from .meth import distance, get_online_players
-
+from .map import get_mu_map_list
+from arduino_api import arduino_api
 
 class Player:
 
@@ -41,6 +45,12 @@ class Player:
 
     # PROPS
     @property
+    def hwnd(self):
+        if not self._hwnd:
+            self._hwnd = window_api.window_handler_by_title(self.name)
+        return self._hwnd
+    
+    @property
     def last_dist_lvl(self):
         if self._last_dist_lvl is None:
             self._last_dist_lvl = self.lvl
@@ -53,24 +63,24 @@ class Player:
     @property
     def window_id(self):
         if self._window_id is None:
-            self._window_id = mu_window.window_id_by_title(self.name)
+            self._window_id = window_api.window_id_by_title(self.name)
         return self._window_id
 
     @property
     def reset(self) -> int:
-        window_title = window_api.window_title_by_handler(self._hwnd)
+        window_title = window_api.window_title_by_handler(self.hwnd)
         reset_str = re.search("Reset: \d+", window_title)[0]
         return int(reset_str.split()[1])
 
     @property
     def lvl(self):
-        window_title = window_api.window_title_by_handler(self._hwnd)
+        window_title = window_api.window_title_by_handler(self.hwnd)
         lvl_str = re.search("Level: \d+", window_title)[0]
         return int(lvl_str.split()[1])
 
     @property
     def coords(self) -> tuple:
-        return memory.my_coords(self._window_id)
+        return memory.my_coords(self.window_id)
 
     @cached_property_with_ttl(ttl=12 * 60 * 60)
     def gr(self):
@@ -113,8 +123,8 @@ class Player:
 
     # PUBLIC METHODS
     def surrounding_units(self) -> list:
-        return memory.get_surrounding_units(self._window_id)
-        
+        return memory.get_surrounding_units(self.window_id)
+
     def distribute_stats(self) -> None:
         """If stats should be distributed, distribute them.
         """
@@ -254,6 +264,27 @@ class Player:
     def _go_to_coords(self, coords: tuple):
         area = "".join(i for i in self.warp if i.isalpha())
         return game_methods.go_to(coords, area, lambda: self.coords)
+
+    def go_to_coords(self, target_coords: tuple):
+        origin = (645, 323) # in game_pixel
+        map_name = "".join(i for i in self.warp if i.isalpha())
+        map_array = get_mu_map_list(map_name)
+        path = djikstra8(self.coords, target_coords, map_array)
+
+        while distance(self_coords := self.coords, path[-1]) > 5:
+            closest_path_point_index = min(((i, distance(self_coords, e)) for i, e in enumerate(path)), key=lambda x: x[1])[0]
+            try:
+                next_point = path[closest_path_point_index + 5]
+            except IndexError:
+                next_point = path[-1]
+            pixel_offset = walking_vector.go_next_point(self_coords, next_point)
+            game_pixel = origin[0] + pixel_offset[0], origin[1] + pixel_offset[1]
+            screen_pixel = window_api.window_pixel_to_screen_pixel(self.hwnd, *game_pixel)
+            arduino_api.ard_mouse_to_pos(screen_pixel)
+            arduino_api.hold_left()
+            time.sleep(0.02)
+
+        arduino_api.release_buttons()
 
     def _exclude_current_spot(self):
         del self.leveling_plan[self.farming_spot_index]

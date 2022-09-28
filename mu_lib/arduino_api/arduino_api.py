@@ -7,7 +7,7 @@ import numpy
 import pyautogui
 from serial.serialwin32 import Serial
 
-PORT = "COM6"
+PORT = "COM3"
 
 UPPER_LIMIT = 120
 LOWER_LIMIT = -120
@@ -39,6 +39,8 @@ def hold_left() -> None:
 
 
 def release_buttons():
+    """Realease all keyboard and mouse buttons.
+    """
     _send('x')
 
 
@@ -52,7 +54,7 @@ def _send(data):
     arduino.write(f'{data}{ENDING_SIGN}'.encode('utf-8'))
 
 
-def ard_mouse_to_pos(target_pos):
+def ard_mouse_to_pos(target_pos: tuple):
     """ Move to the given pixel the screen. """
     pos = pyautogui.position()
     pos = numpy.array([pos.x, pos.y])

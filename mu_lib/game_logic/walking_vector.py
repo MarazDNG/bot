@@ -1,7 +1,4 @@
-from subprocess import call
-from .reading import read_coords
 from .meth import _if_stucked
-from mu_window.mu_window import mouse_to_pos, mouse_event
 from conf.conf import SURR
 from .decorators import d_logger
 from .exceptions import DeathException
@@ -84,7 +81,17 @@ def go_through_path(path: list, read_coords: callable) -> None:
     print("Finish!")
 
 
-def get_vector(target_pos, current_pos):
+def go_next_point(start: tuple, goal: tuple) -> tuple:
+    """
+    Return pixel offset from character to click on to get to the goal.
+    Use:mouse_click(pixel_on_characters_feet + this_offset)
+    """
+    vector = get_vector(goal, start)
+    vector = transform_vector(vector)
+    return perspective_transform(vector)
+
+
+def get_vector(target_pos: tuple, current_pos: tuple):
     """Get normalized vector by ingame coordinates.
     """
     if current_pos == target_pos:
