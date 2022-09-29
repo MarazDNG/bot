@@ -35,52 +35,6 @@ def go_direction(target_coords: tuple) -> None:
     print("Finish!")
 
 
-def go_through_path(path: list, read_coords: callable) -> None:
-    """ Works nicely."""
-
-    ct = 0
-    origin = SURR[0, 0]
-    path_len = len(path)
-    ahead = 5
-    mouse_to_pos(origin)
-    time.sleep(0.3)
-    last_coords = read_coords()
-    while ct < path_len - 1:
-        mouse_event("hold_left")
-        my_coords = read_coords()
-        if distance(last_coords, my_coords) > 10:
-            raise DeathException("Player died!")
-        # next square in path
-        try:
-            ahead_coords = path[ct + ahead]
-        except IndexError:
-            ahead_coords = path[-1]
-        if distance(ahead_coords, my_coords) < ahead:
-            ct += 1
-
-        # stuck protection
-        if _if_stucked(my_coords):
-            vector = get_vector(ahead_coords, my_coords)
-            vector = transform_vector(vector, k=300)
-            mouse_pos = origin[0] + vector[0], origin[1] + vector[1]
-            mouse_to_pos(mouse_pos)
-            time.sleep(0.5)
-            continue
-
-        # standard movement
-        vector = get_vector(ahead_coords, my_coords)
-        vector = transform_vector(vector)
-        vector = perspective_transform(vector)
-        mouse_pos = origin[0] + vector[0], origin[1] + vector[1]
-        mouse_to_pos(mouse_pos)
-        time.sleep(0.02)
-        last_coords = my_coords
-
-    mouse_event("release_buttons")
-    mouse_to_pos(origin)
-    print("Finish!")
-
-
 def go_next_point(start: tuple, goal: tuple) -> tuple:
     """
     Return pixel offset from character to click on to get to the goal.

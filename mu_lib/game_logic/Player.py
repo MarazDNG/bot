@@ -16,8 +16,8 @@ from .browser import do_reset
 from .exceptions import DeathException, WarpException, ResetError
 from conf.stats import config
 from . import game_menu
-from . import game_methods
-from .meth import distance, get_online_players
+from .meth import distance, get_online_players, _if_stucked
+from . import meth
 from .map import get_mu_map_list
 from arduino_api import arduino_api
 
@@ -101,7 +101,7 @@ class Player:
             """
             def peaceswamp1():
                 self._warp_to("peaceswamp")
-                self._go_to_coords((139, 125))
+                self.go_to_coords((139, 125))
 
             tmp = self.coords
 
@@ -169,32 +169,28 @@ class Player:
         spot = self.leveling_plan[self.farming_spot_index]
         if not self._is_on_place(spot["warp"], spot["coords"]):
             self.warp = spot["warp"]
-            try:
-                if self._go_to_coords(spot["coords"]):
-                    self._exclude_current_spot()
-                    self.ensure_on_best_spot()
-                    return
-                units = self.surrounding_units()
-                my_coords = self.coords
-                units = filter(lambda x: distance(
-                    x.coords, my_coords) < 10, units)
-                players = get_online_players()
-                [players.remove(ally) for ally in self.allies]
-                players.remove(self.name)
-                if units := [unit for unit in units if unit.name in players]:
-                    logging.info(
-                        f"Someone is here: {[{unit.name: unit.coords} for unit in units]}")
-
-                    self._exclude_current_spot()
-                    self.ensure_on_best_spot()
-                    return
-                # game_methods.kill_runaway_units()
-                self._go_to_coords(spot["coords"])
-            except DeathException as e:
+            if self.go_to_coords(spot["coords"]):
                 logging.info(
                     "Player died while trying to get to the best spot")
                 self._exclude_current_spot()
                 self.ensure_on_best_spot()
+                return
+            units = self.surrounding_units()
+            my_coords = self.coords
+            units = filter(lambda x: distance(
+                x.coords, my_coords) < 10, units)
+            players = get_online_players()
+            [players.remove(ally) for ally in self.allies]
+            players.remove(self.name)
+            if units := [unit for unit in units if unit.name in players]:
+                logging.info(
+                    f"Someone is here: {[{unit.name: unit.coords} for unit in units]}")
+
+                self._exclude_current_spot()
+                self.ensure_on_best_spot()
+                return
+            # game_methods.kill_runaway_units()
+            self.go_to_coords(spot["coords"])
 
     def try_reset(self) -> bool:
         """Do reset if required level is met.
@@ -221,7 +217,7 @@ class Player:
         if not self.farming["flag"]:
             self.farming["flag"] = True
             self.farming["coords"] = self.coords
-        game_methods.turn_helper_on()
+        meth.turn_helper_on()
         time.sleep(5)
 
     def check_death(self):
@@ -261,27 +257,29 @@ class Player:
 
         raise ResetError("Reset failed!")
 
-    def _go_to_coords(self, coords: tuple):
-        area = "".join(i for i in self.warp if i.isalpha())
-        return game_methods.go_to(coords, area, lambda: self.coords)
-
     def go_to_coords(self, target_coords: tuple):
+        """Go to target coordinates on current map.
+        """
         origin = (645, 323) # in game_pixel
         map_name = "".join(i for i in self.warp if i.isalpha())
         map_array = get_mu_map_list(map_name)
         path = djikstra8(self.coords, target_coords, map_array)
 
         while distance(self_coords := self.coords, path[-1]) > 5:
+            stucked = _if_stucked(self_coords)
             closest_path_point_index = min(((i, distance(self_coords, e)) for i, e in enumerate(path)), key=lambda x: x[1])[0]
             try:
                 next_point = path[closest_path_point_index + 5]
             except IndexError:
                 next_point = path[-1]
             pixel_offset = walking_vector.go_next_point(self_coords, next_point)
+            if stucked: pixel_offset = int(pixel_offset[0] * 1.5), int(pixel_offset[1] * 1.5)
             game_pixel = origin[0] + pixel_offset[0], origin[1] + pixel_offset[1]
             screen_pixel = window_api.window_pixel_to_screen_pixel(self.hwnd, *game_pixel)
             arduino_api.ard_mouse_to_pos(screen_pixel)
             arduino_api.hold_left()
+            if stucked:
+                time.sleep(2)
             time.sleep(0.02)
 
         arduino_api.release_buttons()

@@ -22,10 +22,10 @@ def send_string(data: str):
     arduino.write(f'{STRING_STARTING_SIGN}{data}{ENDING_SIGN}'.encode('utf-8'))
 
 
-def send_ascii(data: int):
+def send_ascii(char: int):
     """ Send char in ascii code. """
     arduino = Serial(PORT)
-    arduino.write(f'{INT_STARTING_SIGN}{data}{ENDING_SIGN}'.encode('utf-8'))
+    arduino.write(f'{INT_STARTING_SIGN}{char}{ENDING_SIGN}'.encode('utf-8'))
 
 
 def hold_right():

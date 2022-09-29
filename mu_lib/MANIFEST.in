@@ -1,4 +1,1 @@
-include mu_image_processing/lvl.png
-include mu_image_processing/patterns/*
-include mu_image_processing/y_img/*
-include game_methods/maps/*
+include game_logic/maps/*
