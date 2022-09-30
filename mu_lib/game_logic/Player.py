@@ -4,24 +4,25 @@ import re
 import time
 from cached_property import cached_property_with_ttl
 import logging
-import window_api
 from multiprocessing import Process
 from datetime import datetime, timedelta
 
-from game_logic.djikstra import djikstra8
-from game_logic import walking_vector
+import window_api
+import arduino_api
 
 from . import memory
-from .browser import do_reset
-from .exceptions import DeathException, WarpException, ResetError
-from conf.stats import config
-from . import game_menu
-from .meth import distance, get_online_players, _if_stucked
 from . import meth
-from .map import get_mu_map_list
-from arduino_api import arduino_api
+from . import KEY_RETURN
+from . import game_menu
+from . import walking_vector
 
-KEY_RETURN = 176
+from .exceptions import DeathException, WarpException, ResetError
+from .meth import distance, get_online_players, _if_stucked
+from .browser import do_reset
+from .map import get_mu_map_list
+from .djikstra import djikstra8
+from conf.stats import config
+
 
 class Player:
 

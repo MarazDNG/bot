@@ -2,16 +2,14 @@ import re
 import requests
 from datetime import datetime, timedelta
 import math
-import window_api
 import numpy
 import itertools
 import time
 
-from arduino_api import arduino_api
+import window_api
+import arduino_api
 
-
-KEY_RETURN = 176
-KEY_HOME = 210
+from . import KEY_HOME, KEY_RETURN
 
 
 def distance(a: tuple, b: tuple) -> float:

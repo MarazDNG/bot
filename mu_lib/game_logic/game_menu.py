@@ -2,15 +2,16 @@
 # Game login and game logout
 #
 
-from curses import window
 import multiprocessing
-from arduino_api import arduino_api
-from conf.conf import KEY_ESC, KEY_RETURN
-
 import time
 import subprocess
 import multiprocessing
+
+import arduino_api
 import window_api
+
+from . import KEY_ESC, KEY_RETURN
+
 
 def _start_launcher():
     subprocess.call(r"C:\Users\Public\Desktop\ETERNMU.lnk", shell=True)

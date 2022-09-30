@@ -5,6 +5,7 @@ from game_logic.exceptions import WrongArgumentsException
 import logging
 import sys
 import window_api
+import arduino_api
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
@@ -14,6 +15,8 @@ if __name__ == "__main__":
 
     if len(sys.argv) != 2:
         raise WrongArgumentsException("Character name is required.")
+
+    arduino_api.ard_init(3)
 
     player = Player(sys.argv[1])
     game_menu.start_game()

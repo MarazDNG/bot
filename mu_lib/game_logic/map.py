@@ -1,7 +1,7 @@
 from PIL import Image
 import os
 import numpy
-from conf.conf import WHITE_COLOR
+from . import WHITE_COLOR
 
 
 def _is_white(color: numpy.iterable) -> bool:
