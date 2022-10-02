@@ -43,34 +43,34 @@ def get_online_players():
         r"https://eternmu.cz/profile/player/req/(.{1,10})/", r.text)
 
 
-def _is_helper_on() -> bool:
+def _is_helper_on(hwnd: int) -> bool:
     on = 74, 53, 5
-    img = window_api.window_grab_image(299, 35, 1, 1)
+    img = window_api.window_grab_image(hwnd, 299, 35, 1, 1)
     img = numpy.asarray(img)
     color = tuple(img[0][0])
     return color[0] == on[0] and color[1] == on[1] and color[2] == on[2]
 
 
-def _detect_ok() -> bool:
+def _detect_ok(hwnd: int) -> bool:
     """
     Detects if OK button is on the screen.
     """
     # 600 235 30 1
     bbox = (600, 235, 30, 1)
     test_indices = (6, 8, 20, 27)
-    img = window_api.window_grab_image(*bbox)
+    img = window_api.window_grab_image(hwnd, *bbox)
     img_1d = [tuple(x) for x in numpy.asarray(img)[0]]
     return all(img_1d[i][c] == 255 for i, c in itertools.product(test_indices, range(3)))
 
 
-def turn_helper_on(fast=False) -> bool:
+def turn_helper_on(hwnd: int, fast=False) -> bool:
     """Starts helper if it is not on."""
-    if not _is_helper_on():
+    if not _is_helper_on(hwnd):
         arduino_api.send_ascii(KEY_HOME)
         if not fast:
             time.sleep(0.5)
-    if not _is_helper_on():
-        if _detect_ok():
+    if not _is_helper_on(hwnd):
+        if _detect_ok(hwnd):
             arduino_api.send_ascii(KEY_RETURN)
         if not fast:
             time.sleep(0.5)

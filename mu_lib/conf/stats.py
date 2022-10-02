@@ -4,12 +4,13 @@ config = {
     "Silco": {
         "account": {
             "id": "Zaram",
-            "pass": "***REMOVED***"
+            "pass": "***REMOVED***",
+            "select_offset": 300
         },
         "stats": {
-            "str": "f200",
+            "str": "f300",
             "agi": "r1",
-            "vit": "f100",
+            "vit": "f200",
             "ene": "r2",
         },
         "leveling_plan": [
@@ -25,7 +26,8 @@ config = {
     "Consumer": {
         "account": {
             "id": "Maraz",
-            "pass": "***REMOVED***"
+            "pass": "***REMOVED***",
+            "select_offset": 0
         },
         "stats": {
             "str": "r2",

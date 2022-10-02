@@ -1,3 +1,4 @@
+import contextlib
 import logging
 import requests
 import re
@@ -12,7 +13,7 @@ import arduino_api
 
 from . import memory
 from . import meth
-from . import KEY_RETURN
+from . import KEY_RETURN, ORIGIN
 from . import game_menu
 from . import walking_vector
 
@@ -42,6 +43,7 @@ class Player:
             "flag": False,
             "coords": None,
         }
+        self._time_last_reset = None
         logging.info(f"Initialized player {self.name}")
 
     # PROPS
@@ -85,7 +87,6 @@ class Player:
 
     @cached_property_with_ttl(ttl=12 * 60 * 60)
     def gr(self):
-        return 0
         resp = requests.get(
             f"https://eternmu.cz/profile/player/req/{self.name}/")
         gr_str = re.search("Grand resety</td><td>\d+", resp.text)[0]
@@ -181,8 +182,9 @@ class Player:
             units = filter(lambda x: distance(
                 x.coords, my_coords) < 10, units)
             players = get_online_players()
-            [players.remove(ally) for ally in self.allies]
-            players.remove(self.name)
+            with contextlib.suppress(ValueError):
+                [players.remove(ally) for ally in self.allies]
+                players.remove(self.name)
             if units := [unit for unit in units if unit.name in players]:
                 logging.info(
                     f"Someone is here: {[{unit.name: unit.coords} for unit in units]}")
@@ -208,7 +210,7 @@ class Player:
                         self.config["account"]["pass"])
             window_api.window_activate(self.name)
             game_menu.game_login(
-                self["account"]["id"], self["account"]["pass"])
+                self.config["account"]["id"], self.config["account"]["pass"], self.config["account"]["select_offset"])
             time.sleep(2)
             self.__init__(self.name)
             return True
@@ -218,7 +220,7 @@ class Player:
         if not self.farming["flag"]:
             self.farming["flag"] = True
             self.farming["coords"] = self.coords
-        meth.turn_helper_on()
+        meth.turn_helper_on(self.hwnd)
         time.sleep(5)
 
     def check_death(self):
@@ -244,8 +246,8 @@ class Player:
 
     def _reset(self, id: str, password: str) -> None:
         logging.info("Starting reset")
-        self._reset.last_time = getattr(self._reset, "last_time", 0)
-        if self._reset.last_time and datetime.now() - self._reset.last_time < timedelta(seconds=1200):
+        self._time_last_reset = self._time_last_reset or 0
+        if self._time_last_reset and datetime.now() - self._time_last_reset < timedelta(seconds=1200):
             return
 
         for _ in range(3):
@@ -253,15 +255,14 @@ class Player:
             p.start()
             p.join(30)
             if p.exitcode == 0:
-                self._reset.last_time = datetime.now()
+                self._time_last_reset = datetime.now()
                 return
 
         raise ResetError("Reset failed!")
 
-    def go_to_coords(self, target_coords: tuple):
+    def go_to_coords2(self, target_coords: tuple):
         """Go to target coordinates on current map.
         """
-        origin = (645, 323) # in game_pixel
         map_name = "".join(i for i in self.warp if i.isalpha())
         map_array = get_mu_map_list(map_name)
         path = djikstra8(self.coords, target_coords, map_array)
@@ -275,7 +276,7 @@ class Player:
                 next_point = path[-1]
             pixel_offset = walking_vector.go_next_point(self_coords, next_point)
             if stucked: pixel_offset = int(pixel_offset[0] * 1.5), int(pixel_offset[1] * 1.5)
-            game_pixel = origin[0] + pixel_offset[0], origin[1] + pixel_offset[1]
+            game_pixel = ORIGIN[0] + pixel_offset[0], ORIGIN[1] + pixel_offset[1]
             screen_pixel = window_api.window_pixel_to_screen_pixel(self.hwnd, *game_pixel)
             arduino_api.ard_mouse_to_pos(screen_pixel)
             arduino_api.hold_left()
@@ -283,8 +284,47 @@ class Player:
                 time.sleep(2)
             time.sleep(0.02)
 
+        screen_pixel = window_api.window_pixel_to_screen_pixel(self.hwnd, *ORIGIN)
+        arduino_api.ard_mouse_to_pos(screen_pixel)
         arduino_api.release_buttons()
 
+    def go_to_coords(self, target_coords: tuple):
+        """Go to target coordinates on current map.
+        """
+        map_name = "".join(i for i in self.warp if i.isalpha())
+        map_array = get_mu_map_list(map_name)
+        path = djikstra8(self.coords, target_coords, map_array)
+
+        while distance(self_coords := self.coords, path[-1]) > 4:
+            closest_path_point_index = min(((i, distance(self_coords, e)) for i, e in enumerate(path)), key=lambda x: x[1])[0]
+            try:
+                next_point = path[closest_path_point_index + 5]
+            except IndexError:
+                next_point = path[-1]
+            self.go_direction(next_point)
+
+        screen_pixel = window_api.window_pixel_to_screen_pixel(self.hwnd, *ORIGIN)
+        arduino_api.ard_mouse_to_pos(screen_pixel)
+        arduino_api.release_buttons()
+
+    def go_direction(self, target_coords: tuple) -> None:
+        screen_pixel = window_api.window_pixel_to_screen_pixel(self.hwnd, *ORIGIN)
+        arduino_api.ard_mouse_to_pos(screen_pixel)
+        
+        while distance(self_coords := self.coords, target_coords) > 2:
+            stucked = _if_stucked(self_coords)
+            pixel_offset = walking_vector.go_next_point(self_coords, target_coords)
+            with contextlib.suppress(ValueError):
+                if stucked: pixel_offset = int(pixel_offset[0] * 1.5), int(pixel_offset[1] * 1.5)
+            game_pixel = ORIGIN[0] + pixel_offset[0], ORIGIN[1] + pixel_offset[1]
+            screen_pixel = window_api.window_pixel_to_screen_pixel(self.hwnd, *game_pixel)
+            arduino_api.ard_mouse_to_pos(screen_pixel)
+            arduino_api.hold_left()
+            if stucked:
+                time.sleep(2)
+            time.sleep(0.02)
+
+        
     # PRIVATE METHODS
     def _exclude_current_spot(self):
         del self.leveling_plan[self.farming_spot_index]
