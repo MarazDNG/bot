@@ -18,5 +18,10 @@ class WrongArgumentsException(Exception):
 class DeathException(Exception):
     pass
 
+
 class ResetError(Exception):
+    pass
+
+
+class ChatError(Exception):
     pass

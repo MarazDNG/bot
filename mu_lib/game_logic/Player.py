@@ -17,7 +17,7 @@ from . import KEY_RETURN, ORIGIN
 from . import game_menu
 from . import walking_vector
 
-from .exceptions import DeathException, WarpException, ResetError
+from .exceptions import DeathException, WarpException, ResetError, ChatError
 from .meth import distance, get_online_players, _if_stucked
 from .browser import do_reset
 from .map import get_mu_map_list
@@ -52,7 +52,7 @@ class Player:
         if not self._hwnd:
             self._hwnd = window_api.window_handler_by_title(self.name)
         return self._hwnd
-    
+
     @property
     def last_dist_lvl(self):
         if self._last_dist_lvl is None:
@@ -143,7 +143,7 @@ class Player:
             self._distribute_relativety(total)
 
         step = 50 if self.reset < 15 else 100
-    
+
         if self.lvl < self.last_dist_lvl:
             self.last_dist_lvl = 1
         if self.lvl > self.last_dist_lvl + step:
@@ -269,22 +269,29 @@ class Player:
 
         while distance(self_coords := self.coords, path[-1]) > 5:
             stucked = _if_stucked(self_coords)
-            closest_path_point_index = min(((i, distance(self_coords, e)) for i, e in enumerate(path)), key=lambda x: x[1])[0]
+            closest_path_point_index = min(
+                ((i, distance(self_coords, e)) for i, e in enumerate(path)), key=lambda x: x[1])[0]
             try:
                 next_point = path[closest_path_point_index + 5]
             except IndexError:
                 next_point = path[-1]
-            pixel_offset = walking_vector.go_next_point(self_coords, next_point)
-            if stucked: pixel_offset = int(pixel_offset[0] * 1.5), int(pixel_offset[1] * 1.5)
-            game_pixel = ORIGIN[0] + pixel_offset[0], ORIGIN[1] + pixel_offset[1]
-            screen_pixel = window_api.window_pixel_to_screen_pixel(self.hwnd, *game_pixel)
+            pixel_offset = walking_vector.go_next_point(
+                self_coords, next_point)
+            if stucked:
+                pixel_offset = int(
+                    pixel_offset[0] * 1.5), int(pixel_offset[1] * 1.5)
+            game_pixel = ORIGIN[0] + \
+                pixel_offset[0], ORIGIN[1] + pixel_offset[1]
+            screen_pixel = window_api.window_pixel_to_screen_pixel(
+                self.hwnd, *game_pixel)
             arduino_api.ard_mouse_to_pos(screen_pixel)
             arduino_api.hold_left()
             if stucked:
                 time.sleep(2)
             time.sleep(0.02)
 
-        screen_pixel = window_api.window_pixel_to_screen_pixel(self.hwnd, *ORIGIN)
+        screen_pixel = window_api.window_pixel_to_screen_pixel(
+            self.hwnd, *ORIGIN)
         arduino_api.ard_mouse_to_pos(screen_pixel)
         arduino_api.release_buttons()
 
@@ -296,36 +303,44 @@ class Player:
         path = djikstra8(self.coords, target_coords, map_array)
 
         while distance(self_coords := self.coords, path[-1]) > 4:
-            closest_path_point_index = min(((i, distance(self_coords, e)) for i, e in enumerate(path)), key=lambda x: x[1])[0]
+            closest_path_point_index = min(
+                ((i, distance(self_coords, e)) for i, e in enumerate(path)), key=lambda x: x[1])[0]
             try:
                 next_point = path[closest_path_point_index + 5]
             except IndexError:
                 next_point = path[-1]
             self.go_direction(next_point)
 
-        screen_pixel = window_api.window_pixel_to_screen_pixel(self.hwnd, *ORIGIN)
+        screen_pixel = window_api.window_pixel_to_screen_pixel(
+                self.hwnd, *ORIGIN)
         arduino_api.ard_mouse_to_pos(screen_pixel)
         arduino_api.release_buttons()
 
     def go_direction(self, target_coords: tuple) -> None:
-        screen_pixel = window_api.window_pixel_to_screen_pixel(self.hwnd, *ORIGIN)
+        screen_pixel = window_api.window_pixel_to_screen_pixel(
+            self.hwnd, *ORIGIN)
         arduino_api.ard_mouse_to_pos(screen_pixel)
-        
+
         while distance(self_coords := self.coords, target_coords) > 2:
             stucked = _if_stucked(self_coords)
-            pixel_offset = walking_vector.go_next_point(self_coords, target_coords)
+            pixel_offset = walking_vector.go_next_point(
+                self_coords, target_coords)
             with contextlib.suppress(ValueError):
-                if stucked: pixel_offset = int(pixel_offset[0] * 1.5), int(pixel_offset[1] * 1.5)
-            game_pixel = ORIGIN[0] + pixel_offset[0], ORIGIN[1] + pixel_offset[1]
-            screen_pixel = window_api.window_pixel_to_screen_pixel(self.hwnd, *game_pixel)
+                if stucked:
+                    pixel_offset = int(
+                        pixel_offset[0] * 1.5), int(pixel_offset[1] * 1.5)
+            game_pixel = ORIGIN[0] + \
+                pixel_offset[0], ORIGIN[1] + pixel_offset[1]
+            screen_pixel = window_api.window_pixel_to_screen_pixel(
+                self.hwnd, *game_pixel)
             arduino_api.ard_mouse_to_pos(screen_pixel)
             arduino_api.hold_left()
             if stucked:
                 time.sleep(2)
             time.sleep(0.02)
 
-        
     # PRIVATE METHODS
+
     def _exclude_current_spot(self):
         del self.leveling_plan[self.farming_spot_index]
         self.farming_spot_index -= 1
@@ -333,11 +348,21 @@ class Player:
     def _write_to_chat(self, msg: str):
         arduino_api.send_ascii(KEY_RETURN)
         time.sleep(0.5)
+        if not meth._detect_chat_open(self.hwnd):
+            arduino_api.send_ascii(KEY_RETURN)
+        time.sleep(0.5)
+        if not meth._detect_chat_open(self.hwnd):
+            raise ChatError("Cannot open chat!")
         arduino_api.send_string(msg)
         time.sleep(0.5)
         arduino_api.send_ascii(KEY_RETURN)
         time.sleep(0.5)
-    
-    def _warp_to(self, area: str) -> None:        
+        if meth._detect_chat_open(self.hwnd):
+            arduino_api.send_ascii(KEY_RETURN)
+        time.sleep(0.5)
+        if meth._detect_chat_open(self.hwnd):
+            raise ChatError("Cannot close chat!")
+
+    def _warp_to(self, area: str) -> None:
         self._write_to_chat(f'/warp {area}')
         time.sleep(3)
