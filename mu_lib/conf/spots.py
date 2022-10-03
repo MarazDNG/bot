@@ -13,7 +13,7 @@ n_WEREWOLVES = {
 n_GHOSTS_1 = {
     "warp": "dungeon2",
     "min_lvl": 40,
-    "coords": (214, 218),
+    "coords": (214, 128),
 }
 
 n_GHOSTS_2 = {
