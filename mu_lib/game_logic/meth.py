@@ -69,7 +69,7 @@ def _detect_chat_open(hwnd: int) -> bool:
     bbox = (100, 625, 300, 1)
     img = window_api.window_grab_image(hwnd, *bbox)
     img_1d = [tuple(x) for x in numpy.asarray(img)[0]]
-    return all(img_1d[indices[i]][j] == colors[i] for i, j in itertools.product(range(3), range(3)))
+    return all(abs(img_1d[indices[i]][j] - colors[i]) <= 3 for i, j in itertools.product(range(3), range(3)))
 
 
 def turn_helper_on(hwnd: int, fast=False) -> bool:
