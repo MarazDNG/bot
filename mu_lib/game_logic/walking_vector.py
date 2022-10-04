@@ -29,7 +29,7 @@ def get_vector(target_pos: tuple, current_pos: tuple):
     return vector
 
 
-def transform_vector(vector, k: int = 200):
+def transform_vector(vector, k: int = 250):
     """Transform and scale vector by screen coordinates.
     """
     start = time.time()
@@ -50,6 +50,8 @@ def perspective_transform(vector: tuple):
     v = 3
 
     r = vector[1] / numpy.linalg.norm(vector)
+    if r == 0:
+        return (vector[0], vector[1])
 
     z = v - r * cos(alpha)
     y = r * sin(alpha)

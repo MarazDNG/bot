@@ -209,8 +209,8 @@ class Player:
             self._reset(self.config["account"]["id"],
                         self.config["account"]["pass"])
             window_api.window_activate(self.name)
-            game_menu.game_login(
-                self.config["account"]["id"], self.config["account"]["pass"], self.config["account"]["select_offset"])
+            game_menu.game_login(self.hwnd,
+                                 self.config["account"]["id"], self.config["account"]["pass"], self.config["account"]["select_offset"])
             time.sleep(2)
             self.__init__(self.name)
             return True
@@ -312,7 +312,7 @@ class Player:
             self.go_direction(next_point)
 
         screen_pixel = window_api.window_pixel_to_screen_pixel(
-                self.hwnd, *ORIGIN)
+            self.hwnd, *ORIGIN)
         arduino_api.ard_mouse_to_pos(screen_pixel)
         arduino_api.release_buttons()
 
