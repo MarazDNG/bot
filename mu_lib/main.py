@@ -26,7 +26,7 @@ if __name__ == "__main__":
         hwnd = window_api.window_handler_by_regex("^MU$")
         window_api.window_activate_by_handler(hwnd)
         game_menu.game_login(hwnd,
-            player.config["account"]["id"], player.config["account"]["pass"], player.config["account"]["select_offset"])
+                             player.config["account"]["id"], player.config["account"]["pass"], player.config["account"]["select_offset"])
 
     window_api.window_activate(f"Player: {player.name}")
 
@@ -35,7 +35,8 @@ if __name__ == "__main__":
 
         player.distribute_stats()
 
-        player.try_reset()
+        if player.try_reset():
+            continue
 
         player.ensure_on_best_spot()
 
