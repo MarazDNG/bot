@@ -45,6 +45,7 @@ class Player:
         }
         self._time_last_reset = None
         logging.info(f"Initialized player {self.name}")
+        self.birthtime = datetime.now()
 
     # PROPS
     @property
@@ -233,6 +234,12 @@ class Player:
             del self.leveling_plan[self.farming_spot_index]
             self.farming_spot_index -= 1
             self.ensure_on_best_spot()
+
+    def check_lifetime(self) -> bool:
+        """Return True if object lives too long.
+        """
+        lifespan = datetime(hour=2)
+        return datetime.now() - self.start_time > lifespan
 
     def _distribute_relativety(self, stats_to_distribute: int) -> None:
         parts = sum(int(self.stats[key][1:])

@@ -31,6 +31,9 @@ if __name__ == "__main__":
     window_api.window_activate(f"Player: {player.name}")
 
     while True:
+        if player.check_lifetime():
+            player.__init__(player.name)
+
         player.check_death()
 
         player._buy_pots()
