@@ -366,3 +366,27 @@ class Player:
     def _warp_to(self, area: str) -> None:
         self._write_to_chat(f'/warp {area}')
         time.sleep(3)
+
+    def _buy_pots(self):
+        if meth._detect_pots(self.hwnd):
+            return
+
+        self.warp = "devias"
+        self.go_to_coords((226, 40))
+
+        # click on npc 225, 41
+        time.sleep(1)
+        offset = walking_vector.coords_to_pixel_offset(self.coords, (225, 41))
+        total = (ORIGIN[0] + offset[0], ORIGIN[1] + offset[1])
+        arduino_api.ard_mouse_to_pos(
+            window_api.window_pixel_to_screen_pixel(self.hwnd, *total))
+        time.sleep(0.5)
+        arduino_api.click()
+        time.sleep(3)
+
+        arduino_api.ard_mouse_to_pos(
+            window_api.window_pixel_to_screen_pixel(self.hwnd, 700, 120))
+        for _ in range(2):
+            time.sleep(0.5)
+            arduino_api.click()
+        time.sleep(0.5)

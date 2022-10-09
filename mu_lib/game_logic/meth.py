@@ -72,6 +72,17 @@ def _detect_chat_open(hwnd: int) -> bool:
     return all(abs(img_1d[indices[i]][j] - colors[i]) <= 3 for i, j in itertools.product(range(3), range(3)))
 
 
+def _detect_pots(hwnd: int) -> bool:
+    """
+    Return True if Player has pots.
+    """
+    img = window_api.window_grab_image(hwnd, 40, 710, 10, 1)
+    img_1d = [tuple(x) for x in numpy.asarray(img)[0]]
+    color = (153, 9, 9)
+    return all(abs(img_1d[i][j] - color[j]) <= 3 for i,
+               j in itertools.product(range(5), range(3)))
+
+
 def turn_helper_on(hwnd: int, fast=False) -> bool:
     """Starts helper if it is not on."""
     if not _is_helper_on(hwnd):

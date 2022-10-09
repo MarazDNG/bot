@@ -33,6 +33,8 @@ if __name__ == "__main__":
     while True:
         player.check_death()
 
+        player._buy_pots()
+
         player.distribute_stats()
 
         if player.try_reset():
