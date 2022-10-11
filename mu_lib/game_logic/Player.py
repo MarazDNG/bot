@@ -309,7 +309,7 @@ class Player:
         map_array = get_mu_map_list(map_name)
         path = djikstra8(self.coords, target_coords, map_array)
 
-        while distance(self_coords := self.coords, path[-1]) > 3    :
+        while distance(self_coords := self.coords, path[-1]) > 3:
             closest_path_point_index = min(
                 ((i, distance(self_coords, e)) for i, e in enumerate(path)), key=lambda x: x[1])[0]
             try:
@@ -323,10 +323,10 @@ class Player:
             screen_pixel = window_api.window_pixel_to_screen_pixel(
                 self.hwnd, *game_pixel)
             arduino_api.ard_mouse_to_pos(screen_pixel)
+            arduino_api.hold_left()
             if _if_stucked(self_coords):
                 time.sleep(2)
             time.sleep(0.02)
-            arduino_api.hold_left()
 
         screen_pixel = window_api.window_pixel_to_screen_pixel(
             self.hwnd, *ORIGIN)
@@ -403,7 +403,7 @@ class Player:
 
         arduino_api.ard_mouse_to_pos(
             window_api.window_pixel_to_screen_pixel(self.hwnd, 700, 120))
-        for _ in range(2):
+        for _ in range(10):
             time.sleep(0.5)
             arduino_api.click()
         time.sleep(0.5)
