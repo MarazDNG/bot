@@ -238,8 +238,8 @@ class Player:
     def check_lifetime(self) -> bool:
         """Return True if object lives too long.
         """
-        lifespan = datetime(hour=2)
-        return datetime.now() - self.start_time > lifespan
+        lifespan = timedelta(hours=2)
+        return datetime.now() - self.birthtime > lifespan
 
     def _distribute_relativety(self, stats_to_distribute: int) -> None:
         parts = sum(int(self.stats[key][1:])

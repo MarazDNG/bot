@@ -44,8 +44,10 @@ config = {
             n_THUNDER_LICHES_1,
             n_MUTANTS_2,
             n_MUTANTS_1,
-            n_SPLINTER_WOLVES_1,
+            n_BLOODY_WOLVES_1,
+            n_SPLINTER_WOLVES_3,
             n_SPLINTER_WOLVES_2,
+            n_SPLINTER_WOLVES_1,
         ]
     }
 }
