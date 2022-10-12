@@ -324,8 +324,11 @@ class Player:
                 self.hwnd, *game_pixel)
             arduino_api.ard_mouse_to_pos(screen_pixel)
             arduino_api.hold_left()
-            if _if_stucked(self_coords):
-                time.sleep(2)
+            if diff := _if_stucked(self_coords):
+                if diff < timedelta(seconds=4):
+                    time.sleep(2)
+                else:
+                    self.warp = self.warp
             time.sleep(0.02)
 
         screen_pixel = window_api.window_pixel_to_screen_pixel(
