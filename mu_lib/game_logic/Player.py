@@ -167,11 +167,12 @@ class Player:
                 f"lvl: {self.lvl} is enough for spot {self.leveling_plan[self.farming_spot_index + 1]}")
             self.farming_spot_index += 1
 
-    def ensure_on_best_spot(self):
+    def ensure_on_best_spot(self, prefer_warp: bool = True):
         self._update_best_spot_index()
         spot = self.leveling_plan[self.farming_spot_index]
         if not self._is_on_place(spot["warp"], spot["coords"]):
-            self.warp = spot["warp"]
+            if self.warp != spot["warp"] or prefer_warp:
+                self.warp = spot["warp"]
             if self.go_to_coords(spot["coords"]):
                 logging.info(
                     "Player died while trying to get to the best spot")
@@ -191,7 +192,7 @@ class Player:
                     f"Someone is here: {[{unit.name: unit.coords} for unit in units]}")
 
                 self._exclude_current_spot()
-                self.ensure_on_best_spot()
+                self.ensure_on_best_spot(prefer_warp=True)
                 return
             # game_methods.kill_runaway_units()
             self.go_to_coords(spot["coords"])
@@ -231,8 +232,7 @@ class Player:
         if self.farming["flag"] and distance(self.coords, self.farming["coords"]) > 13:
             logging.info("Player died while farming")
             self.farming["flag"] = False
-            del self.leveling_plan[self.farming_spot_index]
-            self.farming_spot_index -= 1
+            self._exclude_current_spot()
             self.ensure_on_best_spot()
 
     def check_lifetime(self) -> bool:
