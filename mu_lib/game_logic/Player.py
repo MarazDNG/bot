@@ -410,3 +410,11 @@ class Player:
             time.sleep(0.5)
             arduino_api.click()
         time.sleep(0.5)
+
+        # close shop
+        game_pixel = 960, 630
+        total = window_api.window_pixel_to_screen_pixel(self.hwnd, *game_pixel)
+        arduino_api.ard_mouse_to_pos(total)
+        time.sleep(0.5)
+        arduino_api.click()
+        time.sleep(0.5)
