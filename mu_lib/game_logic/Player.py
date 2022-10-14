@@ -192,7 +192,7 @@ class Player:
                     f"Someone is here: {[{unit.name: unit.coords} for unit in units]}")
 
                 self._exclude_current_spot()
-                self.ensure_on_best_spot(prefer_warp=True)
+                self.ensure_on_best_spot(prefer_warp=False)
                 return
             # game_methods.kill_runaway_units()
             self.go_to_coords(spot["coords"])
@@ -313,22 +313,25 @@ class Player:
             closest_path_point_index = min(
                 ((i, distance(self_coords, e)) for i, e in enumerate(path)), key=lambda x: x[1])[0]
             try:
-                next_point = path[closest_path_point_index + 3]
+                next_point = path[closest_path_point_index + 4]
             except IndexError:
                 next_point = path[-1]
             # self.go_direction(next_point)
             offset = walking_vector.coords_to_pixel_offset(
                 self_coords, next_point)
-            game_pixel = ORIGIN[0] + offset[0], ORIGIN[1] + offset[1]
+            game_pixel = [ORIGIN[0] + offset[0], ORIGIN[1] + offset[1]]
+            game_pixel[1] = min(game_pixel[1], 650)
             screen_pixel = window_api.window_pixel_to_screen_pixel(
                 self.hwnd, *game_pixel)
             arduino_api.ard_mouse_to_pos(screen_pixel)
             arduino_api.hold_left()
-            if diff := _if_stucked(self_coords):
-                if diff < timedelta(seconds=4):
-                    time.sleep(2)
-                else:
-                    self.warp = self.warp
+            # if diff := _if_stucked(self_coords):
+            #     if diff < timedelta(seconds=4):
+            #         time.sleep(2)
+            #     else:
+            #         self.warp = self.warp
+            #         path = djikstra8(self.coords, target_coords, map_array)
+
             time.sleep(0.02)
 
         screen_pixel = window_api.window_pixel_to_screen_pixel(
