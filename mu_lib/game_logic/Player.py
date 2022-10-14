@@ -114,9 +114,15 @@ class Player:
                 self._write_to_chat(f"/warp {warp}")
             time.sleep(3)
 
-            if self.coords == tmp and self.lvl > 10:
-                raise WarpException(
-                    f"Warp failed from {self.warp} {self.coords} to {warp}")
+            if distance(self.coords, tmp) < 5 and self.lvl > 10:
+                if warp in locals():
+                    locals()[warp]()
+                else:
+                    self._write_to_chat(f"/warp {warp}")
+                time.sleep(3)
+                if distance(self.coords, tmp) < 5 and self.lvl > 10:
+                    raise WarpException(
+                        f"Warp failed from {self.warp} {self.coords} to {warp}")
 
         warp_to(value)
         self._warp = value
