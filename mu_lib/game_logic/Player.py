@@ -332,7 +332,7 @@ class Player:
             arduino_api.ard_mouse_to_pos(screen_pixel)
             arduino_api.hold_left()
             if diff := _if_stucked(self_coords):
-                offset = 0.8 * offset[0], 0.8 * offset[1]
+                offset = 0.6 * offset[0], 0.6 * offset[1]
                 game_pixel = [ORIGIN[0] + offset[0], ORIGIN[1] + offset[1]]
                 game_pixel[1] = min(game_pixel[1], 650)
                 screen_pixel = window_api.window_pixel_to_screen_pixel(
