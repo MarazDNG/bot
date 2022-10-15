@@ -38,7 +38,7 @@ def _if_stucked(coords: tuple, recovery: callable = None, wait_time: float = 1.5
 
 
 def get_online_players():
-    r = requests.get("https://eternmu.cz/rankings/online/")
+    r = requests.get("https://eternmu.cz/rankings/online/", verify=False)
     return re.findall(
         r"https://eternmu.cz/profile/player/req/(.{1,10})/", r.text)
 

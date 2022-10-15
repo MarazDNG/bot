@@ -89,7 +89,7 @@ class Player:
     @cached_property_with_ttl(ttl=12 * 60 * 60)
     def gr(self):
         resp = requests.get(
-            f"https://eternmu.cz/profile/player/req/{self.name}/")
+            f"https://eternmu.cz/profile/player/req/{self.name}/", verify=False)
         gr_str = re.search("Grand resety</td><td>\d+", resp.text)[0]
         return int(gr_str.split("</td><td>")[1])
 
