@@ -103,7 +103,7 @@ class Player:
             """Used only when required level is met.
             """
             def peaceswamp1():
-                self._warp_to("peaceswamp")
+                self.warp = "peaceswamp"
                 self.go_to_coords((139, 125))
 
             tmp = self.coords

@@ -30,10 +30,10 @@ config = {
             "select_offset": 0
         },
         "stats": {
-            "str": "r2",
-            "agi": "r3",
-            "vit": "f1500",
-            "ene": "r3",
+            "str": "r20",
+            "agi": "r25",
+            "vit": "f2500",
+            "ene": "r30",
         },
         "leveling_plan": [
             n_BUDGE_DRAGONS,
@@ -48,6 +48,11 @@ config = {
             n_SPLINTER_WOLVES_3,
             n_SPLINTER_WOLVES_2,
             n_SPLINTER_WOLVES_1,
+            # n_SAPI_UNUS1,
+            # n_SAPI_DUOS1,
+            # n_SAPI_DUOS2,
+            n_BLADE_HUNTERS_2,
+            n_BLADE_HUNTERS_1,
         ]
     }
 }

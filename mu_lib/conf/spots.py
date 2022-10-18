@@ -173,6 +173,18 @@ n_SPLINTER_WOLVES_4 = {
     "coords": (141, 221),
 }
 
+n_IRON_RIDERS1 = {
+    "warp": "kantururuins1",
+    "min_lvl": 200,
+    "coords": (176, 166),
+}
+
+n_IRON_RIDERS2 = {
+    "warp": "kantururuins1",
+    "min_lvl": 200,
+    "coords": (193, 183),
+}
+
 n_BLADE_HUNTERS_1 = {
     "warp": "kantururuins2",
     "min_lvl": 220,
@@ -185,8 +197,20 @@ n_BLADE_HUNTERS_2 = {
     "coords": (139, 42),
 }
 
-n_SAPI_DUOS = {
+n_SAPI_UNUS1 = {
+    "warp": "peaceswamp1",
+    "min_lvl": 300,
+    "coords": (204, 201),
+}
+
+n_SAPI_DUOS1 = {
     "warp": "peaceswamp1",
     "min_lvl": 300,
     "coords": (173, 217),
+}
+
+n_SAPI_DUOS2 = {
+    "warp": "peaceswamp1",
+    "min_lvl": 300,
+    "coords": (234, 199),
 }
