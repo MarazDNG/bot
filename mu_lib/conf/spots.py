@@ -173,13 +173,13 @@ n_SPLINTER_WOLVES_4 = {
     "coords": (141, 221),
 }
 
-n_IRON_RIDERS1 = {
+n_IRON_RIDERS_1 = {
     "warp": "kantururuins1",
     "min_lvl": 200,
     "coords": (176, 166),
 }
 
-n_IRON_RIDERS2 = {
+n_IRON_RIDERS_2 = {
     "warp": "kantururuins1",
     "min_lvl": 200,
     "coords": (193, 183),
@@ -197,19 +197,73 @@ n_BLADE_HUNTERS_2 = {
     "coords": (139, 42),
 }
 
-n_SAPI_UNUS1 = {
-    "warp": "peaceswamp1",
+n_ALQUAMOS_1 = {
+    "warp": "icarus",
+    "min_lvl": 150,
+    "coords": (41, 30),
+}
+
+n_MEGA_CRUSTS_1 = {
+    "warp": "icarus",
+    "min_lvl": 150,
+    "coords": (68, 42),
+}
+
+n_QUEEN_RAINIERS_1 = {
+    "warp": "icarus",
+    "min_lvl": 150,
+    "coords": (92, 58),
+}
+
+n_QUEEN_RAINIERS_2 = {
+    "warp": "icarus",
+    "min_lvl": 150,
+    "coords": (85, 82),
+}
+
+n_QUEEN_RAINIERS_3 = {
+    "warp": "icarus",
+    "min_lvl": 150,
+    "coords": (61, 80),
+}
+
+n_DRAKANS_1 = {
+    "warp": "icarus",
+    "min_lvl": 150,
+    "coords": (42, 83),
+}
+
+n_ALPHA_CRUSTS_1 = {
+    "warp": "icarus",
+    "min_lvl": 150,
+    "coords": (33, 101),
+}
+
+n_ALPHA_CRUSTS_2 = {
+    "warp": "icarus",
+    "min_lvl": 150,
+    "coords": (50, 122),
+}
+
+n_PHANTOM_KNIGHTS_1 = {
+    "warp": "icarus",
+    "min_lvl": 150,
+    "coords": (40, 142),
+}
+
+n_SAPI_UNUS_1 = {
+    "warp": "peaceswamp_1",
     "min_lvl": 300,
     "coords": (204, 201),
 }
 
-n_SAPI_DUOS1 = {
+n_SAPI_DUOS_1 = {
     "warp": "peaceswamp1",
     "min_lvl": 300,
     "coords": (173, 217),
 }
 
-n_SAPI_DUOS2 = {
+n_SAPI_DUOS_2 = {
     "warp": "peaceswamp1",
     "min_lvl": 300,
     "coords": (234, 199),
