@@ -30,9 +30,9 @@ config = {
             "select_offset": 0
         },
         "stats": {
-            "str": "r20",
+            "str": "r25",
             "agi": "r25",
-            "vit": "f2500",
+            "vit": "f3500",
             "ene": "r30",
         },
         "leveling_plan": [
@@ -53,6 +53,8 @@ config = {
             # n_SAPI_DUOS2,
             n_BLADE_HUNTERS_2,
             n_BLADE_HUNTERS_1,
+            n_BERSERKERS_2,
+            n_BERSERKERS_1,
         ]
     }
 }

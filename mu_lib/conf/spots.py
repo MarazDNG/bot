@@ -197,6 +197,18 @@ n_BLADE_HUNTERS_2 = {
     "coords": (139, 42),
 }
 
+n_BERSERKERS_1 = {
+    "warp": "kantururuins2",
+    "min_lvl": 220,
+    "coords": (151, 10),
+}
+
+n_BERSERKERS_2 = {
+    "warp": "kantururuins2",
+    "min_lvl": 220,
+    "coords": (127, 18),
+}
+
 n_ALQUAMOS_1 = {
     "warp": "icarus",
     "min_lvl": 150,
