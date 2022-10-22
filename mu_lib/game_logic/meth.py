@@ -12,6 +12,13 @@ import arduino_api
 from . import KEY_HOME, KEY_RETURN
 
 
+def protection_click():
+    arduino_api.ard_mouse_to_pos((0, 0))
+    time.sleep(0.3)
+    arduino_api.click()
+    time.sleep(0.1)
+
+
 def distance(a: tuple, b: tuple) -> float:
     return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 

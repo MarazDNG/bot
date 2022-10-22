@@ -1,6 +1,7 @@
 from game_logic import game_menu
 from game_logic.Player import Player
 from game_logic.exceptions import WrongArgumentsException
+from game_logic import meth
 
 import logging
 import sys
@@ -20,23 +21,14 @@ if __name__ == "__main__":
 
     player_pool = [Player(sys.argv[i]) for i in range(1, len(sys.argv))]
 
-    # try:
-    #     window_api.window_handler_by_title(f"Player: {player.name}")
-    # except Exception:
-    #     game_menu.start_game()
-    #     hwnd = window_api.window_handler_by_regex("^MU$")
-    #     window_api.window_activate_by_handler(hwnd)
-    #     game_menu.game_login(hwnd,
-    #                          player.config["account"]["id"], player.config["account"]["pass"], player.config["account"]["select_offset"])
-
-    # window_api.window_activate(f"Player: {player.name}")
-
     while True:
         for player in player_pool:
             try:
+                meth.protection_click()
                 window_api.window_activate(f"Player: {player.name}")
             except IndexError:
                 game_menu.start_game()
+                meth.protection_click()
                 hwnd = window_api.window_handler_by_regex("^MU$")
                 window_api.window_activate_by_handler(hwnd)
                 game_menu.game_login(hwnd,

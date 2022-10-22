@@ -216,6 +216,7 @@ class Player:
             game_menu.server_selection(self.hwnd)
             self._reset(self.config["account"]["id"],
                         self.config["account"]["pass"])
+            meth.protection_click()
             window_api.window_activate(self.name)
             game_menu.game_login(self.hwnd,
                                  self.config["account"]["id"], self.config["account"]["pass"], self.config["account"]["select_offset"])

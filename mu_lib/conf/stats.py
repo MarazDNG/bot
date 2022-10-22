@@ -34,10 +34,10 @@ config = {
             "select_offset": 0
         },
         "stats": {
-            "str": "r25",
-            "agi": "r25",
-            "vit": "f3500",
-            "ene": "r30",
+            "str": "r4",
+            "agi": "r3",
+            "vit": "f4000",
+            "ene": "r4",
         },
         "leveling_plan": [
             n_BUDGE_DRAGONS,
