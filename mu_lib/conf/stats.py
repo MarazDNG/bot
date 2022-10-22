@@ -10,7 +10,7 @@ config = {
         "stats": {
             "str": "f300",
             "agi": "r1",
-            "vit": "f200",
+            "vit": "f700",
             "ene": "r2",
         },
         "leveling_plan": [
@@ -20,7 +20,11 @@ config = {
             n_GRIZZLYS_1,
             n_POISON_BULL_FIGHTERS_2,
             n_DARK_KNIGHTS_2,
-            n_DARK_KNIGHTS_1
+            n_DARK_KNIGHTS_1,
+            n_DEATH_KNIGHTS_4,
+            n_DEATH_KNIGHTS_3,
+            n_DEATH_KNIGHTS_2,
+            n_DEATH_KNIGHTS_1,
         ]
     },
     "Consumer": {
