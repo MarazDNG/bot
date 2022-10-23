@@ -31,12 +31,10 @@ class Player:
     def __init__(self, char_name: str):
         self.name = char_name
         self.config = config[char_name]
-        self.name = char_name
         self._window_id = None
         self._hwnd = None
         self.allies = []
-        self._warp = "lorencia"
-        self.stats = self.config["stats"]
+        self._warp = None
         self.leveling_plan = self.config["leveling_plan"]
         self._last_dist_lvl = None
         self.farming_spot_index = 0
@@ -139,13 +137,13 @@ class Player:
         """If stats should be distributed, distribute them.
         """
         lvl = self.lvl
-
         if lvl == 1:
+            stats = self.config["stats"]
             total = self.gr * 10*1000 + self.reset * 500
-            for stat in self.stats:
-                if self.stats[stat][0] == "f":
+            for stat in stats:
+                if stats[stat][0] == "f":
                     # distribute flat
-                    to_add = int(self.stats[stat][1:])
+                    to_add = int(stats[stat][1:])
                     total -= to_add
                     self._write_to_chat(f"/add{stat} {to_add}")
             self._distribute_relativety(total)
@@ -250,12 +248,13 @@ class Player:
         return datetime.now() - self.birthtime > lifespan
 
     def _distribute_relativety(self, stats_to_distribute: int) -> None:
-        parts = sum(int(self.stats[key][1:])
-                    for key in self.stats if self.stats[key][0] == "r")
+        stats = self.config["stats"]
+        parts = sum(int(stats[key][1:])
+                    for key in stats if stats[key][0] == "r")
 
-        for stat in self.stats:
-            if self.stats[stat][0] == "r":
-                to_add = int(int(self.stats[stat][1:])
+        for stat in stats:
+            if stats[stat][0] == "r":
+                to_add = int(int(stats[stat][1:])
                              * stats_to_distribute / parts)
                 self._write_to_chat(f"/add{stat} {to_add}")
 
