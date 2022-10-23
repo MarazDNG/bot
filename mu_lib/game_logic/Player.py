@@ -30,11 +30,11 @@ class Player:
 
     def __init__(self, char_name: str):
         self.name = char_name
-        self.config = config[char_name]
+        self._config = config[char_name]
         self._window_id = None
-        self._hwnd = None
-        self.allies = []
-        self._warp = None
+        self.__hwnd = None
+        self._allies = []
+        self.__warp = None
         self._last_dist_lvl = None
         self.farming_spot_index = 0
         self.farming = {
@@ -47,10 +47,10 @@ class Player:
 
     # PROPS
     @property
-    def hwnd(self):
-        if not self._hwnd:
-            self._hwnd = window_api.window_handler_by_title(self.name)
-        return self._hwnd
+    def _hwnd(self):
+        if not self.__hwnd:
+            self.__hwnd = window_api.window_handler_by_title(self.name)
+        return self.__hwnd
 
     @property
     def last_dist_lvl(self):
@@ -70,13 +70,13 @@ class Player:
 
     @property
     def reset(self) -> int:
-        window_title = window_api.window_title_by_handler(self.hwnd)
+        window_title = window_api.window_title_by_handler(self._hwnd)
         reset_str = re.search("Reset: \d+", window_title)[0]
         return int(reset_str.split()[1])
 
     @property
     def lvl(self):
-        window_title = window_api.window_title_by_handler(self.hwnd)
+        window_title = window_api.window_title_by_handler(self._hwnd)
         lvl_str = re.search("Level: \d+", window_title)[0]
         return int(lvl_str.split()[1])
 
@@ -93,7 +93,7 @@ class Player:
 
     @property
     def warp(self):
-        return self.config["starting_warp"] if self.lvl < 10 else self._warp
+        return self._config["starting_warp"] if self.lvl < 10 else self.__warp
 
     @warp.setter
     def warp(self, value: str):
@@ -123,7 +123,7 @@ class Player:
                         f"Warp failed from {self.warp} {self.coords} to {warp}")
 
         warp_to(value)
-        self._warp = value
+        self.__warp = value
 
         # update flag
         self.farming["flag"] = False
@@ -137,7 +137,7 @@ class Player:
         """
         lvl = self.lvl
         if lvl == 1:
-            stats = self.config["stats"]
+            stats = self._config["stats"]
             total = self.gr * 10*1000 + self.reset * 500
             for stat in stats:
                 if stats[stat][0] == "f":
@@ -166,7 +166,7 @@ class Player:
         return ret
 
     def _update_best_spot_index(self):
-        leveling_plan = self.config["leveling_plan"]
+        leveling_plan = self._config["leveling_plan"]
         while self.farming_spot_index + 1 < len(leveling_plan) and self.lvl >= leveling_plan[self.farming_spot_index + 1]["min_lvl"]:
             print(
                 f"lvl: {self.lvl} is enough for spot {leveling_plan[self.farming_spot_index + 1]}")
@@ -174,7 +174,7 @@ class Player:
 
     def ensure_on_best_spot(self, prefer_warp: bool = True):
         self._update_best_spot_index()
-        spot = self.config["leveling_plan"][self.farming_spot_index]
+        spot = self._config["leveling_plan"][self.farming_spot_index]
         if not self._is_on_place(spot["warp"], spot["coords"]):
             if self.warp != spot["warp"] or prefer_warp:
                 self.warp = spot["warp"]
@@ -190,7 +190,7 @@ class Player:
                 x.coords, my_coords) < 10, units)
             players = get_online_players()
             with contextlib.suppress(ValueError):
-                [players.remove(ally) for ally in self.allies]
+                [players.remove(ally) for ally in self._allies]
                 players.remove(self.name)
             if units := [unit for unit in units if unit.name in players]:
                 logging.info(
@@ -212,13 +212,13 @@ class Player:
         logging.info(f"level_needed: {level_needed}")
         logging.info(f"self.lvl: {self.lvl}")
         if self.lvl >= level_needed:
-            game_menu.server_selection(self.hwnd)
-            self._reset(self.config["account"]["id"],
-                        self.config["account"]["pass"])
+            game_menu.server_selection(self._hwnd)
+            self._reset(self._config["account"]["id"],
+                        self._config["account"]["pass"])
             meth.protection_click()
             window_api.window_activate(self.name)
-            game_menu.game_login(self.hwnd,
-                                 self.config["account"]["id"], self.config["account"]["pass"], self.config["account"]["select_offset"])
+            game_menu.game_login(self._hwnd,
+                                 self._config["account"]["id"], self._config["account"]["pass"], self._config["account"]["select_offset"])
             time.sleep(2)
             self.__init__(self.name)
             return True
@@ -228,7 +228,7 @@ class Player:
         if not self.farming["flag"]:
             self.farming["flag"] = True
             self.farming["coords"] = self.coords
-        meth.turn_helper_on(self.hwnd)
+        meth.turn_helper_on(self._hwnd)
         time.sleep(5)
 
     def check_death(self):
@@ -248,7 +248,7 @@ class Player:
         return datetime.now() - self.birthtime > lifespan
 
     def _distribute_relativety(self, stats_to_distribute: int) -> None:
-        stats = self.config["stats"]
+        stats = self._config["stats"]
         parts = sum(int(stats[key][1:])
                     for key in stats if stats[key][0] == "r")
 
@@ -297,7 +297,7 @@ class Player:
             game_pixel = ORIGIN[0] + \
                 pixel_offset[0], ORIGIN[1] + pixel_offset[1]
             screen_pixel = window_api.window_pixel_to_screen_pixel(
-                self.hwnd, *game_pixel)
+                self._hwnd, *game_pixel)
             arduino_api.ard_mouse_to_pos(screen_pixel)
             arduino_api.hold_left()
             if stucked:
@@ -305,7 +305,7 @@ class Player:
             time.sleep(0.02)
 
         screen_pixel = window_api.window_pixel_to_screen_pixel(
-            self.hwnd, *ORIGIN)
+            self._hwnd, *ORIGIN)
         arduino_api.ard_mouse_to_pos(screen_pixel)
         arduino_api.release_buttons()
 
@@ -329,7 +329,7 @@ class Player:
             game_pixel = [ORIGIN[0] + offset[0], ORIGIN[1] + offset[1]]
             game_pixel[1] = min(game_pixel[1], 650)
             screen_pixel = window_api.window_pixel_to_screen_pixel(
-                self.hwnd, *game_pixel)
+                self._hwnd, *game_pixel)
             arduino_api.ard_mouse_to_pos(screen_pixel)
             arduino_api.hold_left()
             if diff := _if_stucked(self_coords):
@@ -337,7 +337,7 @@ class Player:
                 game_pixel = [ORIGIN[0] + offset[0], ORIGIN[1] + offset[1]]
                 game_pixel[1] = min(game_pixel[1], 650)
                 screen_pixel = window_api.window_pixel_to_screen_pixel(
-                    self.hwnd, *game_pixel)
+                    self._hwnd, *game_pixel)
                 arduino_api.ard_mouse_to_pos(screen_pixel)
                 time.sleep(2)
 
@@ -348,13 +348,13 @@ class Player:
             time.sleep(0.02)
 
         screen_pixel = window_api.window_pixel_to_screen_pixel(
-            self.hwnd, *ORIGIN)
+            self._hwnd, *ORIGIN)
         arduino_api.ard_mouse_to_pos(screen_pixel)
         arduino_api.release_buttons()
 
     def go_direction(self, target_coords: tuple) -> None:
         screen_pixel = window_api.window_pixel_to_screen_pixel(
-            self.hwnd, *ORIGIN)
+            self._hwnd, *ORIGIN)
         arduino_api.ard_mouse_to_pos(screen_pixel)
 
         while distance(self_coords := self.coords, target_coords) > 2:
@@ -368,7 +368,7 @@ class Player:
             game_pixel = ORIGIN[0] + \
                 pixel_offset[0], ORIGIN[1] + pixel_offset[1]
             screen_pixel = window_api.window_pixel_to_screen_pixel(
-                self.hwnd, *game_pixel)
+                self._hwnd, *game_pixel)
             arduino_api.ard_mouse_to_pos(screen_pixel)
             arduino_api.hold_left()
             if stucked:
@@ -376,7 +376,7 @@ class Player:
             time.sleep(0.02)
 
     def close_game(self):
-        gw.Win32Window(hWnd=self.hwnd).close()
+        gw.Win32Window(hWnd=self._hwnd).close()
         time.sleep(0.5)
         arduino_api.send_ascii(KEY_RETURN)
         time.sleep(0.5)
@@ -384,25 +384,25 @@ class Player:
     # PRIVATE METHODS
 
     def _exclude_current_spot(self):
-        del self.config["leveling_plan"][self.farming_spot_index]
+        del self._config["leveling_plan"][self.farming_spot_index]
         self.farming_spot_index -= 1
 
     def _write_to_chat(self, msg: str):
         arduino_api.send_ascii(KEY_RETURN)
         time.sleep(0.5)
-        if not meth._detect_chat_open(self.hwnd):
+        if not meth._detect_chat_open(self._hwnd):
             arduino_api.send_ascii(KEY_RETURN)
         time.sleep(0.5)
-        if not meth._detect_chat_open(self.hwnd):
+        if not meth._detect_chat_open(self._hwnd):
             raise ChatError("Cannot open chat!")
         arduino_api.send_string(msg)
         time.sleep(0.5)
         arduino_api.send_ascii(KEY_RETURN)
         time.sleep(0.5)
-        if meth._detect_chat_open(self.hwnd):
+        if meth._detect_chat_open(self._hwnd):
             arduino_api.send_ascii(KEY_RETURN)
         time.sleep(0.5)
-        if meth._detect_chat_open(self.hwnd):
+        if meth._detect_chat_open(self._hwnd):
             raise ChatError("Cannot close chat!")
 
     def _warp_to(self, area: str) -> None:
@@ -410,7 +410,7 @@ class Player:
         time.sleep(3)
 
     def _buy_pots(self):
-        if meth._detect_pots(self.hwnd):
+        if meth._detect_pots(self._hwnd):
             return
 
         self.warp = "devias"
@@ -421,13 +421,13 @@ class Player:
         offset = walking_vector.coords_to_pixel_offset(self.coords, (225, 41))
         total = (ORIGIN[0] + offset[0], ORIGIN[1] + offset[1])
         arduino_api.ard_mouse_to_pos(
-            window_api.window_pixel_to_screen_pixel(self.hwnd, *total))
+            window_api.window_pixel_to_screen_pixel(self._hwnd, *total))
         time.sleep(0.5)
         arduino_api.click()
         time.sleep(3)
 
         arduino_api.ard_mouse_to_pos(
-            window_api.window_pixel_to_screen_pixel(self.hwnd, 700, 120))
+            window_api.window_pixel_to_screen_pixel(self._hwnd, 700, 120))
         for _ in range(10):
             time.sleep(0.5)
             arduino_api.click()
@@ -435,7 +435,8 @@ class Player:
 
         # close shop
         game_pixel = 960, 630
-        total = window_api.window_pixel_to_screen_pixel(self.hwnd, *game_pixel)
+        total = window_api.window_pixel_to_screen_pixel(
+            self._hwnd, *game_pixel)
         arduino_api.ard_mouse_to_pos(total)
         time.sleep(0.5)
         arduino_api.click()
