@@ -1,3 +1,9 @@
+n_STRANGE_RABBITS = {
+    "warp": "elbeland",
+    "min_lvl": 10,
+    "coords": (25, 153),
+}
+
 n_BUDGE_DRAGONS = {
     "warp": "lorencia",
     "min_lvl": 10,

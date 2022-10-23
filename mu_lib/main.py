@@ -1,12 +1,13 @@
 from game_logic import game_menu
 from game_logic.Player import Player
-from game_logic.exceptions import WrongArgumentsException
+from game_logic.exceptions import WrongArgumentsException, TooManyIterationsException, WarpException, ChatError
 from game_logic import meth
 
 import logging
 import sys
 import window_api
 import arduino_api
+import pygetwindow as gw
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
@@ -36,15 +37,19 @@ if __name__ == "__main__":
             if player.check_lifetime():
                 player.__init__(player.name)
 
-            player.check_death()
+            try:
+                player.check_death()
 
-            player._buy_pots()
+                player._buy_pots()
 
-            player.distribute_stats()
+                player.distribute_stats()
 
-            if player.try_reset():
-                continue
+                if player.try_reset():
+                    continue
 
-            player.ensure_on_best_spot()
+                player.ensure_on_best_spot()
 
-            player.farm()
+                player.farm()
+            except (TooManyIterationsException, WarpException, ChatError) as e:
+                gw.Win32Window(hWnd=hwnd).close()
+                player.__init__(player.name)

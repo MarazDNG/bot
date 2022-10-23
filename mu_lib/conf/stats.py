@@ -13,6 +13,7 @@ config = {
             "vit": "f700",
             "ene": "r2",
         },
+        "starting_warp": "lorencia",
         "leveling_plan": [
             n_BUDGE_DRAGONS,
             n_WEREWOLVES,
@@ -25,7 +26,7 @@ config = {
             n_DEATH_KNIGHTS_3,
             n_DEATH_KNIGHTS_2,
             n_DEATH_KNIGHTS_1,
-        ]
+        ],
     },
     "Consumer": {
         "account": {
@@ -39,6 +40,7 @@ config = {
             "vit": "f4000",
             "ene": "r4",
         },
+        "starting_warp": "lorencia",
         "leveling_plan": [
             n_BUDGE_DRAGONS,
             n_WEREWOLVES,
@@ -59,6 +61,27 @@ config = {
             n_BLADE_HUNTERS_1,
             n_BERSERKERS_2,
             n_BERSERKERS_1,
+        ]
+    },
+    "Connie": {
+        "account": {
+            "id": "Zaram1",
+            "pass": "***REMOVED***",
+            "select_offset": 150
+        },
+        "stats": {
+            "str": "f400",
+            "agi": "r1",
+            "vit": "f100",
+            "ene": "r2",
+        },
+        "starting_warp": "elbeland",
+        "leveling_plan": [
+            n_STRANGE_RABBITS,
+            n_WEREWOLVES,
+            n_POISON_BULL_FIGHTERS_1,
+            n_DARK_KNIGHTS_2,
+            n_DARK_KNIGHTS_1,
         ]
     }
 }

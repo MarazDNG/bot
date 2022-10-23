@@ -7,6 +7,7 @@ from cached_property import cached_property_with_ttl
 import logging
 from multiprocessing import Process
 from datetime import datetime, timedelta
+import pygetwindow as gw
 
 import window_api
 import arduino_api
@@ -95,7 +96,7 @@ class Player:
 
     @property
     def warp(self):
-        return self._warp
+        return self.config["starting_warp"] if self.lvl < 10 else self._warp
 
     @warp.setter
     def warp(self, value: str):
@@ -374,6 +375,12 @@ class Player:
             if stucked:
                 time.sleep(2)
             time.sleep(0.02)
+
+    def close_game(self):
+        gw.Win32Window(hWnd=self.hwnd).close()
+        time.sleep(0.5)
+        arduino_api.send_ascii(KEY_RETURN)
+        time.sleep(0.5)
 
     # PRIVATE METHODS
 
