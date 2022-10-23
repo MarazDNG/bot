@@ -101,7 +101,7 @@ class Player:
             """
             def peaceswamp1():
                 self.warp = "peaceswamp"
-                self.go_to_coords((139, 125))
+                self._go_to_coords((139, 125))
 
             tmp = self.coords
 
@@ -127,8 +127,38 @@ class Player:
 
     # PUBLIC METHODS
 
-    def surrounding_units(self) -> list:
-        return memory.get_surrounding_units(self._window_id)
+    def buy_pots(self):
+        if meth._detect_pots(self._window_hwnd):
+            return
+
+        self.warp = "devias"
+        self._go_to_coords((226, 40))
+
+        # click on npc 225, 41
+        time.sleep(1)
+        offset = walking_vector.coords_to_pixel_offset(self.coords, (225, 41))
+        total = (ORIGIN[0] + offset[0], ORIGIN[1] + offset[1])
+        arduino_api.ard_mouse_to_pos(
+            window_api.window_pixel_to_screen_pixel(self._window_hwnd, *total))
+        time.sleep(0.5)
+        arduino_api.click()
+        time.sleep(3)
+
+        arduino_api.ard_mouse_to_pos(
+            window_api.window_pixel_to_screen_pixel(self._window_hwnd, 700, 120))
+        for _ in range(10):
+            time.sleep(0.5)
+            arduino_api.click()
+        time.sleep(0.5)
+
+        # close shop
+        game_pixel = 960, 630
+        total = window_api.window_pixel_to_screen_pixel(
+            self._window_hwnd, *game_pixel)
+        arduino_api.ard_mouse_to_pos(total)
+        time.sleep(0.5)
+        arduino_api.click()
+        time.sleep(0.5)
 
     def distribute_stats(self) -> None:
         """If stats should be distributed, distribute them.
@@ -154,35 +184,19 @@ class Player:
             self._last_dist_lvl = lvl
             self._distribute_relativety(total)
 
-    def _is_on_place(self, warp: str, coords: tuple) -> bool:
-        """Check if player is on place.
-        """
-        ret = self.warp == warp and distance(self.coords, coords) < 10
-        if not ret:
-            logging.info(
-                f"Player, {self.warp} {self.coords}, is not on place {warp} {coords}")
-        return ret
-
-    def _update_best_spot_index(self):
-        leveling_plan = self._config["leveling_plan"]
-        while self._farming_spot_index + 1 < len(leveling_plan) and self.lvl >= leveling_plan[self._farming_spot_index + 1]["min_lvl"]:
-            print(
-                f"lvl: {self.lvl} is enough for spot {leveling_plan[self._farming_spot_index + 1]}")
-            self._farming_spot_index += 1
-
     def ensure_on_best_spot(self, prefer_warp: bool = True):
         self._update_best_spot_index()
         spot = self._config["leveling_plan"][self._farming_spot_index]
         if not self._is_on_place(spot["warp"], spot["coords"]):
             if self.warp != spot["warp"] or prefer_warp:
                 self.warp = spot["warp"]
-            if self.go_to_coords(spot["coords"]):
+            if self._go_to_coords(spot["coords"]):
                 logging.info(
                     "Player died while trying to get to the best spot")
                 self._exclude_current_spot()
                 self.ensure_on_best_spot()
                 return
-            units = self.surrounding_units()
+            units = self._surrounding_units()
             my_coords = self.coords
             units = filter(lambda x: distance(
                 x.coords, my_coords) < 10, units)
@@ -198,7 +212,7 @@ class Player:
                 self.ensure_on_best_spot(prefer_warp=False)
                 return
             # game_methods.kill_runaway_units()
-            self.go_to_coords(spot["coords"])
+            self._go_to_coords(spot["coords"])
 
     def try_reset(self) -> bool:
         """Do reset if required level is met.
@@ -245,6 +259,14 @@ class Player:
         lifespan = timedelta(hours=2)
         return datetime.now() - self.birthtime > lifespan
 
+    def close_game(self):
+        gw.Win32Window(hWnd=self._window_hwnd).close()
+        time.sleep(0.5)
+        arduino_api.send_ascii(KEY_RETURN)
+        time.sleep(0.5)
+
+    # PRIVATE METHODS
+
     def _distribute_relativety(self, stats_to_distribute: int) -> None:
         stats = self._config["stats"]
         parts = sum(int(stats[key][1:])
@@ -272,42 +294,7 @@ class Player:
 
         raise ResetError("Reset failed!")
 
-    def go_to_coords2(self, target_coords: tuple):
-        """Go to target coordinates on current map.
-        """
-        map_name = "".join(i for i in self.warp if i.isalpha())
-        map_array = get_mu_map_list(map_name)
-        path = djikstra8(self.coords, target_coords, map_array)
-
-        while distance(self_coords := self.coords, path[-1]) > 5:
-            stucked = _if_stucked(self_coords)
-            closest_path_point_index = min(
-                ((i, distance(self_coords, e)) for i, e in enumerate(path)), key=lambda x: x[1])[0]
-            try:
-                next_point = path[closest_path_point_index + 5]
-            except IndexError:
-                next_point = path[-1]
-            pixel_offset = walking_vector.go_next_point(
-                self_coords, next_point)
-            if stucked:
-                pixel_offset = int(
-                    pixel_offset[0] * 1.5), int(pixel_offset[1] * 1.5)
-            game_pixel = ORIGIN[0] + \
-                pixel_offset[0], ORIGIN[1] + pixel_offset[1]
-            screen_pixel = window_api.window_pixel_to_screen_pixel(
-                self._window_hwnd, *game_pixel)
-            arduino_api.ard_mouse_to_pos(screen_pixel)
-            arduino_api.hold_left()
-            if stucked:
-                time.sleep(2)
-            time.sleep(0.02)
-
-        screen_pixel = window_api.window_pixel_to_screen_pixel(
-            self._window_hwnd, *ORIGIN)
-        arduino_api.ard_mouse_to_pos(screen_pixel)
-        arduino_api.release_buttons()
-
-    def go_to_coords(self, target_coords: tuple):
+    def _go_to_coords(self, target_coords: tuple):
         """Go to target coordinates on current map.
         """
         map_name = "".join(i for i in self.warp if i.isalpha())
@@ -350,7 +337,7 @@ class Player:
         arduino_api.ard_mouse_to_pos(screen_pixel)
         arduino_api.release_buttons()
 
-    def go_direction(self, target_coords: tuple) -> None:
+    def _go_direction(self, target_coords: tuple) -> None:
         screen_pixel = window_api.window_pixel_to_screen_pixel(
             self._window_hwnd, *ORIGIN)
         arduino_api.ard_mouse_to_pos(screen_pixel)
@@ -372,14 +359,6 @@ class Player:
             if stucked:
                 time.sleep(2)
             time.sleep(0.02)
-
-    def close_game(self):
-        gw.Win32Window(hWnd=self._window_hwnd).close()
-        time.sleep(0.5)
-        arduino_api.send_ascii(KEY_RETURN)
-        time.sleep(0.5)
-
-    # PRIVATE METHODS
 
     def _exclude_current_spot(self):
         del self._config["leveling_plan"][self._farming_spot_index]
@@ -407,35 +386,21 @@ class Player:
         self._write_to_chat(f'/warp {area}')
         time.sleep(3)
 
-    def _buy_pots(self):
-        if meth._detect_pots(self._window_hwnd):
-            return
+    def _surrounding_units(self) -> list:
+        return memory.get_surrounding_units(self._window_id)
 
-        self.warp = "devias"
-        self.go_to_coords((226, 40))
+    def _is_on_place(self, warp: str, coords: tuple) -> bool:
+        """Check if player is on place.
+        """
+        ret = self.warp == warp and distance(self.coords, coords) < 10
+        if not ret:
+            logging.info(
+                f"Player, {self.warp} {self.coords}, is not on place {warp} {coords}")
+        return ret
 
-        # click on npc 225, 41
-        time.sleep(1)
-        offset = walking_vector.coords_to_pixel_offset(self.coords, (225, 41))
-        total = (ORIGIN[0] + offset[0], ORIGIN[1] + offset[1])
-        arduino_api.ard_mouse_to_pos(
-            window_api.window_pixel_to_screen_pixel(self._window_hwnd, *total))
-        time.sleep(0.5)
-        arduino_api.click()
-        time.sleep(3)
-
-        arduino_api.ard_mouse_to_pos(
-            window_api.window_pixel_to_screen_pixel(self._window_hwnd, 700, 120))
-        for _ in range(10):
-            time.sleep(0.5)
-            arduino_api.click()
-        time.sleep(0.5)
-
-        # close shop
-        game_pixel = 960, 630
-        total = window_api.window_pixel_to_screen_pixel(
-            self._window_hwnd, *game_pixel)
-        arduino_api.ard_mouse_to_pos(total)
-        time.sleep(0.5)
-        arduino_api.click()
-        time.sleep(0.5)
+    def _update_best_spot_index(self):
+        leveling_plan = self._config["leveling_plan"]
+        while self._farming_spot_index + 1 < len(leveling_plan) and self.lvl >= leveling_plan[self._farming_spot_index + 1]["min_lvl"]:
+            print(
+                f"lvl: {self.lvl} is enough for spot {leveling_plan[self._farming_spot_index + 1]}")
+            self._farming_spot_index += 1
