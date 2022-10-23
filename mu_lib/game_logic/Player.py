@@ -35,7 +35,6 @@ class Player:
         self._hwnd = None
         self.allies = []
         self._warp = None
-        self.leveling_plan = self.config["leveling_plan"]
         self._last_dist_lvl = None
         self.farming_spot_index = 0
         self.farming = {
@@ -167,14 +166,15 @@ class Player:
         return ret
 
     def _update_best_spot_index(self):
-        while self.farming_spot_index + 1 < len(self.leveling_plan) and self.lvl >= self.leveling_plan[self.farming_spot_index + 1]["min_lvl"]:
+        leveling_plan = self.config["leveling_plan"]
+        while self.farming_spot_index + 1 < len(leveling_plan) and self.lvl >= leveling_plan[self.farming_spot_index + 1]["min_lvl"]:
             print(
-                f"lvl: {self.lvl} is enough for spot {self.leveling_plan[self.farming_spot_index + 1]}")
+                f"lvl: {self.lvl} is enough for spot {leveling_plan[self.farming_spot_index + 1]}")
             self.farming_spot_index += 1
 
     def ensure_on_best_spot(self, prefer_warp: bool = True):
         self._update_best_spot_index()
-        spot = self.leveling_plan[self.farming_spot_index]
+        spot = self.config["leveling_plan"][self.farming_spot_index]
         if not self._is_on_place(spot["warp"], spot["coords"]):
             if self.warp != spot["warp"] or prefer_warp:
                 self.warp = spot["warp"]
@@ -384,7 +384,7 @@ class Player:
     # PRIVATE METHODS
 
     def _exclude_current_spot(self):
-        del self.leveling_plan[self.farming_spot_index]
+        del self.config["leveling_plan"][self.farming_spot_index]
         self.farming_spot_index -= 1
 
     def _write_to_chat(self, msg: str):
