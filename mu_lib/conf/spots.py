@@ -209,6 +209,12 @@ n_BERSERKERS_2 = {
     "coords": (127, 18),
 }
 
+n_BERSERKERS_3 = {
+    "warp": "kantururuins2",
+    "min_lvl": 220,
+    "coords": (115, 44),
+}
+
 n_ALQUAMOS_1 = {
     "warp": "icarus",
     "min_lvl": 150,
