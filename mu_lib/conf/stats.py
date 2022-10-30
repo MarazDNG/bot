@@ -5,7 +5,8 @@ config = {
         "account": {
             "id": "Zaram",
             "pass": "***REMOVED***",
-            "select_offset": 300
+            "select_offset": 300,
+            "position": 1,
         },
         "stats": {
             "str": "f300",
@@ -32,7 +33,8 @@ config = {
         "account": {
             "id": "Maraz",
             "pass": "***REMOVED***",
-            "select_offset": 0
+            "select_offset": 0,
+            "position": 1
         },
         "stats": {
             "str": "r4",
@@ -67,7 +69,8 @@ config = {
         "account": {
             "id": "Zaram1",
             "pass": "***REMOVED***",
-            "select_offset": 150
+            "select_offset": 150,
+            "position": 2
         },
         "stats": {
             "str": "f400",

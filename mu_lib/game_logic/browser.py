@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 
 
-def do_reset(id: str, password: str):
+def do_reset(id: str, password: str, position: int):
     driver = webdriver.Firefox()
     driver.maximize_window()
     driver.get("https://eternmu.cz/")
@@ -26,8 +26,10 @@ def do_reset(id: str, password: str):
         By.PARTIAL_LINK_TEXT, value='Reset postavy')
     reset_link.click()
 
-    # driver.execute_script("document.body.style.zoom='50%'")
-    reset_btn = driver.find_element(By.CSS_SELECTOR, value='[title^="Posled"]')
+    tbody = driver.find_element_by_tag_name("tbody")
+    tr_char = tbody.find_elements(By.TAG_NAME, "tr")[position]
+    reset_btn = tr_char.find_element(
+        By.CSS_SELECTOR, value='[title^="Posled"]')
     reset_btn.click()
 
     driver.execute_script("window.scrollTo(0,500)")

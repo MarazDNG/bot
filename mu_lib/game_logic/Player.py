@@ -225,8 +225,7 @@ class Player:
         logging.info(f"self.lvl: {self.lvl}")
         if self.lvl >= level_needed:
             game_menu.server_selection(self._window_hwnd)
-            self._reset(self._config["account"]["id"],
-                        self._config["account"]["pass"])
+            self._reset()
             meth.protection_click()
             window_api.window_activate(self.name)
             game_menu.game_login(self._window_hwnd,
@@ -278,14 +277,19 @@ class Player:
                              * stats_to_distribute / parts)
                 self._write_to_chat(f"/add{stat} {to_add}")
 
-    def _reset(self, id: str, password: str) -> None:
+    def _reset(self) -> None:
         logging.info("Starting reset")
         self._last_reset_time = self._last_reset_time or 0
         if self._last_reset_time and datetime.now() - self._last_reset_time < timedelta(seconds=1200):
             return
 
+        account = self._config["account"]
+        login_id = account["id"]
+        password = account["pass"]
+        position = account["position"]
+        
         for _ in range(3):
-            p = Process(target=do_reset, args=(id, password))
+            p = Process(target=do_reset, args=(login_id, password, position))
             p.start()
             p.join(30)
             if p.exitcode == 0:

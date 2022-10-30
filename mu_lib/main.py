@@ -40,7 +40,7 @@ if __name__ == "__main__":
             try:
                 player.check_death()
 
-                player._buy_pots()
+                player.buy_pots()
 
                 player.distribute_stats()
 
