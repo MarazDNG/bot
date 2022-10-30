@@ -131,34 +131,33 @@ class Player:
         if meth._detect_pots(self._window_hwnd):
             return
 
+        # go to shop
         self.warp = "devias"
         self._go_to_coords((226, 40))
 
         # click on npc 225, 41
         time.sleep(1)
         offset = walking_vector.coords_to_pixel_offset(self.coords, (225, 41))
-        total = (ORIGIN[0] + offset[0], ORIGIN[1] + offset[1])
-        arduino_api.ard_mouse_to_pos(
-            window_api.window_pixel_to_screen_pixel(self._window_hwnd, *total))
-        time.sleep(0.5)
+        window_pixel = (ORIGIN[0] + offset[0], ORIGIN[1] + offset[1])
+        screen_pixel = window_api.window_pixel_to_screen_pixel(
+            self._window_hwnd, *window_pixel)
+        arduino_api.ard_mouse_to_pos(screen_pixel, sleep=True)
         arduino_api.click()
         time.sleep(3)
 
-        arduino_api.ard_mouse_to_pos(
-            window_api.window_pixel_to_screen_pixel(self._window_hwnd, 700, 120))
+        # click on pots n times
+        screen_pixel = window_api.window_pixel_to_screen_pixel(
+            self._window_hwnd, 700, 120)
+        arduino_api.ard_mouse_to_pos(screen_pixel, sleep=True)
         for _ in range(10):
-            time.sleep(0.5)
-            arduino_api.click()
-        time.sleep(0.5)
+            arduino_api.click(sleep=True)
 
         # close shop
-        game_pixel = 960, 630
-        total = window_api.window_pixel_to_screen_pixel(
-            self._window_hwnd, *game_pixel)
-        arduino_api.ard_mouse_to_pos(total)
-        time.sleep(0.5)
-        arduino_api.click()
-        time.sleep(0.5)
+        window_pixel = 960, 630
+        screen_pixel = window_api.window_pixel_to_screen_pixel(
+            self._window_hwnd, *window_pixel)
+        arduino_api.ard_mouse_to_pos(screen_pixel, sleep=True)
+        arduino_api.click(sleep=True)
 
     def distribute_stats(self) -> None:
         """If stats should be distributed, distribute them.
@@ -287,7 +286,7 @@ class Player:
         login_id = account["id"]
         password = account["pass"]
         position = account["position"]
-        
+
         for _ in range(3):
             p = Process(target=do_reset, args=(login_id, password, position))
             p.start()
@@ -313,6 +312,7 @@ class Player:
             except IndexError:
                 next_point = path[-1]
             # self.go_direction(next_point)
+
             offset = walking_vector.coords_to_pixel_offset(
                 self_coords, next_point)
             game_pixel = [ORIGIN[0] + offset[0], ORIGIN[1] + offset[1]]
@@ -321,7 +321,8 @@ class Player:
                 self._window_hwnd, *game_pixel)
             arduino_api.ard_mouse_to_pos(screen_pixel)
             arduino_api.hold_left()
-            if diff := _if_stucked(self_coords):
+
+            if _if_stucked(self_coords):
                 offset = 0.6 * offset[0], 0.6 * offset[1]
                 game_pixel = [ORIGIN[0] + offset[0], ORIGIN[1] + offset[1]]
                 game_pixel[1] = min(game_pixel[1], 650)
@@ -330,39 +331,12 @@ class Player:
                 arduino_api.ard_mouse_to_pos(screen_pixel)
                 time.sleep(2)
 
-            #     else:
-            #         self.warp = self.warp
-            #         path = djikstra8(self.coords, target_coords, map_array)
-
             time.sleep(0.02)
 
         screen_pixel = window_api.window_pixel_to_screen_pixel(
             self._window_hwnd, *ORIGIN)
         arduino_api.ard_mouse_to_pos(screen_pixel)
         arduino_api.release_buttons()
-
-    def _go_direction(self, target_coords: tuple) -> None:
-        screen_pixel = window_api.window_pixel_to_screen_pixel(
-            self._window_hwnd, *ORIGIN)
-        arduino_api.ard_mouse_to_pos(screen_pixel)
-
-        while distance(self_coords := self.coords, target_coords) > 2:
-            stucked = _if_stucked(self_coords)
-            pixel_offset = walking_vector.go_next_point(
-                self_coords, target_coords)
-            with contextlib.suppress(ValueError):
-                if stucked:
-                    pixel_offset = int(
-                        pixel_offset[0] * 1.5), int(pixel_offset[1] * 1.5)
-            game_pixel = ORIGIN[0] + \
-                pixel_offset[0], ORIGIN[1] + pixel_offset[1]
-            screen_pixel = window_api.window_pixel_to_screen_pixel(
-                self._window_hwnd, *game_pixel)
-            arduino_api.ard_mouse_to_pos(screen_pixel)
-            arduino_api.hold_left()
-            if stucked:
-                time.sleep(2)
-            time.sleep(0.02)
 
     def _exclude_current_spot(self):
         del self._config["leveling_plan"][self._farming_spot_index]
