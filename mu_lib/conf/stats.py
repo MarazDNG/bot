@@ -47,7 +47,7 @@ config = {
         "starting_warp": "lorencia",
         "leveling_plan": [
             n_BUDGE_DRAGONS,
-            n_WEREWOLVES_3  ,
+            n_WEREWOLVES_3,
             n_WEREWOLVES_2,
             n_WEREWOLVES_1,
             n_POISON_BULL_FIGHTERS_1,
@@ -67,6 +67,9 @@ config = {
             n_BLADE_HUNTERS_1,
             n_BERSERKERS_2,
             n_BERSERKERS_1,
+            n_GENOCIDERS_3,
+            n_GENOCIDERS_2,
+            n_GENOCIDERS_1,
         ]
     },
     "Connie": {

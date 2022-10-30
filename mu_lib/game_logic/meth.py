@@ -101,8 +101,8 @@ def turn_helper_on(hwnd: int, fast=False) -> bool:
             arduino_api.send_ascii(KEY_RETURN)
         if not fast:
             time.sleep(0.5)
-        window_pixel = window_api.window_pixel_to_screen_pixel(ORIGIN)
-        arduino_api.ard_mouse_to_pos(window_pixel, True)
+        window_pixel = window_api.window_pixel_to_screen_pixel(hwnd, *ORIGIN)
+        arduino_api.ard_mouse_to_pos(window_pixel, sleep=True)
         arduino_api.send_ascii(ord("1"))
         arduino_api.hold_right()
         time.sleep(5)
