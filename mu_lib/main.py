@@ -33,7 +33,7 @@ if __name__ == "__main__":
                 hwnd = window_api.window_handler_by_regex("^MU$")
                 window_api.window_activate_by_handler(hwnd)
                 game_menu.game_login(hwnd,
-                                     player.config["account"]["id"], player.config["account"]["pass"], player.config["account"]["select_offset"])
+                                     player._config["account"]["id"], player._config["account"]["pass"], player._config["account"]["select_offset"])
             if player.check_lifetime():
                 player.__init__(player.name)
 

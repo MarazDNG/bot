@@ -13,7 +13,7 @@ from . import KEY_HOME, KEY_RETURN, ORIGIN
 
 
 def protection_click():
-    arduino_api.ard_mouse_to_pos((0, 0))
+    arduino_api.ard_mouse_to_pos((1000, 0))
     time.sleep(0.3)
     arduino_api.click()
     time.sleep(0.1)
