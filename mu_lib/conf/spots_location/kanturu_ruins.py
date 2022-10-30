@@ -63,3 +63,21 @@ n_BERSERKERS_3 = {
     "min_lvl": 220,
     "coords": (115, 44),
 }
+
+n_GENOCIDERS_1 = {
+    "warp": "kantururuins2",
+    "min_lvl": 220,
+    "coords": (49, 55),
+}
+
+n_GENOCIDERS_2 = {
+    "warp": "kantururuins2",
+    "min_lvl": 220,
+    "coords": (47, 75),
+}
+
+n_GENOCIDERS_3 = {
+    "warp": "kantururuins2",
+    "min_lvl": 220,
+    "coords": (58, 102),
+}
