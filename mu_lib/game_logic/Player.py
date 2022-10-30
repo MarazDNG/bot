@@ -198,7 +198,7 @@ class Player:
             units = self._surrounding_units()
             my_coords = self.coords
             units = filter(lambda x: distance(
-                x.coords, my_coords) < 10, units)
+                x.coords, my_coords) < 6, units)
             players = get_online_players()
             with contextlib.suppress(ValueError):
                 [players.remove(ally) for ally in self._allies]
