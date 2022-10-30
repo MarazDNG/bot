@@ -51,5 +51,5 @@ if __name__ == "__main__":
 
                 player.farm()
             except (TooManyIterationsException, WarpException, ChatError) as e:
-                gw.Win32Window(hWnd=hwnd).close()
+                gw.Win32Window(hWnd=player._window_hwnd).close()
                 player.__init__(player.name)

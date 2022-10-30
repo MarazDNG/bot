@@ -225,8 +225,9 @@ class Player:
         if self.lvl >= level_needed:
             game_menu.server_selection(self._window_hwnd)
             self._reset()
+            time.sleep(2)
             meth.protection_click()
-            window_api.window_activate(self.name)
+            window_api.window_activate_by_handler(self._window_hwnd)
             game_menu.game_login(self._window_hwnd,
                                  self._config["account"]["id"], self._config["account"]["pass"], self._config["account"]["select_offset"])
             time.sleep(2)

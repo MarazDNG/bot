@@ -39,7 +39,7 @@ config = {
             "position": 1
         },
         "stats": {
-            "str": "r4",
+            "str": "r5",
             "agi": "r3",
             "vit": "f4000",
             "ene": "r4",
@@ -94,6 +94,10 @@ config = {
             n_POISON_BULL_FIGHTERS_1,
             n_DARK_KNIGHTS_2,
             n_DARK_KNIGHTS_1,
+            n_DEATH_KNIGHTS_4,
+            n_DEATH_KNIGHTS_3,
+            n_DEATH_KNIGHTS_2,
+            n_DEATH_KNIGHTS_1,
         ]
     }
 }
