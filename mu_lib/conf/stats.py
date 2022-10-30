@@ -17,7 +17,9 @@ config = {
         "starting_warp": "lorencia",
         "leveling_plan": [
             n_BUDGE_DRAGONS,
-            n_WEREWOLVES,
+            n_WEREWOLVES_3,
+            n_WEREWOLVES_2,
+            n_WEREWOLVES_1,
             n_GRIZZLYS_2,
             n_GRIZZLYS_1,
             n_POISON_BULL_FIGHTERS_2,
@@ -45,7 +47,9 @@ config = {
         "starting_warp": "lorencia",
         "leveling_plan": [
             n_BUDGE_DRAGONS,
-            n_WEREWOLVES,
+            n_WEREWOLVES_3  ,
+            n_WEREWOLVES_2,
+            n_WEREWOLVES_1,
             n_POISON_BULL_FIGHTERS_1,
             n_DARK_KNIGHTS_2,
             n_DARK_KNIGHTS_1,
@@ -81,7 +85,9 @@ config = {
         "starting_warp": "elbeland",
         "leveling_plan": [
             n_STRANGE_RABBITS,
-            n_WEREWOLVES,
+            n_WEREWOLVES_3,
+            n_WEREWOLVES_2,
+            n_WEREWOLVES_1,
             n_POISON_BULL_FIGHTERS_1,
             n_DARK_KNIGHTS_2,
             n_DARK_KNIGHTS_1,

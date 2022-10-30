@@ -4,10 +4,23 @@ n_STRANGE_RABBITS = {
     "coords": (25, 153),
 }
 
-n_WEREWOLVES = {
+n_WEREWOLVES_1 = {
     "warp": "elbeland2",
     "min_lvl": 20,
     "coords": (57, 69),
+}
+
+n_WEREWOLVES_2 = {
+    "warp": "elbeland2",
+    "min_lvl": 20,
+    "coords": (81, 61),
+}
+
+
+n_WEREWOLVES_3 = {
+    "warp": "elbeland2",
+    "min_lvl": 20,
+    "coords": (67, 58),
 }
 
 n_GRIZZLYS_1 = {
