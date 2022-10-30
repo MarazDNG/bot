@@ -177,10 +177,10 @@ class Player:
         step = 50 if self.reset < 15 else 100
 
         if self.lvl < self._last_dist_lvl:
-            self._last_dist_lvl = 1
+            self.__last_dist_lvl = 1
         if self.lvl > self._last_dist_lvl + step:
             total = (self.lvl - self._last_dist_lvl) * 6
-            self._last_dist_lvl = lvl
+            self.__last_dist_lvl = lvl
             self._distribute_relativety(total)
 
     def ensure_on_best_spot(self, prefer_warp: bool = True):
