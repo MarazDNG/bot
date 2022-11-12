@@ -39,10 +39,10 @@ config = {
             "position": 1
         },
         "stats": {
-            "str": "r5",
+            "str": "r8",
             "agi": "r3",
-            "vit": "f4000",
-            "ene": "r4",
+            "vit": "f3000",
+            "ene": "r3",
         },
         "starting_warp": "lorencia",
         "leveling_plan": [
@@ -98,6 +98,39 @@ config = {
             n_DEATH_KNIGHTS_3,
             n_DEATH_KNIGHTS_2,
             n_DEATH_KNIGHTS_1,
+        ]
+    },
+    "Nalik": {
+        "account": {
+            "id": "Nalik",
+            "pass": "***REMOVED***",
+            "select_offset": 0,
+            "position": 1
+        },
+        "stats": {
+            "str": "f1000",
+            "agi": "r1",
+            "vit": "f2000",
+            "ene": "f10000",
+        },
+        "starting_warp": "noria",
+        "leveling_plan": [
+            n_STRANGE_RABBITS,
+            n_WEREWOLVES_3,
+            n_WEREWOLVES_2,
+            n_WEREWOLVES_1,
+            n_POISON_BULL_FIGHTERS_1,
+            n_DARK_KNIGHTS_2,
+            n_DARK_KNIGHTS_1,
+            n_DEATH_KNIGHTS_4,
+            n_DEATH_KNIGHTS_3,
+            n_DEATH_KNIGHTS_2,
+            n_DEATH_KNIGHTS_1,
+            n_BLADE_HUNTERS_2,
+            n_BLADE_HUNTERS_1,
+            n_BERSERKERS_3,
+            n_BERSERKERS_2,
+            n_BERSERKERS_1,
         ]
     }
 }
