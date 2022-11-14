@@ -18,7 +18,7 @@ if __name__ == "__main__":
     if len(sys.argv) == 1:
         raise WrongArgumentsException("Character name is required.")
 
-    arduino_api.ard_init(6)
+    arduino_api.ard_init(3)
 
     player_pool = [Player(sys.argv[i]) for i in range(1, len(sys.argv))]
 
@@ -30,7 +30,7 @@ if __name__ == "__main__":
             except IndexError:
                 game_menu.start_game()
                 meth.protection_click()
-                hwnd = window_api.window_handler_by_regex("^MU$")
+                hwnd = window_api.window_handler_by_regex("^EternMU$")
                 window_api.window_activate_by_handler(hwnd)
                 game_menu.game_login(hwnd,
                                      player._config["account"]["id"], player._config["account"]["pass"], player._config["account"]["select_offset"])

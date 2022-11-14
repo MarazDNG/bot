@@ -9,9 +9,9 @@ config = {
             "position": 1,
         },
         "stats": {
-            "str": "f300",
+            "str": "f400",
             "agi": "r1",
-            "vit": "f700",
+            "vit": "f1600",
             "ene": "r2",
         },
         "starting_warp": "lorencia",
@@ -29,6 +29,8 @@ config = {
             n_DEATH_KNIGHTS_3,
             n_DEATH_KNIGHTS_2,
             n_DEATH_KNIGHTS_1,
+            n_MUTANTS_2,
+            n_MUTANTS_1 ,
         ],
     },
     "Consumer": {
@@ -81,9 +83,9 @@ config = {
         },
         "stats": {
             "str": "f400",
-            "agi": "r1",
-            "vit": "f100",
-            "ene": "r2",
+            "agi": "r3",
+            "vit": "f600",
+            "ene": "r4",
         },
         "starting_warp": "elbeland",
         "leveling_plan": [
