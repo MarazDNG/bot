@@ -2,6 +2,7 @@ from game_logic import game_menu
 from game_logic.Player import Player
 from game_logic.exceptions import WrongArgumentsException, TooManyIterationsException, WarpException, ChatError
 from game_logic import meth
+from game_logic import KEY_RETURN
 
 import logging
 import sys
@@ -51,5 +52,7 @@ if __name__ == "__main__":
 
                 player.farm()
             except (TooManyIterationsException, WarpException, ChatError) as e:
-                gw.Win32Window(hWnd=player._window_hwnd).close()
+                window_api.window_activate_by_handler(player._window_hwnd)
+                player.close_game()
+                arduino_api.send_ascii(KEY_RETURN)
                 player.__init__(player.name)
