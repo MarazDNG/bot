@@ -1,4 +1,5 @@
 import contextlib
+import yaml
 import logging
 import requests
 import re
@@ -17,20 +18,20 @@ from . import meth
 from . import KEY_RETURN, ORIGIN
 from . import game_menu
 from . import walking_vector
+from . import config
 
 from .exceptions import DeathException, WarpException, ResetError, ChatError
 from .meth import distance, get_online_players, _if_stucked
 from .browser import do_reset
 from .map import get_mu_map_list
 from .djikstra import djikstra8
-from conf.stats import config
 
 
 class Player:
 
     def __init__(self, char_name: str):
         self.name = char_name
-        self._config = config[char_name]
+        self._config = config.ConfigManager.config_for_player(self.name)
         self._allies = []
         self._farming_spot_index = 0
         self._farming_flag = False

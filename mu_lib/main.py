@@ -1,14 +1,20 @@
+import contextlib
 from game_logic import game_menu
 from game_logic.Player import Player
 from game_logic.exceptions import WrongArgumentsException, TooManyIterationsException, WarpException, ChatError
 from game_logic import meth
 from game_logic import KEY_RETURN
+from game_logic import config
 
 import logging
 import sys
 import window_api
 import arduino_api
 import pygetwindow as gw
+import queue
+
+
+CONFIG_PATH = r"C:\Users\Maraz\smart\bot\mu_lib\conf"
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
@@ -20,10 +26,16 @@ if __name__ == "__main__":
         raise WrongArgumentsException("Character name is required.")
 
     arduino_api.ard_init(3)
+    config.ConfigManager.init(CONFIG_PATH)
 
     player_pool = [Player(sys.argv[i]) for i in range(1, len(sys.argv))]
 
+    q = queue.Queue()
     while True:
+        with contextlib.suppress(queue.Empty):
+            next_config_change = q.get(timeout=1)
+            config.ConfigManager.modify(next_config_change)
+
         for player in player_pool:
             try:
                 meth.protection_click()

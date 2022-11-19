@@ -1,0 +1,23 @@
+account:
+  id: Zaram1
+  pass: ***REMOVED***
+  position: 2
+  select_offset: 150
+leveling_plan:
+  - n_STRANGE_RABBITS
+  - n_WEREWOLVES_3
+  - n_WEREWOLVES_2
+  - n_WEREWOLVES_1
+  - n_POISON_BULL_FIGHTERS_1
+  - n_DARK_KNIGHTS_2
+  - n_DARK_KNIGHTS_1
+  - n_DEATH_KNIGHTS_4
+  - n_DEATH_KNIGHTS_3
+  - n_DEATH_KNIGHTS_2
+  - n_DEATH_KNIGHTS_1
+starting_warp: elbeland
+stats:
+  agi: r3
+  ene: r4
+  str: f400
+  vit: f600
