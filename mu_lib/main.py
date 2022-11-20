@@ -11,10 +11,35 @@ import sys
 import window_api
 import arduino_api
 import pygetwindow as gw
-import queue
+
+from multiprocessing import Process, Queue
+from telegram import Update
+from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, filters, MessageHandler
 
 
 CONFIG_PATH = r"C:\Users\Maraz\smart\bot\mu_lib\conf"
+TOKEN = "5738719734:AAFxl-8hEkCms58QatVz9D7FeJxCGArfP8g"
+
+
+async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
+    return update.message.text
+
+
+async def echo_wrapper(*args, q=None):
+    res = await echo(*args)
+    q.put(res)
+
+
+def telegram_bot(q: Queue):
+    application = ApplicationBuilder().token(TOKEN).build()
+
+    callback = lambda *args: echo_wrapper(*args, q=q)
+    echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), callback)
+    application.add_handler(echo_handler)
+
+    application.run_polling()
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
@@ -30,11 +55,32 @@ if __name__ == "__main__":
 
     player_pool = [Player(sys.argv[i]) for i in range(1, len(sys.argv))]
 
-    q = queue.Queue()
+    q = Queue()
+    p = Process(target=telegram_bot, args=(q,))
+    p.start()
+
     while True:
-        with contextlib.suppress(queue.Empty):
+        next_config_change = None
+        try:
             next_config_change = q.get(timeout=1)
-            config.ConfigManager.modify(next_config_change)
+        except:
+            print("Not valid config change.")
+        if next_config_change:
+            action_type, value = next_config_change.split(" ", 1)
+            if action_type == "cfg":
+                config.ConfigManager.modify(value)
+            if action_type == "on":
+                if value in [p.name for p in player_pool]:
+                    print(f"Player {value} is already in game.")
+                else:
+                    p = Player(value)
+                    player_pool.append(p)
+            if action_type == "off":
+                if value in [p.name for p in player_pool]:
+                    player_pool.remove(value)
+                else:
+                    print(f"Player {value} is not in game.")
+            continue
 
         for player in player_pool:
             try:
