@@ -97,6 +97,9 @@ class Player:
 
     @warp.setter
     def warp(self, value: str):
+        if self.lvl < 10:
+            logging.info("Player is too low level to warp")
+            return
         def warp_to(warp: str) -> None:
             """Used only when required level is met.
             """
@@ -112,13 +115,13 @@ class Player:
                 self._write_to_chat(f"/warp {warp}")
             time.sleep(3)
 
-            if distance(self.coords, tmp) < 5 and self.lvl > 10:
+            if self.coords == tmp and self.warp != value: 
                 if warp in locals():
                     locals()[warp]()
                 else:
                     self._write_to_chat(f"/warp {warp}")
                 time.sleep(3)
-                if distance(self.coords, tmp) < 5 and self.lvl > 10:
+                if self.coords == tmp:
                     raise WarpException(
                         f"Warp failed from {self.warp} {self.coords} to {warp}")
 
