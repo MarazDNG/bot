@@ -15,9 +15,17 @@ leveling_plan:
   - n_DEATH_KNIGHTS_3
   - n_DEATH_KNIGHTS_2
   - n_DEATH_KNIGHTS_1
+  - n_MUTANTS_2
+  - n_MUTANTS_1
+  - n_BLOODY_WOLVES_3
+  - n_BLOODY_WOLVES_2
+  - n_BLOODY_WOLVES_1
+  - n_SPLINTER_WOLVES_3
+  - n_SPLINTER_WOLVES_2
+  - n_SPLINTER_WOLVES_1
 starting_warp: elbeland
 stats:
-  agi: r3
-  ene: r4
+  agi: r1
+  ene: r1
   str: f400
-  vit: f600
+  vit: f1100

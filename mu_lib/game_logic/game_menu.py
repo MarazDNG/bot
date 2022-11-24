@@ -24,7 +24,7 @@ def start_game():
     # os.system(r"C:\Users\Public\Desktop\ETERNMU.lnk")
     p = multiprocessing.Process(target=_start_launcher)
     p.start()
-    time.sleep(2)
+    time.sleep(4)
 
     # find launcher start_pixel
     hwnd = window_api.window_handler_by_title("Launcher")

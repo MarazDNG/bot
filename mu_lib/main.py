@@ -64,22 +64,26 @@ if __name__ == "__main__":
         try:
             next_config_change = q.get(timeout=1)
         except:
-            print("Not valid config change.")
+            pass
         if next_config_change:
             action_type, value = next_config_change.split(" ", 1)
             if action_type == "cfg":
                 config.ConfigManager.modify(value)
-            if action_type == "on":
+            elif action_type == "on":
                 if value in [p.name for p in player_pool]:
                     print(f"Player {value} is already in game.")
                 else:
                     p = Player(value)
                     player_pool.append(p)
-            if action_type == "off":
+            elif action_type == "off":
                 if value in [p.name for p in player_pool]:
+                    window_api.window_activate_by_handler(player._window_hwnd)
+                    p.close_game()
                     player_pool.remove(value)
                 else:
                     print(f"Player {value} is not in game.")
+            else:
+                print("Not valid config change.")
             continue
 
         for player in player_pool:
