@@ -194,31 +194,33 @@ class Player:
     def ensure_on_best_spot(self, prefer_warp: bool = True):
         self._update_best_spot_index()
         spot = self._config["leveling_plan"][self._farming_spot_index]
-        if not self._is_on_place(spot["warp"], spot["coords"]):
-            if self.warp != spot["warp"] or prefer_warp:
-                self.warp = spot["warp"]
-            if self._go_to_coords(spot["coords"]):
-                logging.info("Player died while trying to get to the best spot")
-                self._exclude_current_spot()
-                self.ensure_on_best_spot()
-                return
-            units = self._surrounding_units()
-            my_coords = self.coords
-            units = filter(lambda x: distance(x.coords, my_coords) < 6, units)
-            players = get_online_players()
-            with contextlib.suppress(ValueError):
-                [players.remove(ally) for ally in self._allies]
-                players.remove(self.name)
-            if units := [unit for unit in units if unit.name in players]:
-                logging.info(
-                    f"Someone is here: {[{unit.name: unit.coords} for unit in units]}"
-                )
+        if self._is_on_place(spot["warp"], spot["coords"]):
+            return
+        if self.warp != spot["warp"] or prefer_warp:
+            self.warp = spot["warp"]
+        if self._go_to_coords(spot["coords"]):
+            logging.info("Player died while trying to get to the best spot")
+            self._exclude_current_spot()
+            self.ensure_on_best_spot()
+            return
 
-                self._exclude_current_spot()
-                self.ensure_on_best_spot(prefer_warp=False)
-                return
+        # check if spot is taken
+        units = self._surrounding_units()
+        my_coords = self.coords
+        units = filter(lambda x: distance(x.coords, my_coords) < 6, units)
+        players = get_online_players()
+        with contextlib.suppress(ValueError):
+            [players.remove(ally) for ally in self._allies]
+            players.remove(self.name)
+        units = [unit for unit in units if unit.name in players]
+        if not units:
             # game_methods.kill_runaway_units()
-            self._go_to_coords(spot["coords"])
+            # self._go_to_coords(spot["coords"])
+            return
+
+        logging.info(f"Someone is here: {[{unit.name: unit.coords} for unit in units]}")
+        self._exclude_current_spot()
+        self.ensure_on_best_spot(prefer_warp=False)
 
     def do_reset(self) -> bool:
         """Do reset if required level is met."""
@@ -255,9 +257,7 @@ class Player:
         time.sleep(5)
 
     def check_death(self):
-        """
-        Check if died during farming.
-        """
+        """Check if died during farming."""
         if self._farming_flag and distance(self.coords, self._farming_coords) > 13:
             logging.info("Player died while farming")
             self._farming_flag = False
