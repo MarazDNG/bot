@@ -1,4 +1,3 @@
-
 # keys
 KEY_ESC = 177
 KEY_RETURN = 176

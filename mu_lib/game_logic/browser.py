@@ -11,30 +11,28 @@ def do_reset(id: str, password: str, position: int):
     driver.maximize_window()
     driver.get("https://eternmu.cz/")
 
-    login = driver.find_element(By.ID, value='loginBox1')
+    login = driver.find_element(By.ID, value="loginBox1")
     login.clear()
     login.send_keys(id)
 
-    pw = driver.find_element(By.ID, value='loginBox2')
+    pw = driver.find_element(By.ID, value="loginBox2")
     pw.clear()
     pw.send_keys(password)
 
-    btn = driver.find_element(By.CLASS_NAME, value='button-login')
+    btn = driver.find_element(By.CLASS_NAME, value="button-login")
     btn.click()
 
-    reset_link = driver.find_element(
-        By.PARTIAL_LINK_TEXT, value='Reset postavy')
+    reset_link = driver.find_element(By.PARTIAL_LINK_TEXT, value="Reset postavy")
     reset_link.click()
 
     tbody = driver.find_element(By.TAG_NAME, "tbody")
     tr_char = tbody.find_elements(By.TAG_NAME, "tr")[position]
-    reset_btn = tr_char.find_element(
-        By.CSS_SELECTOR, value='[title^="Posled"]')
+    reset_btn = tr_char.find_element(By.CSS_SELECTOR, value='[title^="Posled"]')
     reset_btn.click()
 
     driver.execute_script("window.scrollTo(0,500)")
 
-    logout_btn = driver.find_element(By.PARTIAL_LINK_TEXT, value='Log Out')
+    logout_btn = driver.find_element(By.PARTIAL_LINK_TEXT, value="Log Out")
     logout_btn.click()
 
     driver.close()

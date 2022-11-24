@@ -1,20 +1,8 @@
-n_CURSED_WIZARDS_1 = {
-    "warp": "losttower3",
-    "min_lvl": 60,
-    "coords": (84, 189)
-}
+n_CURSED_WIZARDS_1 = {"warp": "losttower3", "min_lvl": 60, "coords": (84, 189)}
 
-n_CURSED_WIZARDS_2 = {
-    "warp": "losttower3",
-    "min_lvl": 60,
-    "coords": (84, 211)
-}
+n_CURSED_WIZARDS_2 = {"warp": "losttower3", "min_lvl": 60, "coords": (84, 211)}
 
-n_CURSED_WIZARDS_3 = {
-    "warp": "losttower3",
-    "min_lvl": 60,
-    "coords": (84, 228)
-}
+n_CURSED_WIZARDS_3 = {"warp": "losttower3", "min_lvl": 60, "coords": (84, 228)}
 
 n_DEATH_KNIGHTS_1 = {
     "warp": "losttower6",

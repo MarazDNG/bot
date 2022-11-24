@@ -28,7 +28,6 @@ from .djikstra import djikstra8
 
 
 class Player:
-
     def __init__(self, char_name: str):
         self.name = char_name
         self._config = config.ConfigManager.config_for_player(self.name)
@@ -87,7 +86,8 @@ class Player:
     @cached_property_with_ttl(ttl=12 * 60 * 60)
     def gr(self):
         resp = requests.get(
-            f"https://eternmu.cz/profile/player/req/{self.name}/", verify=False)
+            f"https://eternmu.cz/profile/player/req/{self.name}/", verify=False
+        )
         gr_str = re.search("Grand resety</td><td>\d+", resp.text)[0]
         return int(gr_str.split("</td><td>")[1])
 
@@ -100,9 +100,10 @@ class Player:
         if self.lvl < 10:
             logging.info("Player is too low level to warp")
             return
+
         def warp_to(warp: str) -> None:
-            """Used only when required level is met.
-            """
+            """Used only when required level is met."""
+
             def peaceswamp1():
                 self.warp = "peaceswamp"
                 self._go_to_coords((139, 125))
@@ -115,7 +116,7 @@ class Player:
                 self._write_to_chat(f"/warp {warp}")
             time.sleep(3)
 
-            if self.coords == tmp and self.warp != value: 
+            if self.coords == tmp and self.warp != value:
                 if warp in locals():
                     locals()[warp]()
                 else:
@@ -123,7 +124,8 @@ class Player:
                 time.sleep(3)
                 if self.coords == tmp:
                     raise WarpException(
-                        f"Warp failed from {self.warp} {self.coords} to {warp}")
+                        f"Warp failed from {self.warp} {self.coords} to {warp}"
+                    )
 
         warp_to(value)
         self.__warp = value
@@ -144,14 +146,16 @@ class Player:
         offset = walking_vector.coords_to_pixel_offset(self.coords, (225, 41))
         window_pixel = (ORIGIN[0] + offset[0], ORIGIN[1] + offset[1])
         screen_pixel = window_api.window_pixel_to_screen_pixel(
-            self._window_hwnd, *window_pixel)
+            self._window_hwnd, *window_pixel
+        )
         arduino_api.ard_mouse_to_pos(screen_pixel, sleep=True)
         arduino_api.click()
         time.sleep(3)
 
         # click on pots n times
         screen_pixel = window_api.window_pixel_to_screen_pixel(
-            self._window_hwnd, 700, 120)
+            self._window_hwnd, 700, 120
+        )
         arduino_api.ard_mouse_to_pos(screen_pixel, sleep=True)
         for _ in range(10):
             arduino_api.click(sleep=True)
@@ -159,17 +163,17 @@ class Player:
         # close shop
         window_pixel = 960, 630
         screen_pixel = window_api.window_pixel_to_screen_pixel(
-            self._window_hwnd, *window_pixel)
+            self._window_hwnd, *window_pixel
+        )
         arduino_api.ard_mouse_to_pos(screen_pixel, sleep=True)
         arduino_api.click(sleep=True)
 
     def distribute_stats(self) -> None:
-        """If stats should be distributed, distribute them.
-        """
+        """If stats should be distributed, distribute them."""
         lvl = self.lvl
         if lvl == 1:
             stats = self._config["stats"]
-            total = self.gr * 10*1000 + self.reset * 500
+            total = self.gr * 10 * 1000 + self.reset * 500
             for stat in stats:
                 if stats[stat][0] == "f":
                     # distribute flat
@@ -194,22 +198,21 @@ class Player:
             if self.warp != spot["warp"] or prefer_warp:
                 self.warp = spot["warp"]
             if self._go_to_coords(spot["coords"]):
-                logging.info(
-                    "Player died while trying to get to the best spot")
+                logging.info("Player died while trying to get to the best spot")
                 self._exclude_current_spot()
                 self.ensure_on_best_spot()
                 return
             units = self._surrounding_units()
             my_coords = self.coords
-            units = filter(lambda x: distance(
-                x.coords, my_coords) < 6, units)
+            units = filter(lambda x: distance(x.coords, my_coords) < 6, units)
             players = get_online_players()
             with contextlib.suppress(ValueError):
                 [players.remove(ally) for ally in self._allies]
                 players.remove(self.name)
             if units := [unit for unit in units if unit.name in players]:
                 logging.info(
-                    f"Someone is here: {[{unit.name: unit.coords} for unit in units]}")
+                    f"Someone is here: {[{unit.name: unit.coords} for unit in units]}"
+                )
 
                 self._exclude_current_spot()
                 self.ensure_on_best_spot(prefer_warp=False)
@@ -218,8 +221,7 @@ class Player:
             self._go_to_coords(spot["coords"])
 
     def try_reset(self) -> bool:
-        """Do reset if required level is met.
-        """
+        """Do reset if required level is met."""
         # first 10 resets
         level_needed = 400
         if self.gr == 0 and self.reset < 10:
@@ -232,8 +234,12 @@ class Player:
             time.sleep(2)
             meth.protection_click()
             window_api.window_activate_by_handler(self._window_hwnd)
-            game_menu.game_login(self._window_hwnd,
-                                 self._config["account"]["id"], self._config["account"]["pass"], self._config["account"]["select_offset"])
+            game_menu.game_login(
+                self._window_hwnd,
+                self._config["account"]["id"],
+                self._config["account"]["pass"],
+                self._config["account"]["select_offset"],
+            )
             time.sleep(2)
             self.__init__(self.name)
             return True
@@ -257,8 +263,7 @@ class Player:
             self.ensure_on_best_spot()
 
     def check_lifetime(self) -> bool:
-        """Return True if object lives too long.
-        """
+        """Return True if object lives too long."""
         lifespan = timedelta(hours=2)
         return datetime.now() - self.birthtime > lifespan
 
@@ -272,19 +277,19 @@ class Player:
 
     def _distribute_relativety(self, stats_to_distribute: int) -> None:
         stats = self._config["stats"]
-        parts = sum(int(stats[key][1:])
-                    for key in stats if stats[key][0] == "r")
+        parts = sum(int(stats[key][1:]) for key in stats if stats[key][0] == "r")
 
         for stat in stats:
             if stats[stat][0] == "r":
-                to_add = int(int(stats[stat][1:])
-                             * stats_to_distribute / parts)
+                to_add = int(int(stats[stat][1:]) * stats_to_distribute / parts)
                 self._write_to_chat(f"/add{stat} {to_add}")
 
     def _reset(self) -> None:
         logging.info("Starting reset")
         self._last_reset_time = self._last_reset_time or 0
-        if self._last_reset_time and datetime.now() - self._last_reset_time < timedelta(seconds=1200):
+        if self._last_reset_time and datetime.now() - self._last_reset_time < timedelta(
+            seconds=1200
+        ):
             return
 
         account = self._config["account"]
@@ -303,27 +308,28 @@ class Player:
         raise ResetError("Reset failed!")
 
     def _go_to_coords(self, target_coords: tuple):
-        """Go to target coordinates on current map.
-        """
+        """Go to target coordinates on current map."""
         map_name = "".join(i for i in self.warp if i.isalpha())
         map_array = get_mu_map_list(map_name)
         path = djikstra8(self.coords, target_coords, map_array)
 
         while distance(self_coords := self.coords, path[-1]) > 3:
             closest_path_point_index = min(
-                ((i, distance(self_coords, e)) for i, e in enumerate(path)), key=lambda x: x[1])[0]
+                ((i, distance(self_coords, e)) for i, e in enumerate(path)),
+                key=lambda x: x[1],
+            )[0]
             try:
                 next_point = path[closest_path_point_index + 4]
             except IndexError:
                 next_point = path[-1]
             # self.go_direction(next_point)
 
-            offset = walking_vector.coords_to_pixel_offset(
-                self_coords, next_point)
+            offset = walking_vector.coords_to_pixel_offset(self_coords, next_point)
             game_pixel = [ORIGIN[0] + offset[0], ORIGIN[1] + offset[1]]
             game_pixel[1] = min(game_pixel[1], 650)
             screen_pixel = window_api.window_pixel_to_screen_pixel(
-                self._window_hwnd, *game_pixel)
+                self._window_hwnd, *game_pixel
+            )
             arduino_api.ard_mouse_to_pos(screen_pixel)
             arduino_api.hold_left()
 
@@ -332,14 +338,16 @@ class Player:
                 game_pixel = [ORIGIN[0] + offset[0], ORIGIN[1] + offset[1]]
                 game_pixel[1] = min(game_pixel[1], 650)
                 screen_pixel = window_api.window_pixel_to_screen_pixel(
-                    self._window_hwnd, *game_pixel)
+                    self._window_hwnd, *game_pixel
+                )
                 arduino_api.ard_mouse_to_pos(screen_pixel)
                 time.sleep(2)
 
             time.sleep(0.02)
 
         screen_pixel = window_api.window_pixel_to_screen_pixel(
-            self._window_hwnd, *ORIGIN)
+            self._window_hwnd, *ORIGIN
+        )
         arduino_api.ard_mouse_to_pos(screen_pixel)
         arduino_api.release_buttons()
 
@@ -366,24 +374,28 @@ class Player:
             raise ChatError("Cannot close chat!")
 
     def _warp_to(self, area: str) -> None:
-        self._write_to_chat(f'/warp {area}')
+        self._write_to_chat(f"/warp {area}")
         time.sleep(3)
 
     def _surrounding_units(self) -> list:
         return memory.get_surrounding_units(self._window_id)
 
     def _is_on_place(self, warp: str, coords: tuple) -> bool:
-        """Check if player is on place.
-        """
+        """Check if player is on place."""
         ret = self.warp == warp and distance(self.coords, coords) < 10
         if not ret:
             logging.info(
-                f"Player, {self.warp} {self.coords}, is not on place {warp} {coords}")
+                f"Player, {self.warp} {self.coords}, is not on place {warp} {coords}"
+            )
         return ret
 
     def _update_best_spot_index(self):
         leveling_plan = self._config["leveling_plan"]
-        while self._farming_spot_index + 1 < len(leveling_plan) and self.lvl >= leveling_plan[self._farming_spot_index + 1]["min_lvl"]:
+        while (
+            self._farming_spot_index + 1 < len(leveling_plan)
+            and self.lvl >= leveling_plan[self._farming_spot_index + 1]["min_lvl"]
+        ):
             print(
-                f"lvl: {self.lvl} is enough for spot {leveling_plan[self._farming_spot_index + 1]}")
+                f"lvl: {self.lvl} is enough for spot {leveling_plan[self._farming_spot_index + 1]}"
+            )
             self._farming_spot_index += 1

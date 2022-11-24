@@ -1,4 +1,3 @@
-
 class StuckedException(Exception):
     pass
 

@@ -20,6 +20,7 @@ def _start_launcher():
 
 def start_game():
     import os
+
     # run launcher.exe
     # os.system(r"C:\Users\Public\Desktop\ETERNMU.lnk")
     p = multiprocessing.Process(target=_start_launcher)
@@ -39,13 +40,13 @@ def start_game():
 
 
 def server_selection(hwnd: int):
-    """ Logout into server selection.
-    """
+    """Logout into server selection."""
 
     arduino_api.send_ascii(KEY_ESC)
     # click select
     arduino_api.ard_mouse_to_pos(
-        window_api.window_pixel_to_screen_pixel(hwnd, 600, 280))
+        window_api.window_pixel_to_screen_pixel(hwnd, 600, 280)
+    )
     time.sleep(0.5)
     arduino_api.click()
     time.sleep(0.5)
@@ -54,13 +55,14 @@ def server_selection(hwnd: int):
 
 
 def game_login(hwnd: int, login: str, password: str, offset: int):
-    """ Log in from the server selection and
+    """Log in from the server selection and
     choose character.
     """
     # pop up server selection
 
     arduino_api.ard_mouse_to_pos(
-        window_api.window_pixel_to_screen_pixel(hwnd, 450, 305))
+        window_api.window_pixel_to_screen_pixel(hwnd, 450, 305)
+    )
     time.sleep(0.5)
     arduino_api.click()
     time.sleep(0.5)
@@ -69,14 +71,16 @@ def game_login(hwnd: int, login: str, password: str, offset: int):
     # server 1: y = 305
     # server 2: y = 330
     arduino_api.ard_mouse_to_pos(
-        window_api.window_pixel_to_screen_pixel(hwnd, 600, 330))
+        window_api.window_pixel_to_screen_pixel(hwnd, 600, 330)
+    )
     time.sleep(0.5)
     arduino_api.click()
     time.sleep(0.5)
 
     # click login
     arduino_api.ard_mouse_to_pos(
-        window_api.window_pixel_to_screen_pixel(hwnd, 650, 460))
+        window_api.window_pixel_to_screen_pixel(hwnd, 650, 460)
+    )
     time.sleep(0.5)
     arduino_api.click()
     time.sleep(0.5)
@@ -84,7 +88,8 @@ def game_login(hwnd: int, login: str, password: str, offset: int):
 
     # click password
     arduino_api.ard_mouse_to_pos(
-        window_api.window_pixel_to_screen_pixel(hwnd, 650, 490))
+        window_api.window_pixel_to_screen_pixel(hwnd, 650, 490)
+    )
     time.sleep(0.5)
     arduino_api.click()
     time.sleep(0.5)
@@ -92,7 +97,8 @@ def game_login(hwnd: int, login: str, password: str, offset: int):
 
     # click ok
     arduino_api.ard_mouse_to_pos(
-        window_api.window_pixel_to_screen_pixel(hwnd, 660, 540))
+        window_api.window_pixel_to_screen_pixel(hwnd, 660, 540)
+    )
     time.sleep(0.5)
     arduino_api.click()
     time.sleep(0.5)
@@ -102,7 +108,8 @@ def game_login(hwnd: int, login: str, password: str, offset: int):
 
     # click on character
     arduino_api.ard_mouse_to_pos(
-        window_api.window_pixel_to_screen_pixel(hwnd, 360 + offset, 530))
+        window_api.window_pixel_to_screen_pixel(hwnd, 360 + offset, 530)
+    )
     time.sleep(0.5)
     arduino_api.click()
     time.sleep(0.5)

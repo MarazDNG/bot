@@ -1,7 +1,12 @@
 import contextlib
 from game_logic import game_menu
 from game_logic.Player import Player
-from game_logic.exceptions import WrongArgumentsException, TooManyIterationsException, WarpException, ChatError
+from game_logic.exceptions import (
+    WrongArgumentsException,
+    TooManyIterationsException,
+    WarpException,
+    ChatError,
+)
 from game_logic import meth
 from game_logic import KEY_RETURN
 from game_logic import config
@@ -14,7 +19,13 @@ import pygetwindow as gw
 
 from multiprocessing import Process, Queue
 from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, filters, MessageHandler
+from telegram.ext import (
+    ApplicationBuilder,
+    ContextTypes,
+    CommandHandler,
+    filters,
+    MessageHandler,
+)
 
 
 CONFIG_PATH = r"C:\Users\Maraz\smart\bot\mu_lib\conf"
@@ -22,7 +33,9 @@ TOKEN = "5738719734:AAFxl-8hEkCms58QatVz9D7FeJxCGArfP8g"
 
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id, text=update.message.text
+    )
     return update.message.text
 
 
@@ -42,10 +55,12 @@ def telegram_bot(q: Queue):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG,
-                        filename="mu.log",
-                        filemode="w",
-                        datefmt="%Y/%m/%d %H:%M:%S",)
+    logging.basicConfig(
+        level=logging.DEBUG,
+        filename="mu.log",
+        filemode="w",
+        datefmt="%Y/%m/%d %H:%M:%S",
+    )
 
     if len(sys.argv) == 1:
         raise WrongArgumentsException("Character name is required.")
@@ -97,8 +112,12 @@ if __name__ == "__main__":
                 meth.protection_click()
                 hwnd = window_api.window_handler_by_regex("^EternMU$")
                 window_api.window_activate_by_handler(hwnd)
-                game_menu.game_login(hwnd,
-                                     player._config["account"]["id"], player._config["account"]["pass"], player._config["account"]["select_offset"])
+                game_menu.game_login(
+                    hwnd,
+                    player._config["account"]["id"],
+                    player._config["account"]["pass"],
+                    player._config["account"]["select_offset"],
+                )
             if player.check_lifetime():
                 player.__init__(player.name)
 

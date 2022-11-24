@@ -10,8 +10,9 @@ class NotEnoughMobsException(Exception):
 @dataclass
 class Unit:
     """
-        NPC with name, x, y.
+    NPC with name, x, y.
     """
+
     name: str
     coords: tuple
 
@@ -25,8 +26,7 @@ def _distance(x1, y1, x2, y2) -> float:
 
 
 def get_surrounding_units(id: int):
-    """Return surrounding units sorted closest first.
-    """
+    """Return surrounding units sorted closest first."""
     d0 = 0x00A7A224
     d1 = 0x8
     d2 = 0x38
@@ -50,8 +50,7 @@ def get_surrounding_units(id: int):
 
 
 def surrounding_units(id: int) -> list[Unit]:
-    """Return 6 closest same units.
-    """
+    """Return 6 closest same units."""
     d0 = 0x00A7A224
     d1 = 0x8
     d2 = 0x38
@@ -90,7 +89,7 @@ def surrounding_units(id: int) -> list[Unit]:
 def my_coords(id: int) -> tuple:
 
     d0 = 0x077C2F04
-    dx = 0xac
+    dx = 0xAC
     rwm = ReadWriteMemory()
     process = rwm.get_process_by_id(id)
     process.open()

@@ -1,4 +1,3 @@
-
 from game_logic import Player
 
 from PIL import Image
@@ -28,7 +27,5 @@ while True:
     coords_set.add(coords)
 
 for i in coords_set:
-    idk[
-        i[0], i[1]
-    ] = (255, 255, 255)
-img.save('mapper.png')
+    idk[i[0], i[1]] = (255, 255, 255)
+img.save("mapper.png")

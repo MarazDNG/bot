@@ -23,8 +23,10 @@ def distance(a: tuple, b: tuple) -> float:
     return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
 
-def _if_stucked(coords: tuple, recovery: callable = None, wait_time: float = 1.5) -> bool:
-    """ Detect stucked character."""
+def _if_stucked(
+    coords: tuple, recovery: callable = None, wait_time: float = 1.5
+) -> bool:
+    """Detect stucked character."""
     _if_stucked.cached_pos = getattr(_if_stucked, "cached_pos", coords)
     _if_stucked.cache_time = getattr(_if_stucked, "cache_time", datetime.now())
 
@@ -46,8 +48,7 @@ def _if_stucked(coords: tuple, recovery: callable = None, wait_time: float = 1.5
 
 def get_online_players():
     r = requests.get("https://eternmu.cz/rankings/online/", verify=False)
-    return re.findall(
-        r"https://eternmu.cz/profile/player/req/(.{1,10})/", r.text)
+    return re.findall(r"https://eternmu.cz/profile/player/req/(.{1,10})/", r.text)
 
 
 def _is_helper_on(hwnd: int) -> bool:
@@ -67,7 +68,9 @@ def _detect_ok(hwnd: int) -> bool:
     test_indices = (6, 8, 20, 27)
     img = window_api.window_grab_image(hwnd, *bbox)
     img_1d = [tuple(x) for x in numpy.asarray(img)[0]]
-    return all(img_1d[i][c] == 255 for i, c in itertools.product(test_indices, range(3)))
+    return all(
+        img_1d[i][c] == 255 for i, c in itertools.product(test_indices, range(3))
+    )
 
 
 def _detect_chat_open(hwnd: int) -> bool:
@@ -76,7 +79,10 @@ def _detect_chat_open(hwnd: int) -> bool:
     bbox = (100, 625, 300, 1)
     img = window_api.window_grab_image(hwnd, *bbox)
     img_1d = [tuple(x) for x in numpy.asarray(img)[0]]
-    return all(abs(img_1d[indices[i]][j] - colors[i]) <= 3 for i, j in itertools.product(range(3), range(3)))
+    return all(
+        abs(img_1d[indices[i]][j] - colors[i]) <= 3
+        for i, j in itertools.product(range(3), range(3))
+    )
 
 
 def _detect_pots(hwnd: int) -> bool:
@@ -86,8 +92,10 @@ def _detect_pots(hwnd: int) -> bool:
     img = window_api.window_grab_image(hwnd, 40, 710, 10, 1)
     img_1d = [tuple(x) for x in numpy.asarray(img)[0]]
     color = (153, 9, 9)
-    return all(abs(img_1d[i][j] - color[j]) <= 3 for i,
-               j in itertools.product(range(5), range(3)))
+    return all(
+        abs(img_1d[i][j] - color[j]) <= 3
+        for i, j in itertools.product(range(5), range(3))
+    )
 
 
 def turn_helper_on(hwnd: int, fast=False) -> bool:
@@ -111,5 +119,5 @@ def turn_helper_on(hwnd: int, fast=False) -> bool:
     return True
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(get_online_players())

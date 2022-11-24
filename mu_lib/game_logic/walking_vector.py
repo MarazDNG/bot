@@ -1,4 +1,3 @@
-
 from math import sqrt, cos, sin, pi
 import time
 import numpy
@@ -17,13 +16,15 @@ def go_next_point(start: tuple, goal: tuple, normalize: bool = True) -> tuple:
 
 
 def get_vector(target_pos: tuple, current_pos: tuple, normalize: bool = True) -> tuple:
-    """Get normalized vector by ingame coordinates.
-    """
+    """Get normalized vector by ingame coordinates."""
     if current_pos == target_pos:
         return (0, 0)
-    vector = numpy.array([target_pos[0] - current_pos[0],
-                          target_pos[1] - current_pos[1],
-                          ])
+    vector = numpy.array(
+        [
+            target_pos[0] - current_pos[0],
+            target_pos[1] - current_pos[1],
+        ]
+    )
     # print(vector)
     if normalize:
         vector = vector / numpy.linalg.norm(vector)
@@ -31,13 +32,12 @@ def get_vector(target_pos: tuple, current_pos: tuple, normalize: bool = True) ->
 
 
 def transform_vector(vector, k: int = 250):
-    """Take MU vector and return offset.
-    """
+    """Take MU vector and return offset."""
     start = time.time()
     ox = vector[0] * k
     oy = vector[1] * k
-    nx = ox * cos(1/4 * pi) + oy * sin(1/4 * pi)
-    ny = - oy * sin(1/4 * pi) + ox * cos(1/4 * pi)
+    nx = ox * cos(1 / 4 * pi) + oy * sin(1 / 4 * pi)
+    ny = -oy * sin(1 / 4 * pi) + ox * cos(1 / 4 * pi)
     end = time.time()
     # print('transform vector took:', end-start)
     return (nx, ny)
@@ -100,22 +100,22 @@ def perspective_transform2(vector: tuple):
     coeff = 620
     return (coeff * xs, coeff * ys)
 
+
 def coords_to_pixel_offset(start: tuple, goal: tuple):
-    """Retun offset from start to goal in pixels.
-    """
+    """Retun offset from start to goal in pixels."""
     vector = get_vector(goal, start, normalize=False)
     # vector = transform_vector(vector)
-    vector = vector_rotate(vector, 7/4 * pi)
+    vector = vector_rotate(vector, 7 / 4 * pi)
     vector = perspective_transform2(vector)
-    return vector[0], - vector[1]
+    return vector[0], -vector[1]
 
 
 def distance(a: tuple, b: tuple) -> float:
     return sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
-    v = vector_rotate((3, -2), 7/4 * pi)
+    v = vector_rotate((3, -2), 7 / 4 * pi)
     v = perspective_transform2(v)
     print(v)

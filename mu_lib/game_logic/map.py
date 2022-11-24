@@ -10,7 +10,11 @@ def _is_white(color: numpy.iterable) -> bool:
     """
     Check if color is white
     """
-    return color[0] == WHITE_COLOR[0] and color[1] == WHITE_COLOR[1] and color[2] == WHITE_COLOR[2]
+    return (
+        color[0] == WHITE_COLOR[0]
+        and color[1] == WHITE_COLOR[1]
+        and color[2] == WHITE_COLOR[2]
+    )
 
 
 def get_mu_map_list(map_name: str) -> Image:
@@ -25,11 +29,17 @@ def get_mu_map_list(map_name: str) -> Image:
 
 def check_spot_accessibility():
     l = globals()
+
     def warp_to_map_name(warp: str):
         return "".join(i for i in warp if i.isalpha())
 
-    map_coords_pairs = [(warp_to_map_name(l[spot]["warp"]), l[spot]["coords"])
-                        for spot in l if spot.startswith("n_")]
-    [print(map_name, coords) for map_name, coords in map_coords_pairs if not get_mu_map_list(
-        map_name)[coords[0]][coords[1]]]
-    
+    map_coords_pairs = [
+        (warp_to_map_name(l[spot]["warp"]), l[spot]["coords"])
+        for spot in l
+        if spot.startswith("n_")
+    ]
+    [
+        print(map_name, coords)
+        for map_name, coords in map_coords_pairs
+        if not get_mu_map_list(map_name)[coords[0]][coords[1]]
+    ]
