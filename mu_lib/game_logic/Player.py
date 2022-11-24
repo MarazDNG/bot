@@ -212,8 +212,21 @@ class Player:
         with contextlib.suppress(ValueError):
             [players.remove(ally) for ally in self._allies]
             players.remove(self.name)
-        units = [unit for unit in units if unit.name in players]
-        if not units:
+        players_on_spot = [unit for unit in units if unit.name in players]
+        if not players_on_spot:
+            i = 0
+            # count monsters
+            while [unit.name for unit in units].count(units[i].name) < 6:
+                i += 1
+                if i > 5:
+                    # raise NotEnoughMobsException("Not enough mobs")
+                    spot = self._config["leveling_plan"][self._farming_spot_index]
+                    logging.info(
+                        f"Not enough mobs on spot: {spot['warp']} - {spot['coords']}"
+                    )
+                    self._exclude_current_spot()
+                    self.ensure_on_best_spot(prefer_warp=False)
+                    break
             # game_methods.kill_runaway_units()
             # self._go_to_coords(spot["coords"])
             return
