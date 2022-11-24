@@ -22,7 +22,7 @@ from . import config
 
 from .exceptions import DeathException, WarpException, ResetError, ChatError
 from .meth import distance, get_online_players, _if_stucked
-from .browser import do_reset
+from .browser import do_reset_on_web
 from .map import get_mu_map_list
 from .djikstra import djikstra8
 
@@ -220,7 +220,7 @@ class Player:
             # game_methods.kill_runaway_units()
             self._go_to_coords(spot["coords"])
 
-    def try_reset(self) -> bool:
+    def do_reset(self) -> bool:
         """Do reset if required level is met."""
         # first 10 resets
         level_needed = 400
@@ -228,22 +228,24 @@ class Player:
             level_needed = 300 + 10 * self.reset
         logging.info(f"level_needed: {level_needed}")
         logging.info(f"self.lvl: {self.lvl}")
-        if self.lvl >= level_needed:
-            game_menu.server_selection(self._window_hwnd)
-            self._reset()
-            time.sleep(2)
-            meth.protection_click()
-            window_api.window_activate_by_handler(self._window_hwnd)
-            game_menu.game_login(
-                self._window_hwnd,
-                self._config["account"]["id"],
-                self._config["account"]["pass"],
-                self._config["account"]["select_offset"],
-            )
-            time.sleep(2)
-            self.__init__(self.name)
-            return True
-        return False
+
+        if self.lvl < level_needed:
+            return False
+
+        game_menu.server_selection(self._window_hwnd)
+        self._try_reset_on_web()
+        time.sleep(2)
+        meth.protection_click()
+        window_api.window_activate_by_handler(self._window_hwnd)
+        game_menu.game_login(
+            self._window_hwnd,
+            self._config["account"]["id"],
+            self._config["account"]["pass"],
+            self._config["account"]["select_offset"],
+        )
+        time.sleep(2)
+        self.__init__(self.name)
+        return True
 
     def farm(self):
         if not self._farming_flag:
@@ -284,7 +286,8 @@ class Player:
                 to_add = int(int(stats[stat][1:]) * stats_to_distribute / parts)
                 self._write_to_chat(f"/add{stat} {to_add}")
 
-    def _reset(self) -> None:
+    def _try_reset_on_web(self) -> None:
+        """Start browser and reset on web."""
         logging.info("Starting reset")
         self._last_reset_time = self._last_reset_time or 0
         if self._last_reset_time and datetime.now() - self._last_reset_time < timedelta(
@@ -293,12 +296,12 @@ class Player:
             return
 
         account = self._config["account"]
-        login_id = account["id"]
-        password = account["pass"]
-        position = account["position"]
 
         for _ in range(3):
-            p = Process(target=do_reset, args=(login_id, password, position))
+            p = Process(
+                target=do_reset_on_web,
+                args=(account["id"], account["pass"], account["position"]),
+            )
             p.start()
             p.join(30)
             if p.exitcode == 0:

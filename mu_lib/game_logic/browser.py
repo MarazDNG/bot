@@ -6,7 +6,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 
 
-def do_reset(id: str, password: str, position: int):
+def do_reset_on_web(id: str, password: str, position: int):
+    """Start browser, login, reset character and close browser."""
     driver = webdriver.Firefox()
     driver.maximize_window()
     driver.get("https://eternmu.cz/")

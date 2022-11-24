@@ -128,7 +128,7 @@ if __name__ == "__main__":
 
                 player.distribute_stats()
 
-                if player.try_reset():
+                if player.do_reset():
                     continue
 
                 player.ensure_on_best_spot()
