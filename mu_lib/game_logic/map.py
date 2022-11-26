@@ -1,4 +1,5 @@
 from PIL import Image
+import cv2
 import os
 import numpy
 
@@ -43,3 +44,10 @@ def check_spot_accessibility():
         for map_name, coords in map_coords_pairs
         if not get_mu_map_list(map_name)[coords[0]][coords[1]]
     ]
+
+
+class Warp:
+    def __init__(self, lvl, name, coords):
+        self.lvl: int = lvl
+        self.name: str = name
+        self.coords: tuple = coords
