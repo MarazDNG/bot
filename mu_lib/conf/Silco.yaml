@@ -24,7 +24,7 @@ leveling_plan:
   - n_SPLINTER_WOLVES_1
 starting_warp: lorencia
 stats:
-  agi: r1
-  ene: r2
+  agi: r2
+  ene: r3
   str: f400
   vit: f1600

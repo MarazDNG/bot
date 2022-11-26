@@ -95,7 +95,12 @@ if __name__ == "__main__":
                 player = [p for p in player_pool if p.name == value]
                 if player:
                     player = player[0]
-                    window_api.window_activate_by_handler(player._window_hwnd)
+                    while True:
+                        try:
+                            window_api.window_activate_by_handler(player._window_hwnd)
+                            break
+                        except:
+                            continue
                     player.close_game()
                     player_pool.remove(player)
                 else:
