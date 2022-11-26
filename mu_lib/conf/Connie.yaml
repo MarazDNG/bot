@@ -23,6 +23,8 @@ leveling_plan:
   - n_SPLINTER_WOLVES_3
   - n_SPLINTER_WOLVES_2
   - n_SPLINTER_WOLVES_1
+  - n_BLADE_HUNTERS_2
+  - n_BLADE_HUNTERS_1
 starting_warp: elbeland
 stats:
   agi: r1

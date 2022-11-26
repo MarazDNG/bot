@@ -56,8 +56,8 @@ if __name__ == "__main__":
     player_pool = [Player(sys.argv[i]) for i in range(1, len(sys.argv))]
 
     q = Queue()
-    p = Process(target=telegram_bot, args=(q,))
-    p.start()
+    p_telegram = Process(target=telegram_bot, args=(q,))
+    p_telegram.start()
 
     while True:
         next_config_change = None
@@ -73,13 +73,15 @@ if __name__ == "__main__":
                 if value in [p.name for p in player_pool]:
                     print(f"Player {value} is already in game.")
                 else:
-                    p = Player(value)
-                    player_pool.append(p)
+                    player = Player(value)
+                    player_pool.append(player)
             elif action_type == "off":
-                if value in [p.name for p in player_pool]:
+                player = [p for p in player_pool if p.name == value]
+                if player:
+                    player = player[0]
                     window_api.window_activate_by_handler(player._window_hwnd)
-                    p.close_game()
-                    player_pool.remove(value)
+                    player.close_game()
+                    player_pool.remove(player)
                 else:
                     print(f"Player {value} is not in game.")
             else:
