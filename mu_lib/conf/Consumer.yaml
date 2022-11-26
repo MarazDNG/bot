@@ -12,23 +12,27 @@ leveling_plan:
   - n_DARK_KNIGHTS_2
   - n_DARK_KNIGHTS_1
   - n_THUNDER_LICHES_1
-  - n_MUTANTS_2
-  - n_MUTANTS_1
-  - n_BLOODY_WOLVES_1
-  - n_SPLINTER_WOLVES_3
-  - n_SPLINTER_WOLVES_2
-  - n_SPLINTER_WOLVES_1
-  - n_BLADE_HUNTERS_2
-  - n_BLADE_HUNTERS_1
-  - n_BERSERKERS_3
-  - n_BERSERKERS_2
-  - n_BERSERKERS_1
-  - n_GENOCIDERS_3
-  - n_GENOCIDERS_2
-  - n_GENOCIDERS_1
+  - n_BLOODY_QUEENS_1
+  - n_BLOODY_QUEENS_2
+  - n_BLOODY_QUEENS_3
+  - n_BLOODY_QUEENS_4
+  # - n_MUTANTS_2
+  # - n_MUTANTS_1
+  # - n_BLOODY_WOLVES_1
+  # - n_SPLINTER_WOLVES_3
+  # - n_SPLINTER_WOLVES_2
+  # - n_SPLINTER_WOLVES_1
+  # - n_BLADE_HUNTERS_2
+  # - n_BLADE_HUNTERS_1
+  # - n_BERSERKERS_3
+  # - n_BERSERKERS_2
+  # - n_BERSERKERS_1
+  # - n_GENOCIDERS_3
+  # - n_GENOCIDERS_2
+  # - n_GENOCIDERS_1
 starting_warp: lorencia
 stats:
   agi: r3
   ene: r3
   str: r8
-  vit: f2000
+  vit: f3000

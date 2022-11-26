@@ -33,4 +33,8 @@ MAP_DICT = {
         Warp(300, "peaceswamp1", (190, 190)),
     ),
     "tarkan": (Warp(150, "tarkan", (190, 62)),),
+    "aida": (
+        Warp(150, "aida", (84, 10)),
+        Warp(150, "aida2", (188, 176)),
+    ),
 }

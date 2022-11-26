@@ -35,7 +35,7 @@ def check_spot_accessibility():
         return "".join(i for i in warp if i.isalpha())
 
     map_coords_pairs = [
-        (warp_to_map_name(l[spot]["warp"]), l[spot]["coords"])
+        (warp_to_map_name(l[spot]["map"]), l[spot]["coords"])
         for spot in l
         if spot.startswith("n_")
     ]
