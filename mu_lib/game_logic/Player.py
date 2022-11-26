@@ -40,7 +40,7 @@ from .map_list import MAP_DICT
 class Player:
     def __init__(self, char_name: str):
         self.name = char_name
-        self._config = config.ConfigManager.config_for_player(self.name)
+        self.__config = None
         self._allies = []
         self._farming_spot_index = 0
         self._farming_flag = False
@@ -55,6 +55,12 @@ class Player:
         self.birthtime = datetime.now()
 
     # PROPS
+    @property
+    def _config(self):
+        if not self.__config:
+            self.__config = config.ConfigManager.config_for_player(self.name)
+        return self.__config
+
     @property
     def _window_hwnd(self):
         if not self.__window_hwnd:
