@@ -19,6 +19,9 @@ leveling_plan:
   - n_DEATH_KNIGHTS_1
   - n_MUTANTS_2
   - n_MUTANTS_1
+  - n_SPLINTER_WOLVES_3
+  - n_SPLINTER_WOLVES_2
+  - n_SPLINTER_WOLVES_1
 starting_warp: lorencia
 stats:
   agi: r1

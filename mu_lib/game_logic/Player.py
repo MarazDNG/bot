@@ -120,6 +120,7 @@ class Player:
 
     def warp(self, warp: Warp):
         if self.lvl < 10:
+            self.map = self._config["starting_warp"]
             logging.info("Player is too low level to warp")
             return
 
@@ -472,11 +473,17 @@ class Player:
 
     def _update_best_spot_index(self):
         leveling_plan = self._config["leveling_plan"]
-        while (
-            self._farming_spot_index + 1 < len(leveling_plan)
-            and self.lvl >= leveling_plan[self._farming_spot_index + 1]["min_lvl"]
-        ):
+        f_run = True
+        while self._farming_spot_index + 1 < len(leveling_plan) and f_run:
+            spot = leveling_plan[self._farming_spot_index + 1]
+            f_run = False
+            for warp in MAP_DICT[spot["map"]]:
+                target_coords = spot["coords"]
+                with contextlib.suppress(TooManyIterationsException):
+                    djikstra8(warp.coords, target_coords, get_mu_map_list(warp.map))
+                    self._farming_spot_index += 1
+                    f_run = True
+                    break
             print(
                 f"lvl: {self.lvl} is enough for spot {leveling_plan[self._farming_spot_index + 1]}"
             )
-            self._farming_spot_index += 1

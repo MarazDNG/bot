@@ -51,3 +51,7 @@ class Warp:
         self.lvl: int = lvl
         self.name: str = name
         self.coords: tuple = coords
+
+    @property
+    def map(self):
+        return "".join(i for i in self.name if i.isalpha())
