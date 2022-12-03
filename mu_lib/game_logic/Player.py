@@ -268,6 +268,7 @@ class Player:
                 i < len(units)
                 and [unit.name for unit in units].count(units[i].name) < 6
                 and self._farming_spot_index
+                and False
             ):
                 i += 1
                 if i == len(units):
@@ -480,7 +481,11 @@ class Player:
         while self._farming_spot_index + 1 < len(leveling_plan) and f_run:
             spot = leveling_plan[self._farming_spot_index + 1]
             f_run = False
-            for warp in MAP_DICT[spot["map"]]:
+            map_name = "".join(i for i in spot["map"] if i.isalpha())
+            logging.debug(f"Checking better spot: {spot}")
+            for warp in MAP_DICT[map_name]:
+                if self.lvl < warp.lvl:
+                    continue
                 target_coords = spot["coords"]
                 with contextlib.suppress(TooManyIterationsException):
                     djikstra8(warp.coords, target_coords, get_mu_map_list(warp.map))
@@ -488,5 +493,5 @@ class Player:
                     f_run = True
                     break
             logging.debug(
-                f"lvl: {self.lvl} is enough for spot {leveling_plan[self._farming_spot_index + 1]}"
+                f"lvl: {self.lvl} is enough for spot {leveling_plan[self._farming_spot_index]}"
             )

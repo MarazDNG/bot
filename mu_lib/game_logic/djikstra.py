@@ -26,7 +26,6 @@ def _get_surrounding4(x: int, y: int) -> set:
 
 
 def djikstra8(start: tuple, goal: tuple, array_map: list) -> list:
-    print("START")
     return _djikstra_body(start, goal, array_map, _get_surrounding8)
 
 

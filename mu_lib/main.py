@@ -58,7 +58,6 @@ if __name__ == "__main__":
     logging.basicConfig(
         level=logging.DEBUG,
         filename="mu.log",
-        filemode="w",
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         datefmt="%Y/%m/%d %H:%M:%S",
     )
