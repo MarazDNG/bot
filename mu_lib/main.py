@@ -59,6 +59,7 @@ if __name__ == "__main__":
         level=logging.DEBUG,
         filename="mu.log",
         filemode="w",
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         datefmt="%Y/%m/%d %H:%M:%S",
     )
 
@@ -102,8 +103,10 @@ if __name__ == "__main__":
             else:
                 print("Not valid config change.")
             continue
-
+        
+        logging.debug("Initiating game loop.")
         for player in player_pool:
+            logging.debug(f"Player {player.name} loop - start.")
             try:
                 meth.protection_click()
                 window_api.window_activate(f"Player: {player.name}")
@@ -139,3 +142,5 @@ if __name__ == "__main__":
                 player.close_game()
                 arduino_api.send_ascii(KEY_RETURN)
                 player.__init__(player.name)
+        logging.debug("Ending game loop.")
+                

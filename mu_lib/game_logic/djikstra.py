@@ -4,7 +4,16 @@ from datetime import date
 from itertools import product
 import logging
 
-# DONE
+
+logger = logging.getLogger(__name__)
+handler = logging.FileHandler(f"{__name__}.log")
+formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s", datefmt="%Y/%m/%d %H:%M:%S"
+)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.propagate = False
+logger.setLevel(logging.DEBUG)
 
 
 def _get_surrounding8(x: int, y: int) -> set:
@@ -28,7 +37,7 @@ def djikstra4(start: tuple, goal: tuple, array_map: list) -> list:
 def _djikstra_body(
     start: tuple, goal: tuple, array_map: list, neighbor_fnc: callable
 ) -> list:
-    logging.info(f"Start: { start}, Goal: {goal}")
+    logger.info(f"Start: { start}, Goal: {goal}")
     if start == goal:
         return [start]
     sets = [
@@ -49,7 +58,7 @@ def _djikstra_body(
                 if x >= 0 and x < len(array_map) and y >= 0 and y < len(array_map[x])
             }
             new_set = new_set.union({(x, y) for x, y in neighbors if array_map[x][y]})
-        # logging.debug(f"New set: {new_set}")
+        logger.debug(f"New set: {new_set}")
         if distance > 0:
             new_set.difference_update(sets[distance - 1])
         new_set.difference_update(sets[distance])

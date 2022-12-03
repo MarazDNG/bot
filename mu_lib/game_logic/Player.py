@@ -292,8 +292,8 @@ class Player:
         level_needed = 400
         if self.gr == 0 and self.reset < 10:
             level_needed = 300 + 10 * self.reset
-        logging.info(f"level_needed: {level_needed}")
-        logging.info(f"self.lvl: {self.lvl}")
+        logging.debug(f"level_needed: {level_needed}")
+        logging.debug(f"self.lvl: {self.lvl}")
 
         if self.lvl < level_needed:
             return False
@@ -487,6 +487,6 @@ class Player:
                     self._farming_spot_index += 1
                     f_run = True
                     break
-            print(
+            logging.debug(
                 f"lvl: {self.lvl} is enough for spot {leveling_plan[self._farming_spot_index + 1]}"
             )
