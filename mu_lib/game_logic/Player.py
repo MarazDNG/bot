@@ -221,7 +221,7 @@ class Player:
         if self._is_on_place(map_name, spot["coords"]):
             return
 
-        # choo  se path
+        # choose path
         map_arr = get_mu_map_list(map_name)
         target_coords: tuple = spot["coords"]
         curr_len = None
@@ -238,6 +238,9 @@ class Player:
                 if not curr_len or len(path) < curr_len:
                     curr_len = len(path)
                     curr_warp = warp
+
+        if not curr_len:
+            return
 
         if curr_warp:
             self.warp(curr_warp)
@@ -264,10 +267,10 @@ class Player:
             while (
                 i < len(units)
                 and [unit.name for unit in units].count(units[i].name) < 6
+                and self._farming_spot_index
             ):
                 i += 1
                 if i == len(units):
-                    # raise NotEnoughMobsException("Not enough mobs")
                     spot = self._config["leveling_plan"][self._farming_spot_index]
                     logging.info(
                         f"Not enough mobs on spot: {spot['map']} - {spot['coords']}"
