@@ -32,7 +32,7 @@ leveling_plan:
   # - n_GENOCIDERS_1
 starting_warp: lorencia
 stats:
-  agi: r3
-  ene: r3
-  str: r8
+  agi: f13000
+  ene: r1
+  str: r2
   vit: f3000
