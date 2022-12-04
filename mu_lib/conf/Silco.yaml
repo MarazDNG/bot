@@ -4,7 +4,6 @@ account:
   position: 1
   select_offset: 300
 leveling_plan:
-  - n_BUDGE_DRAGONS
   - n_WEREWOLVES_3
   - n_WEREWOLVES_2
   - n_WEREWOLVES_1
