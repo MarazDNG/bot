@@ -107,7 +107,7 @@ if __name__ == "__main__":
             else:
                 print("Not valid config change.")
             continue
-        
+
         logging.debug("Initiating game loop.")
         for player in player_pool:
             logging.debug(f"Player {player.name} loop - start.")
@@ -129,6 +129,12 @@ if __name__ == "__main__":
                 player.__init__(player.name)
 
             try:
+                if player.lvl == 400 and player.reset == 100:
+                    logging.info(f"Player {player.name} reached max level and reset.")
+                    player.close_game()
+                    player_pool.remove(player)
+                    continue
+
                 player.check_death()
 
                 player.buy_pots()
@@ -147,4 +153,3 @@ if __name__ == "__main__":
                 arduino_api.send_ascii(KEY_RETURN)
                 player.__init__(player.name)
         logging.debug("Ending game loop.")
-                
