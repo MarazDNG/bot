@@ -142,6 +142,7 @@ if __name__ == "__main__":
                 player.distribute_stats()
 
                 if player.do_reset():
+                    player = Player(player.name)
                     continue
 
                 player.ensure_on_best_spot()
