@@ -5,6 +5,7 @@ from .spots_location.lost_tower import *
 from .spots_location.kanturu_ruins import *
 from .spots_location.icarus import *
 from .spots_location.aida import *
+from .spots_location.karutan import *
 
 n_BUDGE_DRAGONS = {
     "map": "lorencia",
