@@ -25,36 +25,41 @@ class ConfigManager:
         return cls._config_pool[player_name]
 
     @classmethod
-    def modify(cls, change: str):
-        """
-        Modify config file.
-        Change is command ie. Consumer:stats:str = r6"
-        """
-        # change config file
-        player_and_keys, value = change.split("=")
+    def _parse_command(cls, command: str):
+        player_and_keys, value = command.split("=")
         player_and_keys = player_and_keys.strip()
         player_name, unsplitted_keys = player_and_keys.split(":", 1)
         keys = unsplitted_keys.split(":")
+        return player_name, keys, value
 
+    @classmethod
+    def modify(cls, change: str):
+        """
+        Modify config file. Change is command i.e.
+        player_name:keys = value
+        Consumer:stats:str = r6"
+        """
+        player_name, keys, value = cls._parse_command(change)
+
+        # load config file
         config_file_path = cls._get_config_path(player_name)
         check_file(config_file_path)
         with open(config_file_path, "r") as f:
             config_file = yaml.safe_load(f)
 
-        last_index = len(keys) - 1
+        # modify object with loaded file
         current_dict = config_file
-        for i, key in enumerate(keys):
-            if i == last_index:
-                if isinstance(current_dict[key], dict):
-                    raise ValueError("Cannot set value to dict.")
-                current_dict[key] = value
-            else:
-                current_dict = current_dict[key]
+        for key in keys[:-1]:
+            current_dict = current_dict[key]
+        if isinstance(current_dict[key], dict):
+            raise ValueError("Cannot set value to dict.")
+        current_dict[key] = value
 
+        # save changes to config file
         with open(config_file_path, "w") as f:
             yaml.safe_dump(config_file, f)
 
-        # load config file
+        # update config pool
         cls._load_config(player_name)
 
     @classmethod
