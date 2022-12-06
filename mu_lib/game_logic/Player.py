@@ -37,20 +37,57 @@ from .djikstra import djikstra8
 from .map_list import MAP_DICT
 
 
+class FarmingSystem:
+    def __init__(self):
+        self._farming_spot_index = 0
+        self._farming_flag = False
+        self._farming_coords = None
+
+
+class LevelingSystem:
+    def __init__(self, lvl_callable: callable):
+        self.last_reset_time = None
+        self.__last_dist_lvl = None
+        self._lvl_callable = lvl_callable
+
+    @property
+    def last_dist_lvl(self):
+        if self.__last_dist_lvl is None:
+            self.__last_dist_lvl = self._lvl_callable()
+        return self.__last_dist_lvl
+
+    @last_dist_lvl.setter
+    def last_dist_lvl(self, value):
+        self.__last_dist_lvl = value
+
+
+class WindowSystem:
+    def __init__(self, partial_title: str):
+        self._partial_title = partial_title
+        self.__window_id = None
+        self.__window_hwnd = None
+
+    @property
+    def _window_hwnd(self):
+        if not self.__window_hwnd:
+            self.__window_hwnd = window_api.window_handler_by_title(self._partial_title)
+        return self.__window_hwnd
+
+    @property
+    def _window_id(self):
+        if self.__window_id is None:
+            self.__window_id = window_api.window_id_by_title(self._partial_title)
+        return self.__window_id
+
+
 class Player:
     def __init__(self, char_name: str):
         self.name = char_name
         self.__config = None
-        self._allies = []
-        self._farming_spot_index = 0
-        self._farming_flag = False
-        self._farming_coords = None
-        self._last_reset_time = None
+        self._farming = FarmingSystem()
+        self._leveling = LevelingSystem(lambda: self.lvl)
+        self._window = WindowSystem(self.name)
 
-        self.__last_dist_lvl = None
-        self.__window_id = None
-        self.__window_hwnd = None
-        self.__map = None
         logging.info(f"Initialized player {self.name}")
         self.birthtime = datetime.now()
 
@@ -62,42 +99,20 @@ class Player:
         return self.__config
 
     @property
-    def _window_hwnd(self):
-        if not self.__window_hwnd:
-            self.__window_hwnd = window_api.window_handler_by_title(self.name)
-        return self.__window_hwnd
-
-    @property
-    def _last_dist_lvl(self):
-        if self.__last_dist_lvl is None:
-            self.__last_dist_lvl = self.lvl
-        return self.__last_dist_lvl
-
-    @_last_dist_lvl.setter
-    def last_dist_lvl(self, value):
-        self.__last_dist_lvl = value
-
-    @property
-    def _window_id(self):
-        if self.__window_id is None:
-            self.__window_id = window_api.window_id_by_title(self.name)
-        return self.__window_id
-
-    @property
     def reset(self) -> int:
-        window_title = window_api.window_title_by_handler(self._window_hwnd)
+        window_title = window_api.window_title_by_handler(self._window._window_hwnd)
         reset_str = re.search("Reset: \d+", window_title)[0]
         return int(reset_str.split()[1])
 
     @property
     def lvl(self):
-        window_title = window_api.window_title_by_handler(self._window_hwnd)
+        window_title = window_api.window_title_by_handler(self._window._window_hwnd)
         lvl_str = re.search("Level: \d+", window_title)[0]
         return int(lvl_str.split()[1])
 
     @property
     def coords(self) -> tuple:
-        return memory.my_coords(self._window_id)
+        return memory.my_coords(self._window._window_id)
 
     @cached_property_with_ttl(ttl=12 * 60 * 60)
     def gr(self):
@@ -152,12 +167,12 @@ class Player:
 
         warp_to(warp)
         self.map = warp.name
-        self._farming_flag = False
+        self._farming._farming_flag = False
 
     # PUBLIC METHODS
 
     def buy_pots(self):
-        if meth._detect_pots(self._window_hwnd):
+        if meth._detect_pots(self._window._window_hwnd):
             return
 
         # go to shop
@@ -169,7 +184,7 @@ class Player:
         offset = walking_vector.coords_to_pixel_offset(self.coords, (225, 41))
         window_pixel = (ORIGIN[0] + offset[0], ORIGIN[1] + offset[1])
         screen_pixel = window_api.window_pixel_to_screen_pixel(
-            self._window_hwnd, *window_pixel
+            self._window._window_hwnd, *window_pixel
         )
         arduino_api.ard_mouse_to_pos(screen_pixel, sleep=True)
         arduino_api.click()
@@ -177,7 +192,7 @@ class Player:
 
         # click on pots n times
         screen_pixel = window_api.window_pixel_to_screen_pixel(
-            self._window_hwnd, 700, 120
+            self._window._window_hwnd, 700, 120
         )
         arduino_api.ard_mouse_to_pos(screen_pixel, sleep=True)
         for _ in range(10):
@@ -186,7 +201,7 @@ class Player:
         # close shop
         window_pixel = 960, 630
         screen_pixel = window_api.window_pixel_to_screen_pixel(
-            self._window_hwnd, *window_pixel
+            self._window._window_hwnd, *window_pixel
         )
         arduino_api.ard_mouse_to_pos(screen_pixel, sleep=True)
         arduino_api.click(sleep=True)
@@ -207,16 +222,16 @@ class Player:
 
         step = 50 if self.reset < 15 else 100
 
-        if self.lvl < self._last_dist_lvl:
-            self.__last_dist_lvl = 1
-        if self.lvl > self._last_dist_lvl + step:
-            total = (self.lvl - self._last_dist_lvl) * 6
-            self.__last_dist_lvl = lvl
+        if self.lvl < self._leveling.last_dist_lvl:
+            self._leveling.last_dist_lvl = 1
+        if self.lvl > self._leveling.last_dist_lvl + step:
+            total = (self.lvl - self._leveling.last_dist_lvl) * 6
+            self._leveling.last_dist_lvl = lvl
             self._distribute_relativety(total)
 
     def ensure_on_best_spot(self):
         self._update_best_spot_index()
-        spot = self._config["leveling_plan"][self._farming_spot_index]
+        spot = self._config["leveling_plan"][self._farming._farming_spot_index]
         map_name = "".join(i for i in spot["map"] if i.isalpha())
         if self._is_on_place(map_name, spot["coords"]):
             return
@@ -258,7 +273,7 @@ class Player:
         units = list(filter(lambda x: distance(x.coords, my_coords) < 6, units))
         players = get_online_players()
         with contextlib.suppress(ValueError):
-            [players.remove(ally) for ally in self._allies]
+            # [players.remove(ally) for ally in self._allies]
             players.remove(self.name)
         players_on_spot = [unit for unit in units if unit.name in players]
         if not players_on_spot:
@@ -267,12 +282,14 @@ class Player:
             while (
                 i < len(units)
                 and [unit.name for unit in units].count(units[i].name) < 6
-                and self._farming_spot_index
+                and self._farming._farming_spot_index
                 and False
             ):
                 i += 1
                 if i == len(units):
-                    spot = self._config["leveling_plan"][self._farming_spot_index]
+                    spot = self._config["leveling_plan"][
+                        self._farming._farming_spot_index
+                    ]
                     logging.info(
                         f"Not enough mobs on spot: {spot['map']} - {spot['coords']}"
                     )
@@ -299,13 +316,13 @@ class Player:
         if self.lvl < level_needed:
             return False
 
-        game_menu.server_selection(self._window_hwnd)
+        game_menu.server_selection(self._window._window_hwnd)
         self._try_reset_on_web()
         time.sleep(2)
         meth.protection_click()
-        window_api.window_activate_by_handler(self._window_hwnd)
+        window_api.window_activate_by_handler(self._window._window_hwnd)
         game_menu.game_login(
-            self._window_hwnd,
+            self._window._window_hwnd,
             self._config["account"]["id"],
             self._config["account"]["pass"],
             self._config["account"]["select_offset"],
@@ -315,17 +332,20 @@ class Player:
         return True
 
     def farm(self):
-        if not self._farming_flag:
-            self._farming_flag = True
-            self._farming_coords = self.coords
-        meth.turn_helper_on(self._window_hwnd)
+        if not self._farming._farming_flag:
+            self._farming._farming_flag = True
+            self._farming._farming_coords = self.coords
+        meth.turn_helper_on(self._window._window_hwnd)
         time.sleep(5)
 
     def check_death(self):
         """Check if died during farming."""
-        if self._farming_flag and distance(self.coords, self._farming_coords) > 13:
+        if (
+            self._farming._farming_flag
+            and distance(self.coords, self._farming._farming_coords) > 13
+        ):
             logging.info("Player died while farming")
-            self._farming_flag = False
+            self._farming._farming_flag = False
             self._exclude_current_spot()
             self.ensure_on_best_spot()
 
@@ -335,7 +355,7 @@ class Player:
         return datetime.now() - self.birthtime > lifespan
 
     def close_game(self):
-        gw.Win32Window(hWnd=self._window_hwnd).close()
+        gw.Win32Window(hWnd=self._window._window_hwnd).close()
         time.sleep(0.5)
         arduino_api.send_ascii(KEY_RETURN)
         time.sleep(0.5)
@@ -352,7 +372,9 @@ class Player:
         )
         template = cv2.imread(template_path)
         bbox = 40, 30, 100, 15
-        img = numpy.array(window_api.window_grab_image(self._window_hwnd, *bbox))
+        img = numpy.array(
+            window_api.window_grab_image(self._window._window_hwnd, *bbox)
+        )
         res = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
         threshold = 0.9
         res = bool(numpy.where(res >= threshold)[0])
@@ -373,9 +395,11 @@ class Player:
     def _try_reset_on_web(self) -> None:
         """Start browser and reset on web."""
         logging.info("Starting reset")
-        self._last_reset_time = self._last_reset_time or 0
-        if self._last_reset_time and datetime.now() - self._last_reset_time < timedelta(
-            seconds=1200
+        self._leveling.last_reset_time = self._leveling.last_reset_time or 0
+        if (
+            self._leveling.last_reset_time
+            and datetime.now() - self._leveling.last_reset_time
+            < timedelta(seconds=1200)
         ):
             return
 
@@ -389,7 +413,7 @@ class Player:
             p.start()
             p.join(30)
             if p.exitcode == 0:
-                self._last_reset_time = datetime.now()
+                self._leveling.last_reset_time = datetime.now()
                 return
 
         raise ResetError("Reset failed!")
@@ -414,7 +438,7 @@ class Player:
             game_pixel = [ORIGIN[0] + offset[0], ORIGIN[1] + offset[1]]
             game_pixel[1] = min(game_pixel[1], 650)
             screen_pixel = window_api.window_pixel_to_screen_pixel(
-                self._window_hwnd, *game_pixel
+                self._window._window_hwnd, *game_pixel
             )
             arduino_api.ard_mouse_to_pos(screen_pixel)
             arduino_api.hold_left()
@@ -424,7 +448,7 @@ class Player:
                 game_pixel = [ORIGIN[0] + offset[0], ORIGIN[1] + offset[1]]
                 game_pixel[1] = min(game_pixel[1], 650)
                 screen_pixel = window_api.window_pixel_to_screen_pixel(
-                    self._window_hwnd, *game_pixel
+                    self._window._window_hwnd, *game_pixel
                 )
                 arduino_api.ard_mouse_to_pos(screen_pixel)
                 time.sleep(2)
@@ -432,31 +456,31 @@ class Player:
             time.sleep(0.02)
 
         screen_pixel = window_api.window_pixel_to_screen_pixel(
-            self._window_hwnd, *ORIGIN
+            self._window._window_hwnd, *ORIGIN
         )
         arduino_api.ard_mouse_to_pos(screen_pixel)
         arduino_api.release_buttons()
 
     def _exclude_current_spot(self):
-        del self._config["leveling_plan"][self._farming_spot_index]
-        self._farming_spot_index -= 1
+        del self._config["leveling_plan"][self._farming._farming_spot_index]
+        self._farming._farming_spot_index -= 1
 
     def _write_to_chat(self, msg: str):
         arduino_api.send_ascii(KEY_RETURN)
         time.sleep(0.5)
-        if not meth._detect_chat_open(self._window_hwnd):
+        if not meth._detect_chat_open(self._window._window_hwnd):
             arduino_api.send_ascii(KEY_RETURN)
         time.sleep(0.5)
-        if not meth._detect_chat_open(self._window_hwnd):
+        if not meth._detect_chat_open(self._window._window_hwnd):
             raise ChatError("Cannot open chat!")
         arduino_api.send_string(msg)
         time.sleep(0.5)
         arduino_api.send_ascii(KEY_RETURN)
         time.sleep(0.5)
-        if meth._detect_chat_open(self._window_hwnd):
+        if meth._detect_chat_open(self._window._window_hwnd):
             arduino_api.send_ascii(KEY_RETURN)
         time.sleep(0.5)
-        if meth._detect_chat_open(self._window_hwnd):
+        if meth._detect_chat_open(self._window._window_hwnd):
             raise ChatError("Cannot close chat!")
 
     def _warp_to(self, area: str) -> None:
@@ -464,7 +488,7 @@ class Player:
         time.sleep(3)
 
     def _surrounding_units(self) -> list:
-        return memory.get_surrounding_units(self._window_id)
+        return memory.get_surrounding_units(self._window._window_id)
 
     def _is_on_place(self, map_name: str, coords: tuple) -> bool:
         """Check if player is on place."""
@@ -478,8 +502,8 @@ class Player:
     def _update_best_spot_index(self):
         leveling_plan = self._config["leveling_plan"]
         f_run = True
-        while self._farming_spot_index + 1 < len(leveling_plan) and f_run:
-            spot = leveling_plan[self._farming_spot_index + 1]
+        while self._farming._farming_spot_index + 1 < len(leveling_plan) and f_run:
+            spot = leveling_plan[self._farming._farming_spot_index + 1]
             f_run = False
             map_name = "".join(i for i in spot["map"] if i.isalpha())
             logging.debug(f"Checking better spot: {spot}")
@@ -489,9 +513,9 @@ class Player:
                 target_coords = spot["coords"]
                 with contextlib.suppress(TooManyIterationsException):
                     djikstra8(warp.coords, target_coords, get_mu_map_list(warp.map))
-                    self._farming_spot_index += 1
+                    self._farming._farming_spot_index += 1
                     f_run = True
                     break
             logging.debug(
-                f"lvl: {self.lvl} is enough for spot {leveling_plan[self._farming_spot_index]}"
+                f"lvl: {self.lvl} is enough for spot {leveling_plan[self._farming._farming_spot_index]}"
             )
