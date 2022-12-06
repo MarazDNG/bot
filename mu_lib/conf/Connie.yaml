@@ -3,7 +3,8 @@ account:
   pass: ***REMOVED***
   position: 2
   select_offset: 150
-leveling_profile: K2
+leveling_profile:
+  70: K2
 stat_profile: SUMM_SWAMP
 leveling_plan:
   - n_WEREWOLVES_3

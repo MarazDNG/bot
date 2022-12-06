@@ -19,9 +19,9 @@ class ConfigManager:
         cls._profiles = cls._load_profiles()
 
     @classmethod
-    def config_for_player(cls, player_name: str):
+    def config_for_player(cls, player_name: str, player_reset: int):
         if player_name not in cls._config_pool:
-            cls._load_config(player_name)
+            cls._load_config(player_name, player_reset)
         return cls._config_pool[player_name]
 
     @classmethod
@@ -69,38 +69,63 @@ class ConfigManager:
         return profiles_yaml
 
     @classmethod
-    def _get_leveling_profile(cls, profile_name: str):
+    def _get_leveling_profile(cls, profile_name: str) -> list:
         return cls._profiles["leveling_profile"][profile_name]
 
     @classmethod
-    def _get_stat_profile(cls, profile_name: str):
+    def _get_stat_profile(cls, profile_name: str) -> list:
         return cls._profiles["stat_profile"][profile_name]
 
     @classmethod
-    def _load_config(cls, player_name: str):
-        """Read and load config to _config_pool file and convert spots."""
-        config_file_path = cls._get_config_path(player_name)
-        check_file(config_file_path)
-        with open(config_file_path, "r") as f:
-            player_config = yaml.safe_load(f)
+    def _parse_leveling_profile(cls, player_config: dict, player_reset: int) -> list:
+        """Parse leveling profile from config file and return list of spots."""
+        # get leveling plan
         if "leveling_profile" in player_config:
-            leveling_profile = player_config["leveling_profile"]
-            leveling_plan_yaml: list = cls._get_leveling_profile(leveling_profile)
+            leveling_profiles: dict = player_config["leveling_profile"]
+            leveling_profiles = sorted(leveling_profiles.items(), reverse=True)
+            for key, value in leveling_profiles:
+                if player_reset >= key:
+                    leveling_plan_yaml: list = cls._get_leveling_profile(value)
+                    break
         else:
             leveling_plan_yaml = player_config["leveling_plan"]
-        if "stat_profile" in player_config:
-            stat_profile = player_config["stat_profile"]
-            stats = cls._get_stat_profile(stat_profile)
-            player_config["stats"] = stats
 
-        # insert starting spot to the beginning of the list
+        # insert starting spot to the beginning of the leveling plan
         starting_warp = player_config["starting_warp"]
         if starting_warp == "lorencia":
             leveling_plan_yaml.insert(0, "n_BUDGE_DRAGONS")
         elif starting_warp == "elbeland":
             leveling_plan_yaml.insert(0, "n_STRANGE_RABBITS")
 
-        leveling_plan = [globals()[item] for item in leveling_plan_yaml]
+        return leveling_plan_yaml
+
+    @classmethod
+    def _parse_stat_profile(cls, player_config: dict, player_reset: int) -> list:
+        """Parse stat profile from config file and return dict of stats."""
+        stat_profiles: dict = player_config["stat_profile"]
+        stat_profiles = sorted(stat_profiles.items(), reverse=True)
+        print(stat_profiles)
+        for key, value in stat_profiles:
+            if player_reset >= key:
+                return cls._get_stat_profile(value)
+        raise ValueError("Stat profile found.")
+
+    @classmethod
+    def _load_config(cls, player_name: str, player_reset: int):
+        """Read and load config to _config_pool file and convert spots."""
+        config_file_path = cls._get_config_path(player_name)
+        check_file(config_file_path)
+        with open(config_file_path, "r") as f:
+            player_config = yaml.safe_load(f)
+
+        if "stat_profile" in player_config:
+            player_config["stats"] = cls._parse_stat_profile(
+                player_config, player_reset
+            )
+        leveling_plan = cls._parse_leveling_profile(player_config, player_reset)
+
+        # convert spots from string to object
+        leveling_plan = [globals()[item] for item in leveling_plan]
         player_config["leveling_plan"] = leveling_plan
         if player_name not in cls._config_pool:
             cls._config_pool[player_name] = player_config

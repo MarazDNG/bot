@@ -58,7 +58,7 @@ class Player:
     @property
     def _config(self):
         if not self.__config:
-            self.__config = config.ConfigManager.config_for_player(self.name)
+            self.__config = config.ConfigManager.config_for_player(self.name, self.reset)
         return self.__config
 
     @property
