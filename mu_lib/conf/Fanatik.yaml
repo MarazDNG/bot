@@ -1,0 +1,12 @@
+account:
+  id: zaram3
+  pass: ***REMOVED***
+  position: 2
+  select_offset: 150
+leveling_profile:
+  0: DUNG_3
+  6: LT_6
+  10: T1
+stat_profile:
+  0: MG_START
+starting_warp: lorencia

@@ -1,4 +1,8 @@
 leveling_profile:
+  WEREWOLVES:
+    - n_WEREWOLVES_3
+    - n_WEREWOLVES_2
+    - n_WEREWOLVES_1
   DUNG_3:
     - n_WEREWOLVES_3
     - n_WEREWOLVES_2
@@ -161,3 +165,18 @@ stat_profile:
     ene: r1
     str: r2
     vit: f3000
+  BK_START:
+    agi: r2
+    ene: r1
+    str: r1
+    vit: f100
+  MG_START:
+    agi: r3
+    ene: f100
+    str: r2
+    vit: f200
+  SM_k2:
+    agi: r2
+    ene: r3
+    str: f400
+    vit: f2600
