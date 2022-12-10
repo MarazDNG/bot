@@ -125,6 +125,11 @@ if __name__ == "__main__":
                     player._config["account"]["pass"],
                     player._config["account"]["select_offset"],
                 )
+            if player.zen:
+                logging.debug(f"Player {player.name} is zenning. {player.zen}")
+                player.save_zen()
+                continue
+
             if player.check_lifetime():
                 player.__init__(player.name)
 

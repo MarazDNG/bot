@@ -22,6 +22,7 @@ from . import KEY_RETURN, ORIGIN
 from . import game_menu
 from . import walking_vector
 from . import config
+from . import browser
 
 from .exceptions import (
     DeathException,
@@ -66,7 +67,8 @@ class WindowSystem:
 class Player:
     def __init__(self, char_name: str):
         self.name = char_name
-        self.__config = None
+        self._config = config.ConfigManager.config_for_player(self.name)
+        self.zen = self._config["zen"] if "zen" in self._config else False
         self._farming = FarmingSystem()
         self._window = WindowSystem(self.name)
 
@@ -76,12 +78,6 @@ class Player:
         self.birthtime = datetime.now()
 
     # PROPS
-    @property
-    def _config(self):
-        if not self.__config:
-            self.__config = config.ConfigManager.config_for_player(self.name)
-        return self.__config
-
     @property
     def reset(self) -> int:
         window_title = window_api.window_title_by_handler(self._window.hwnd)
@@ -154,6 +150,33 @@ class Player:
         self._farming._farming_flag = False
 
     # PUBLIC METHODS
+
+    def save_zen(self):
+        if not getattr(self, "_zen_save", False):
+            self._zen_save = datetime.now()
+
+        if (datetime.now() - self._zen_save).total_seconds() < 60 * 60:
+            return
+
+        self._zen_save = datetime.now()
+
+        game_menu.server_selection(self._window.hwnd)
+        # login to eternmu.cz
+        browser.save_zen(
+            self._config["account"]["id"],
+            self._config["account"]["pass"],
+            self._config["account"]["position"],
+        )
+        window_api.window_activate_by_handler(self._window.hwnd)
+        game_menu.game_login(
+            self._window.hwnd,
+            self._config["account"]["id"],
+            self._config["account"]["pass"],
+            self._config["account"]["select_offset"],
+        )
+        time.sleep(2)
+        # login back to game and start helper
+        self.farm()
 
     def buy_pots(self):
         if meth._detect_pots(self._window.hwnd):
