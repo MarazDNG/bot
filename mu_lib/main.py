@@ -1,4 +1,5 @@
 import contextlib
+import time
 from game_logic import game_menu
 from game_logic.Player import Player
 from game_logic.exceptions import (
@@ -62,9 +63,6 @@ if __name__ == "__main__":
         datefmt="%Y/%m/%d %H:%M:%S",
     )
 
-    if len(sys.argv) == 1:
-        raise WrongArgumentsException("Character name is required.")
-
     arduino_api.ard_init(3)
     config.ConfigManager.init(CONFIG_PATH)
 
@@ -84,12 +82,14 @@ if __name__ == "__main__":
             action_type, value = next_config_change.split(" ", 1)
             if action_type == "cfg":
                 config.ConfigManager.modify(value)
+
             elif action_type == "on":
                 if value in [p.name for p in player_pool]:
                     print(f"Player {value} is already in game.")
                 else:
                     player = Player(value)
                     player_pool.append(player)
+
             elif action_type == "off":
                 player = [p for p in player_pool if p.name == value]
                 if player:
@@ -102,6 +102,7 @@ if __name__ == "__main__":
                             continue
                     player.close_game()
                     player_pool.remove(player)
+
                 else:
                     print(f"Player {value} is not in game.")
             else:
@@ -154,9 +155,12 @@ if __name__ == "__main__":
 
                 player.farm()
             except (TooManyIterationsException, WarpException, ChatError) as e:
-                logging.error(f"Player {player.name} error: {e}")   
+                logging.error(f"Player {player.name} error: {e}")
                 window_api.window_activate_by_handler(player._window.hwnd)
                 player.close_game()
                 arduino_api.send_ascii(KEY_RETURN)
                 player.__init__(player.name)
+
+            if not player.pool:
+                time.sleep(5)
         logging.debug("Ending game loop.")
