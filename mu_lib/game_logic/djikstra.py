@@ -47,6 +47,7 @@ def _djikstra_body(
     distance = 0
     while True:
         if distance > 1000:
+            logger.error(f"Too many iterations.\nstart: {start}, goal: {goal}")
             raise TooManyIterationsException("Too many iterations")
         new_set = set()
         for item in sets[distance]:

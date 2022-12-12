@@ -154,7 +154,8 @@ if __name__ == "__main__":
 
                 player.farm()
             except (TooManyIterationsException, WarpException, ChatError) as e:
-                window_api.window_activate_by_handler(player._window_hwnd)
+                logging.error(f"Player {player.name} error: {e}")   
+                window_api.window_activate_by_handler(player._window.hwnd)
                 player.close_game()
                 arduino_api.send_ascii(KEY_RETURN)
                 player.__init__(player.name)

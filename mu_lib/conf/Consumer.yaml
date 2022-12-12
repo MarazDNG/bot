@@ -3,35 +3,6 @@ account:
   pass: ***REMOVED***
   position: 1
   select_offset: 0
-leveling_plan:
-  - n_WEREWOLVES_3
-  - n_WEREWOLVES_2
-  - n_WEREWOLVES_1
-  - n_POISON_BULL_FIGHTERS_1
-  - n_DARK_KNIGHTS_2
-  - n_DARK_KNIGHTS_1
-  - n_THUNDER_LICHES_1
-  - n_BLOODY_QUEENS_1
-  - n_BLOODY_QUEENS_2
-  - n_BLOODY_QUEENS_3
-  - n_BLOODY_QUEENS_4
-  # - n_MUTANTS_2
-  # - n_MUTANTS_1
-  # - n_BLOODY_WOLVES_1
-  # - n_SPLINTER_WOLVES_3
-  # - n_SPLINTER_WOLVES_2
-  # - n_SPLINTER_WOLVES_1
-  # - n_BLADE_HUNTERS_2
-  # - n_BLADE_HUNTERS_1
-  # - n_BERSERKERS_3
-  # - n_BERSERKERS_2
-  # - n_BERSERKERS_1
-  # - n_GENOCIDERS_3
-  # - n_GENOCIDERS_2
-  # - n_GENOCIDERS_1
+leveling_profile: GENOCIDERS
+stat_profile: BK_130lv
 starting_warp: lorencia
-stats:
-  agi: f13000
-  ene: r1
-  str: r2
-  vit: f3000

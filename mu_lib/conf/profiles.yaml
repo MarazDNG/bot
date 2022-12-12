@@ -34,9 +34,9 @@ leveling_profile:
     - n_DEATH_KNIGHTS_1
     - n_MUTANTS_2
     - n_MUTANTS_1
-    - n_BLOODY_WOLVES_3
-    - n_BLOODY_WOLVES_2
-    - n_BLOODY_WOLVES_1
+    # - n_BLOODY_WOLVES_3
+    # - n_BLOODY_WOLVES_2
+    # - n_BLOODY_WOLVES_1
   K1:
     - n_WEREWOLVES_3
     - n_WEREWOLVES_2
@@ -155,6 +155,11 @@ leveling_profile:
     - n_CONDRAS_2
     - n_CONDRAS_1
 stat_profile:
+  SUMM_K1:
+    agi: r1
+    ene: r1
+    str: f400
+    vit: f1100
   SUMM_SWAMP:
     agi: r1
     ene: r1
@@ -175,8 +180,18 @@ stat_profile:
     ene: f100
     str: r2
     vit: f200
-  SM_k2:
+  MG_TARKAN:
+    agi: r2
+    ene: f200
+    str: r3
+    vit: f600
+  SM_K2:
     agi: r2
     ene: r3
     str: f400
     vit: f2600
+  SM_K1:
+    agi: r2
+    ene: r3
+    str: f400
+    vit: f1100

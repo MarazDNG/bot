@@ -3,6 +3,6 @@ account:
   pass: ***REMOVED***
   position: 2
   select_offset: 150
-leveling_profile: LT_6
-stat_profile: MG_START
+leveling_profile: T1
+stat_profile: MG_TARKAN
 starting_warp: lorencia

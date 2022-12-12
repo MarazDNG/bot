@@ -182,8 +182,9 @@ class Player:
         if meth._detect_pots(self._window.hwnd):
             return
 
+        logging.debug("Going for pots")
         # go to shop
-        self.map = "devias"
+        self.warp(Warp(20, "devias", (204, 37)))
         self._go_to_coords((226, 40))
 
         # click on npc 225, 41
@@ -219,6 +220,7 @@ class Player:
             self._last_dist_lvl = self.lvl
         lvl = self.lvl
         if lvl == 1:
+            logging.debug("Distributing stats after reset")
             stats = self._config["stats"]
             total = self.gr * 10 * 1000 + self.reset * 500
             for stat in stats:
@@ -234,6 +236,7 @@ class Player:
         if self.lvl < self._last_dist_lvl:
             self._last_dist_lvl = 1
         if self.lvl > self._last_dist_lvl + step:
+            logging.debug("Distributing stats during gameplay")
             total = (self.lvl - self._last_dist_lvl) * 6
             self._last_dist_lvl = lvl
             self._distribute_relativety(total)

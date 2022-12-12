@@ -3,32 +3,6 @@ account:
   pass: ***REMOVED***
   position: 2
   select_offset: 150
-leveling_profile: K2
+leveling_profile: K1
 stat_profile: SUMM_SWAMP
-leveling_plan:
-  - n_WEREWOLVES_3
-  - n_WEREWOLVES_2
-  - n_WEREWOLVES_1
-  - n_POISON_BULL_FIGHTERS_1
-  - n_DARK_KNIGHTS_2
-  - n_DARK_KNIGHTS_1
-  - n_DEATH_KNIGHTS_4
-  - n_DEATH_KNIGHTS_3
-  - n_DEATH_KNIGHTS_2
-  - n_DEATH_KNIGHTS_1
-  - n_MUTANTS_2
-  - n_MUTANTS_1
-  - n_BLOODY_WOLVES_3
-  - n_BLOODY_WOLVES_2
-  - n_BLOODY_WOLVES_1
-  - n_SPLINTER_WOLVES_3
-  - n_SPLINTER_WOLVES_2
-  - n_SPLINTER_WOLVES_1
-  - n_BLADE_HUNTERS_2
-  - n_BLADE_HUNTERS_1
 starting_warp: elbeland
-stats:
-  agi: r1
-  ene: r1
-  str: f400
-  vit: f1100
