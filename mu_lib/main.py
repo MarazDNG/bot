@@ -7,6 +7,7 @@ from game_logic.exceptions import (
     TooManyIterationsException,
     WarpException,
     ChatError,
+    ResetError,
 )
 from game_logic import meth
 from game_logic import KEY_RETURN
@@ -154,13 +155,17 @@ if __name__ == "__main__":
                 player.ensure_on_best_spot()
 
                 player.farm()
-            except (TooManyIterationsException, WarpException, ChatError) as e:
+            except (TooManyIterationsException, WarpException, ChatError, ResetError) as e:
                 logging.error(f"Player {player.name} error: {e}")
                 window_api.window_activate_by_handler(player._window.hwnd)
+                if player.exceptions.add():
+                    player_pool.remove(player)
+                else:
+                    exceptions = player.exceptions
+                    player.__init__(player.name)
+                    player.exceptions = exceptions
                 player.close_game()
-                arduino_api.send_ascii(KEY_RETURN)
-                player.__init__(player.name)
 
-            if not player.pool:
+            if not player_pool:
                 time.sleep(5)
         logging.debug("Ending game loop.")

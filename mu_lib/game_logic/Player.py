@@ -64,11 +64,31 @@ class WindowSystem:
         return self.__window_id
 
 
+class ExceptionCounter:
+    def __init__(self):
+        self.timer = None
+        self.counter = 0
+
+    def add(self):
+        if self.timer is None:
+            self.timer = datetime.now()
+            return False
+
+        if datetime.now() - self.timer > timedelta(minutes=2):
+            self.counter += 1
+        else:
+            self.counter = 0
+        self.timer = datetime.now()
+
+        return self.counter >= 3
+
+
 class Player:
     def __init__(self, char_name: str):
         self.name = char_name
         self._config = config.ConfigManager.config_for_player(self.name)
         self.zen = self._config["zen"] if "zen" in self._config else False
+        self.exceptions = ExceptionCounter()
         self._farming = FarmingSystem()
         self._window = WindowSystem(self.name)
 
@@ -348,7 +368,6 @@ class Player:
             self._farming._farming_flag = True
             self._farming._farming_coords = self.coords
         meth.turn_helper_on(self._window.hwnd)
-        time.sleep(5)
 
     def check_death(self):
         """Check if died during farming."""
