@@ -12,6 +12,7 @@ import logging
 from multiprocessing import Process
 from datetime import datetime, timedelta
 import pygetwindow as gw
+import win32api
 
 import window_api
 import arduino_api
@@ -214,7 +215,8 @@ class Player:
         screen_pixel = window_api.window_pixel_to_screen_pixel(
             self._window.hwnd, *window_pixel
         )
-        arduino_api.ard_mouse_to_pos(screen_pixel, sleep=True)
+        win32api.SetCursorPos(screen_pixel, sleep=True)
+        time.sleep(1)
         arduino_api.click()
         time.sleep(3)
 
@@ -222,7 +224,7 @@ class Player:
         screen_pixel = window_api.window_pixel_to_screen_pixel(
             self._window.hwnd, 700, 120
         )
-        arduino_api.ard_mouse_to_pos(screen_pixel, sleep=True)
+        win32api.SetCursorPos(screen_pixel, sleep=True)
         for _ in range(10):
             arduino_api.click(sleep=True)
 
@@ -231,7 +233,7 @@ class Player:
         screen_pixel = window_api.window_pixel_to_screen_pixel(
             self._window.hwnd, *window_pixel
         )
-        arduino_api.ard_mouse_to_pos(screen_pixel, sleep=True)
+        win32api.SetCursorPos(screen_pixel, sleep=True)
         arduino_api.click(sleep=True)
 
     def distribute_stats(self) -> None:
@@ -469,7 +471,8 @@ class Player:
             screen_pixel = window_api.window_pixel_to_screen_pixel(
                 self._window.hwnd, *game_pixel
             )
-            arduino_api.ard_mouse_to_pos(screen_pixel)
+            # print(screen_pixel)
+            win32api.SetCursorPos(list(map(int, screen_pixel)))
             arduino_api.hold_left()
 
             if _if_stucked(self_coords):
@@ -479,7 +482,7 @@ class Player:
                 screen_pixel = window_api.window_pixel_to_screen_pixel(
                     self._window.hwnd, *game_pixel
                 )
-                arduino_api.ard_mouse_to_pos(screen_pixel)
+                win32api.SetCursorPos(list(map(int, screen_pixel)))
                 time.sleep(2)
 
             time.sleep(0.02)
@@ -487,7 +490,7 @@ class Player:
         screen_pixel = window_api.window_pixel_to_screen_pixel(
             self._window.hwnd, *ORIGIN
         )
-        arduino_api.ard_mouse_to_pos(screen_pixel)
+        win32api.SetCursorPos(list(map(int, screen_pixel)))
         arduino_api.release_buttons()
 
     def _exclude_current_spot(self):
