@@ -1,4 +1,5 @@
 from game_logic import Player
+from game_logic import config
 
 from PIL import Image
 import sys
@@ -15,8 +16,11 @@ except:
     raise Exception("Could not open image!")
 idk = img.load()
 
+CONFIG_PATH = r"C:\Users\Avatar\smart\bot\mu_lib\conf"
+config.ConfigManager.init(CONFIG_PATH)
+
 # activate_window("Silco")
-p = Player.Player("Connie")
+p = Player.Player("DINO")
 
 coords_set = set()
 while True:
