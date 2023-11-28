@@ -18,6 +18,7 @@ import sys
 import window_api
 import arduino_api
 import pygetwindow as gw
+import keyboard
 
 from multiprocessing import Process, Queue
 from telegram import Update
@@ -30,7 +31,7 @@ from telegram.ext import (
 )
 
 
-CONFIG_PATH = r"C:\Users\Maraz\smart\bot\mu_lib\conf"
+CONFIG_PATH = r"C:\Users\Avatar\smart\bot\mu_lib\conf"
 TOKEN = "5738719734:AAFxl-8hEkCms58QatVz9D7FeJxCGArfP8g"
 
 
@@ -73,7 +74,9 @@ if __name__ == "__main__":
     p_telegram = Process(target=telegram_bot, args=(q,))
     p_telegram.start()
 
-    while True:
+    q_kb = Queue()
+    keyboard.add_hotkey("ctrl+alt+q", lambda: q_kb.put("q"))
+    while not q_kb.qsize():
         next_config_change = None
         try:
             next_config_change = q.get(timeout=1)
@@ -166,6 +169,9 @@ if __name__ == "__main__":
                     player.exceptions = exceptions
                 player.close_game()
 
-            if not player_pool:
-                time.sleep(5)
+        if not player_pool:
+            time.sleep(5)
         logging.debug("Ending game loop.")
+    logging.debug("Ending PROGRAM.")
+    p_telegram.terminate()
+    print("FINISH")
