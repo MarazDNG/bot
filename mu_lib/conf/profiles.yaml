@@ -222,3 +222,13 @@ stat_profile:
     ene: r3
     str: f400
     vit: f1100
+  MG_ENE_110lv:
+    str: f1500
+    vit: f500
+    agi: f17000
+    ene: r1
+  SUMM_96lv:
+    str: f300
+    vit: f700
+    agi: f20000
+    ene: r1
