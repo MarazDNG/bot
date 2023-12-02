@@ -76,7 +76,7 @@ def do_reset_on_web(id: str, password: str, position: int):
     reset_link.click()
 
     tbody = driver.find_element(By.TAG_NAME, "tbody")
-    tr_char = tbody.find_elements(By.TAG_NAME, "tr")[position]
+    tr_char = tbody.find_elements(By.TAG_NAME, "tr")[-(position + 1)]
     reset_btn = tr_char.find_element(By.CSS_SELECTOR, value='[title^="Posled"]')
     reset_btn.click()
 
