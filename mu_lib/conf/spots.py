@@ -6,6 +6,7 @@ from .spots_location.kanturu_ruins import *
 from .spots_location.icarus import *
 from .spots_location.aida import *
 from .spots_location.karutan import *
+from .spots_location.crywolf import *
 
 n_BUDGE_DRAGONS = {
     "map": "lorencia",

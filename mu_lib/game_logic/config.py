@@ -1,6 +1,7 @@
 from conf.spots import *
 import os
 import yaml
+import logging
 
 
 def check_file(path):
@@ -107,6 +108,7 @@ class ConfigManager:
 
         leveling_plan = [globals()[item] for item in leveling_plan_yaml]
         player_config["leveling_plan"] = leveling_plan
+        logging.debug(f"Leveling plan for {player_name}: {player_config['leveling_plan']}.")
         if player_name not in cls._config_pool:
             cls._config_pool[player_name] = player_config
             return

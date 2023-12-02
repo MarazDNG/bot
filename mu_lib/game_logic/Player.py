@@ -141,13 +141,25 @@ class Player:
             return
 
         def warp_to(warp: Warp) -> None:
-            """Used only when required level is met."""
+            """Move player to warp location in desired map.
+            Used only when required level is met."""
 
             def peaceswamp1():
                 self.warp(Warp(300, "peaceswamp", (139, 108)), "peaceswamp")
                 self._go_to_coords((139, 125))
 
-            tmp = self.coords
+            def crywolf():
+                self.warp(Warp(10, "lorencia", (145, 120)))
+                self._go_to_coords((240, 15))
+                time.sleep(10)
+                self.map = "valley"
+                self._go_to_coords((161, 42))
+                time.sleep(10)
+                self.map = "crywolf"
+
+
+            if self._in_map(warp.map) and distance(self.coords, warp.coords) <= 6:
+                return
 
             if warp.name in locals():
                 locals()[warp.name]()
@@ -155,13 +167,13 @@ class Player:
                 self._write_to_chat(f"/warp {warp.name}")
             time.sleep(3)
 
-            if self.coords == tmp and self.coords != warp.coords:
+            if not self._in_map(warp.map) or (distance(self.coords, warp.coords) > 6 and warp.map not in ["lorencia", "elbeland", "devias", "noria"]):
                 if warp.name in locals():
                     locals()[warp.name]()
                 else:
                     self._write_to_chat(f"/warp {warp.name}")
                 time.sleep(3)
-                if self.coords == tmp:
+                if not self._in_map(warp.map) or (distance(self.coords, warp.coords) > 6 and warp.map not in ["lorencia", "elbeland", "devias", "noria"]):
                     raise WarpException(
                         f"Warp failed from {self.map} {self.coords} to {warp.name}"
                     )
@@ -284,7 +296,7 @@ class Player:
                 continue
             with contextlib.suppress(TooManyIterationsException):
                 path = djikstra8(warp.coords, target_coords, map_arr)
-                if not curr_len or len(path) < curr_len:
+                if not curr_len or (len(path) < curr_len and self.map != "crywolf"):
                     curr_len = len(path)
                     curr_warp = warp
 
@@ -398,8 +410,8 @@ class Player:
     def _in_map(self, map_name: str):
         if self.map == map_name:
             return True
-        if self.map:
-            return False
+        # if self.map:
+        #     return False
         template_path = os.path.join(
             os.path.dirname(__file__), f"patterns/{map_name}.png"
         )

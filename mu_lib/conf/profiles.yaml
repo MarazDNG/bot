@@ -77,6 +77,16 @@ leveling_profile:
     - n_SPLINTER_WOLVES_1
     - n_BLADE_HUNTERS_2
     - n_BLADE_HUNTERS_1
+  CW:
+    - n_BOW_SCOUTS_1
+    - n_CWOLVES_2
+    - n_CWOLVES_1
+    - n_HAMMER_SCOUTS_6
+    - n_HAMMER_SCOUTS_5
+    - n_HAMMER_SCOUTS_4
+    - n_HAMMER_SCOUTS_3
+    - n_HAMMER_SCOUTS_2
+    - n_HAMMER_SCOUTS_1
   ZERKS:
     - n_WEREWOLVES_3
     - n_WEREWOLVES_2
@@ -118,6 +128,23 @@ leveling_profile:
     - n_GENOCIDERS_3
     - n_GENOCIDERS_2
     - n_GENOCIDERS_1
+  CRYPTAS:
+    - n_BOW_SCOUTS_1
+    - n_CWOLVES_2
+    - n_CWOLVES_1
+    - n_HAMMER_SCOUTS_6
+    - n_HAMMER_SCOUTS_5
+    - n_HAMMER_SCOUTS_4
+    - n_HAMMER_SCOUTS_3
+    - n_HAMMER_SCOUTS_2
+    - n_HAMMER_SCOUTS_1
+    - n_BONE_SCORPIONS_4
+    - n_BONE_SCORPIONS_3
+    - n_BONE_SCORPIONS_2
+    - n_BONE_SCORPIONS_1
+    - n_ORCUSES_1
+    - n_CRYPTAS_2
+    - n_CRYPTAS_1
   QUEENS:
     - n_WEREWOLVES_3
     - n_WEREWOLVES_2
