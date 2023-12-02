@@ -19,7 +19,7 @@ import arduino_api
 
 from . import memory
 from . import meth
-from . import KEY_RETURN, ORIGIN
+from . import KEY_RETURN, ORIGIN, KEY_TAB
 from . import game_menu
 from . import walking_vector
 from . import config
@@ -150,11 +150,11 @@ class Player:
 
             def crywolf():
                 self.warp(Warp(10, "lorencia", (145, 120)))
-                self._go_to_coords((240, 15))
-                time.sleep(10)
+                self._go_to_coords((238, 14))
+                self._walk_through_portal((240, 15))
                 self.map = "valley"
-                self._go_to_coords((161, 42))
-                time.sleep(10)
+                self._go_to_coords((159, 43))
+                self._walk_through_portal((161, 42))
                 self.map = "crywolf"
 
 
@@ -460,6 +460,52 @@ class Player:
                 return
 
         raise ResetError("Reset failed!")
+
+    # KEEPING JUST IN CASE I WILL NEED IT
+    # REMOVE IF NOT USED FOR A FEW DAYS
+    def _turn_off_valey_map(self):
+        """Turn off minimap in Valley of Loren.
+        It blocks movement of the character."""
+        bbox = 1060, 631, 100, 1
+        def is_map_open():
+            img = window_api.window_grab_image(self._window.hwnd, *bbox)
+            img_1d = [tuple(x) for x in numpy.asarray(img)[0]]
+            return all(all(i < 10 for i in x) for x in img_1d)
+        counter = 0
+        # try 3 times then just continue
+        while counter <= 3 and is_map_open():
+            arduino_api.send_ascii(KEY_TAB)
+            counter += 1
+            time.sleep(1)
+
+    def _walk_through_portal(self, portal_coords: tuple):
+        """Walk through certail coordinates until character is teleported.
+        When walking through portal either map or coordinates change.
+        """        
+        # click towards portal
+        def click_towards_portal():
+            offset = [min(i, 300) for i in walking_vector.coords_to_pixel_offset(self.coords, portal_coords)]
+            game_pixel = [ORIGIN[0] + offset[0], ORIGIN[1] + offset[1]]
+            game_pixel[1] = min(game_pixel[1], 650)
+            screen_pixel = window_api.window_pixel_to_screen_pixel(
+                self._window.hwnd, *game_pixel
+            )
+            win32api.SetCursorPos(list(map(int, screen_pixel)))
+            time.sleep(0.1)
+            arduino_api.click()
+            # wait
+            time.sleep(1)
+        # check map and coords
+        counter = 0
+        limit = 10
+        # print(self._in_map(self.map))
+        while self._in_map(self.map) and distance(self.coords, portal_coords) < 8:
+            if counter > limit:
+                raise WarpException("Cannot walk through portal")
+            click_towards_portal()
+            counter += 1
+            if counter == limit:
+                time.sleep(10)
 
     def _go_to_coords(self, target_coords: tuple):
         """Go to target coordinates on current map."""

@@ -6,7 +6,7 @@ import numpy
 def go_next_point(start: tuple, goal: tuple, normalize: bool = True) -> tuple:
     """
     Return pixel offset from character to click on to get to the goal.
-    Use:mouse_click(pixel_on_characters_feet + this_offset)
+    Use:mouse_click(pixel_on_characters_feet + go_next_point(...))
     """
     vector = get_vector(goal, start, normalize)
     vector = transform_vector(vector)
