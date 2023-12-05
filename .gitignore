@@ -12,3 +12,4 @@ libmu/
 TODO
 mapper.png
 *tmp.py
+mu_lib\conf\passwd.yaml

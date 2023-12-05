@@ -232,3 +232,8 @@ stat_profile:
     vit: f700
     agi: f20000
     ene: r1
+  MG_STR_110lv:
+    str: r1
+    vit: f500
+    agi: f17000
+    ene: f1000

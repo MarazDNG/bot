@@ -68,6 +68,10 @@ class ConfigManager:
         return os.path.join(cls._config_dir, f"{player_name}.yaml")
 
     @classmethod
+    def _get_passwd_path(cls):
+        return os.path.join(cls._config_dir, "passwd.yaml")
+
+    @classmethod
     def _load_profiles(cls):
         profile_file = os.path.join(cls._config_dir, "profiles.yaml")
         with open(profile_file, "r") as f:
@@ -89,6 +93,8 @@ class ConfigManager:
         check_file(config_file_path)
         with open(config_file_path, "r") as f:
             player_config = yaml.safe_load(f)
+            player_pass = yaml.safe_load(open(cls._get_passwd_path(), "r"))[player_name]
+        player_config["account"]["pass"] = player_pass
         if "leveling_profile" in player_config:
             leveling_profile = player_config["leveling_profile"]
             leveling_plan_yaml: list = cls._get_leveling_profile(leveling_profile)

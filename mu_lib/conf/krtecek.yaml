@@ -1,8 +1,6 @@
 account:
   id: Maraz
-  pass: Dng163524
-  position: 1
-  select_offset: 0
+  position: 0
 leveling_profile: CRYPTAS
-stat_profile: MG_ENE_110lv
+stat_profile: MG_STR_110lv
 starting_warp: lorencia
