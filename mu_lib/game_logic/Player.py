@@ -39,6 +39,10 @@ from .djikstra import djikstra8
 from .map_list import MAP_DICT
 
 
+POINTS_PER_RESET = 1000
+POINTS_PER_GR = 10 * 1000
+
+
 class FarmingSystem:
     def __init__(self):
         self._farming_spot_index = 0
@@ -256,7 +260,7 @@ class Player:
         if lvl == 1:
             logging.debug("Distributing stats after reset")
             stats = self._config["stats"]
-            total = self.gr * 10 * 1000 + self.reset * 500
+            total = self.gr * POINTS_PER_GR + self.reset * POINTS_PER_RESET
             for stat in stats:
                 if stats[stat][0] == "f":
                     # distribute flat

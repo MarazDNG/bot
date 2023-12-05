@@ -33,7 +33,7 @@ from telegram.ext import (
 
 CONFIG_PATH = r"C:\Users\Avatar\smart\bot\mu_lib\conf"
 TOKEN = "5738719734:AAFxl-8hEkCms58QatVz9D7FeJxCGArfP8g"
-
+MAX_RESET = 50
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
@@ -139,7 +139,7 @@ if __name__ == "__main__":
                 player.__init__(player.name)
 
             try:
-                if player.lvl == 400 and player.reset == 100:
+                if player.lvl == 400 and player.reset == MAX_RESET:
                     logging.info(f"Player {player.name} reached max level and reset.")
                     player.close_game()
                     player_pool.remove(player)
